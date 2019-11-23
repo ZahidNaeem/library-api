@@ -1,0 +1,52 @@
+server:
+  port: 8089
+spring:
+  #  Datasource configurations
+  datasource:
+    #    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/xxim?useSSL=false
+    username: root
+    password: 1234
+  #    Email configurations
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: hzahidnaeem@gmail.com
+    password: "******"
+    properties:
+      mail:
+        #        transport:
+        #          protocol: smtp
+        smtp:
+          auth: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+          starttls:
+            enable: true
+  #          socketFactory:
+  #            port: 465
+  #            class: javax.net.ssl.SSLSocketFactory
+  #    url: jdbc:mysql://localhost:3306/xxim?useSSL=false&allowPublicKeyRetrieval=true
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        enable_lazy_load_no_trans: true
+        jdbc:
+          batch_size: 20
+    show-sql: true
+debug: true
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+  pattern:
+    console: '%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n'
+pos:
+  app:
+    jwtSecret: jwtPosSecretKey
+    jwtExpiration: 86400
