@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="warn" packages="org.zahid.apps.web.pos.logging">
+<Configuration status="warn" packages="org.zahid.apps.web.library.logging">
   <Appenders>
     <RollingFile name="RollingFile"
-      fileName="logs/pos.log"
-      filePattern="logs/pos-%d{yyyy-MM-dd}-%i.log.zip">
+      fileName="logs/library.log"
+      filePattern="logs/library-%d{yyyy-MM-dd}-%i.log.zip">
       <PatternLayout>
         <Pattern>%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Pattern>
       </PatternLayout>

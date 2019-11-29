@@ -4,7 +4,7 @@ spring:
   #  Datasource configurations
   datasource:
     #    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/xxim?useSSL=false
+    url: jdbc:mysql://localhost:3306/library?useSSL=false
     username: root
     password: 1234
   #    Email configurations
@@ -46,7 +46,7 @@ logging:
         SQL: debug
   pattern:
     console: '%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n'
-pos:
+library:
   app:
-    jwtSecret: jwtPosSecretKey
+    jwtSecret: jwtLibrarySecretKey
     jwtExpiration: 86400
