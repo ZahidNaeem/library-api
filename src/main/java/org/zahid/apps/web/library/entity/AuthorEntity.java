@@ -25,6 +25,9 @@ public class AuthorEntity extends Auditable<Long> {
     @Column(name = "author_name")
     private String authorName;
 
+    @Column(name = "remarks")
+    private String remarks;
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "author")
     private List<BookEntity> books;
 }

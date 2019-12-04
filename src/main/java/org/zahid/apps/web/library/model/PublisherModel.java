@@ -17,6 +17,8 @@ public class PublisherModel extends Auditable<Long> {
     private Long publisherId;
     
     private String publisherName;
+
+    private String remarks;
     
     private List<BookModel> books;
 }

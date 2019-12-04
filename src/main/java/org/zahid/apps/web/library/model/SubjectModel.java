@@ -19,6 +19,8 @@ public class SubjectModel {
 
     private Long parentSubjectId;
 
+    private String remarks;
+
     private List<BookModel> books;
 
     private List<SubjectModel> subjects;

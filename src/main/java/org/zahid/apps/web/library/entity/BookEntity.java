@@ -49,4 +49,7 @@ public class BookEntity extends Auditable<Long> {
     @ManyToOne
     @JoinColumn(name = "researcher_id")
     private ResearcherEntity researcher;
+
+    @Column(name = "remarks")
+    private String remarks;
 }

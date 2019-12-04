@@ -5,15 +5,25 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.zahid.apps.web.library.entity.Role;
 import org.zahid.apps.web.library.entity.User;
+import org.zahid.apps.web.library.enumeration.RoleName;
 import org.zahid.apps.web.library.exception.ResourceNotFoundException;
 import org.zahid.apps.web.library.model.UserSummary;
+import org.zahid.apps.web.library.repo.RoleRepo;
 import org.zahid.apps.web.library.repo.UserRepo;
 import org.zahid.apps.web.library.security.CurrentUser;
 import org.zahid.apps.web.library.security.payload.request.ChangePasswordRequest;
 import org.zahid.apps.web.library.security.service.UserPrincipal;
+
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -27,15 +37,23 @@ public class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private RoleRepo roleRepo;
+
     @GetMapping("/user/me")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public UserSummary getCurrentUser(@CurrentUser UserPrincipal currentUser) {
+
+        final Set<String> authorities = currentUser.getAuthorities().stream()
+                .map(r -> r.getAuthority()).collect(Collectors.toSet());
+
         UserSummary userSummary = UserSummary.builder()
                 .id(currentUser.getId())
                 .name(currentUser.getName())
                 .username(currentUser.getUsername())
                 .organizationCode(currentUser.getOrganization().getOrganizationCode())
                 .organizationName(currentUser.getOrganization().getOrganizationName())
+                .roles(authorities)
                 .build();
         return userSummary;
     }
@@ -55,12 +73,17 @@ public class UserController {
         final User user = userRepo.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
 
+        final Set<String> roles = user.getRoles().stream()
+                .map(role -> role.getName().name())
+                .collect(Collectors.toSet());
+
         final UserSummary userSummary = UserSummary.builder()
                 .id(user.getId())
                 .name(user.getName())
                 .username(user.getUsername())
                 .organizationCode(user.getOrganization().getOrganizationCode())
                 .organizationName(user.getOrganization().getOrganizationName())
+                .roles(roles)
                 .build();
 
         return userSummary;

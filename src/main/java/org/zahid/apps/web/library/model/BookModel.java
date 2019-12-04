@@ -31,4 +31,6 @@ public class BookModel extends Auditable<Long> {
     private Long publisher;
     
     private Long researcher;
+
+    private String remarks;
 }

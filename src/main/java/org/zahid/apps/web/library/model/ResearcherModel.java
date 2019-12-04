@@ -16,6 +16,8 @@ public class ResearcherModel {
     private Long researcherId;
     
     private String researcherName;
+
+    private String remarks;
     
     private List<BookModel> books;
 }

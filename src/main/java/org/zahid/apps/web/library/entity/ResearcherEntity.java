@@ -25,6 +25,9 @@ public class ResearcherEntity {
     @Column(name = "researcher_name")
     private String researcherName;
 
+    @Column(name = "remarks")
+    private String remarks;
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "researcher")
     private List<BookEntity> books;
 }

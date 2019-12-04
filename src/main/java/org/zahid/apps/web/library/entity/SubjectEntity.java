@@ -29,6 +29,9 @@ public class SubjectEntity {
     @JoinColumn(name = "parent_subject_id")
     private SubjectEntity parentSubjectId;
 
+    @Column(name = "remarks")
+    private String remarks;
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "subject")
     private List<BookEntity> books;
 
