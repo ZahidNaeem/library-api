@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/researcher")
+@RequestMapping("researcher")
 public class ResearcherController {
 
     private static final Logger LOG = LogManager.getLogger(ResearcherController.class);
@@ -31,8 +31,8 @@ public class ResearcherController {
 
     private static void setResearcherForBooks(final ResearcherEntity researcher) {
         if (CollectionUtils.isNotEmpty(researcher.getBooks())) {
-            researcher.getBooks().forEach(stock -> {
-                stock.setResearcher(researcher);
+            researcher.getBooks().forEach(book -> {
+                book.setResearcher(researcher);
             });
         }
     }
@@ -148,22 +148,31 @@ public class ResearcherController {
     }
 
     private static final ResearcherDTO getResearcherDTO(List<ResearcherModel> models, int indx) {
+        final NavigationDtl dtl = resetNavigation();
+        if (models.size() < 1) {
+            final ResearcherModel model = new ResearcherModel();
+            return ResearcherDTO.builder()
+                    .researcher(model)
+                    .navigationDtl(dtl)
+                    .build();
+        }
         if (indx < 0 || indx > models.size() - 1) {
+            LOG.info("models.size(): {}", models.size());
             LOG.info("Index in getResearcherDTO(): {}", indx);
             throw new IndexOutOfBoundsException();
         } else {
-            final NavigationDtl dtl = resetNavigation();
             final ResearcherModel model = models.get(indx);
-            final ResearcherDTO researcherDTO = new ResearcherDTO();
-            researcherDTO.setResearcher(model);
             if (indx > 0) {
                 dtl.setFirst(false);
             }
             if (indx < models.size() - 1) {
                 dtl.setLast(false);
             }
-            researcherDTO.setNavigationDtl(dtl);
-            return researcherDTO;
+
+            return ResearcherDTO.builder()
+                    .researcher(model)
+                    .navigationDtl(dtl)
+                    .build();
         }
     }
 }

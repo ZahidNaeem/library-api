@@ -26,7 +26,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api")
 public class UserController {
 
     private static final Logger LOG = LogManager.getLogger(UserController.class);

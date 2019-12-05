@@ -19,6 +19,7 @@ import java.util.List;
 @Table(name = "subject", schema = "library", catalog = "")
 public class SubjectEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "subject_id")
     private Long subjectId;
 

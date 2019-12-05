@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/publisher")
+@RequestMapping("publisher")
 public class PublisherController {
 
     private static final Logger LOG = LogManager.getLogger(PublisherController.class);
@@ -31,8 +31,8 @@ public class PublisherController {
 
     private static void setPublisherForBooks(final PublisherEntity publisher) {
         if (CollectionUtils.isNotEmpty(publisher.getBooks())) {
-            publisher.getBooks().forEach(stock -> {
-                stock.setPublisher(publisher);
+            publisher.getBooks().forEach(book -> {
+                book.setPublisher(publisher);
             });
         }
     }
@@ -148,22 +148,31 @@ public class PublisherController {
     }
 
     private static final PublisherDTO getPublisherDTO(List<PublisherModel> models, int indx) {
+        final NavigationDtl dtl = resetNavigation();
+        if (models.size() < 1) {
+            final PublisherModel model = new PublisherModel();
+            return PublisherDTO.builder()
+                    .publisher(model)
+                    .navigationDtl(dtl)
+                    .build();
+        }
         if (indx < 0 || indx > models.size() - 1) {
+            LOG.info("models.size(): {}", models.size());
             LOG.info("Index in getPublisherDTO(): {}", indx);
             throw new IndexOutOfBoundsException();
         } else {
-            final NavigationDtl dtl = resetNavigation();
             final PublisherModel model = models.get(indx);
-            final PublisherDTO publisherDTO = new PublisherDTO();
-            publisherDTO.setPublisher(model);
             if (indx > 0) {
                 dtl.setFirst(false);
             }
             if (indx < models.size() - 1) {
                 dtl.setLast(false);
             }
-            publisherDTO.setNavigationDtl(dtl);
-            return publisherDTO;
+
+            return PublisherDTO.builder()
+                    .publisher(model)
+                    .navigationDtl(dtl)
+                    .build();
         }
     }
 }

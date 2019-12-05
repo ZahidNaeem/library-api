@@ -14,21 +14,21 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIdentityInfo(scope = PublisherEntity.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "publisherId")
+@JsonIdentityInfo(scope = ShelfEntity.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "shelfId")
 @Entity
-@Table(name = "publisher", schema = "library", catalog = "")
-public class PublisherEntity extends Auditable<Long> {
+@Table(name = "shelf", schema = "library", catalog = "")
+public class ShelfEntity extends Auditable<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "publisher_id")
-    private Long publisherId;
+    @Column(name = "shelf_id")
+    private Long shelfId;
 
-    @Column(name = "publisher_name")
-    private String publisherName;
+    @Column(name = "shelf_name")
+    private String shelfName;
 
     @Column(name = "remarks")
     private String remarks;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "publisher")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "shelf")
     private List<BookEntity> books;
 }

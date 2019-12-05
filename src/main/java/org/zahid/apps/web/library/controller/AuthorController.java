@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/author")
+@RequestMapping("author")
 public class AuthorController {
 
     private static final Logger LOG = LogManager.getLogger(AuthorController.class);
@@ -31,8 +31,8 @@ public class AuthorController {
 
     private static void setAuthorForBooks(final AuthorEntity author) {
         if (CollectionUtils.isNotEmpty(author.getBooks())) {
-            author.getBooks().forEach(stock -> {
-                stock.setAuthor(author);
+            author.getBooks().forEach(book -> {
+                book.setAuthor(author);
             });
         }
     }
@@ -148,22 +148,31 @@ public class AuthorController {
     }
 
     private static final AuthorDTO getAuthorDTO(List<AuthorModel> models, int indx) {
+        final NavigationDtl dtl = resetNavigation();
+        if (models.size() < 1) {
+            final AuthorModel model = new AuthorModel();
+            return AuthorDTO.builder()
+                    .author(model)
+                    .navigationDtl(dtl)
+                    .build();
+        }
         if (indx < 0 || indx > models.size() - 1) {
+            LOG.info("models.size(): {}", models.size());
             LOG.info("Index in getAuthorDTO(): {}", indx);
             throw new IndexOutOfBoundsException();
         } else {
-            final NavigationDtl dtl = resetNavigation();
             final AuthorModel model = models.get(indx);
-            final AuthorDTO authorDTO = new AuthorDTO();
-            authorDTO.setAuthor(model);
             if (indx > 0) {
                 dtl.setFirst(false);
             }
             if (indx < models.size() - 1) {
                 dtl.setLast(false);
             }
-            authorDTO.setNavigationDtl(dtl);
-            return authorDTO;
+
+            return AuthorDTO.builder()
+                    .author(model)
+                    .navigationDtl(dtl)
+                    .build();
         }
     }
 }

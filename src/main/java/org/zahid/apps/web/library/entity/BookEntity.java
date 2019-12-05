@@ -19,6 +19,7 @@ import java.sql.Timestamp;
 @Table(name = "book", schema = "library", catalog = "")
 public class BookEntity extends Auditable<Long> {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "book_id")
     private Long bookId;
 
@@ -49,6 +50,10 @@ public class BookEntity extends Auditable<Long> {
     @ManyToOne
     @JoinColumn(name = "researcher_id")
     private ResearcherEntity researcher;
+
+    @ManyToOne
+    @JoinColumn(name = "shelf_id")
+    private ShelfEntity shelf;
 
     @Column(name = "remarks")
     private String remarks;

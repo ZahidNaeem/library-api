@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/subject")
+@RequestMapping("subject")
 public class SubjectController {
 
     private static final Logger LOG = LogManager.getLogger(SubjectController.class);
@@ -31,8 +31,8 @@ public class SubjectController {
 
     private static void setSubjectForBooks(final SubjectEntity subject) {
         if (CollectionUtils.isNotEmpty(subject.getBooks())) {
-            subject.getBooks().forEach(stock -> {
-                stock.setSubject(subject);
+            subject.getBooks().forEach(book -> {
+                book.setSubject(subject);
             });
         }
     }
@@ -148,22 +148,31 @@ public class SubjectController {
     }
 
     private static final SubjectDTO getSubjectDTO(List<SubjectModel> models, int indx) {
+        final NavigationDtl dtl = resetNavigation();
+        if (models.size() < 1) {
+            final SubjectModel model = new SubjectModel();
+            return SubjectDTO.builder()
+                    .subject(model)
+                    .navigationDtl(dtl)
+                    .build();
+        }
         if (indx < 0 || indx > models.size() - 1) {
+            LOG.info("models.size(): {}", models.size());
             LOG.info("Index in getSubjectDTO(): {}", indx);
             throw new IndexOutOfBoundsException();
         } else {
-            final NavigationDtl dtl = resetNavigation();
             final SubjectModel model = models.get(indx);
-            final SubjectDTO subjectDTO = new SubjectDTO();
-            subjectDTO.setSubject(model);
             if (indx > 0) {
                 dtl.setFirst(false);
             }
             if (indx < models.size() - 1) {
                 dtl.setLast(false);
             }
-            subjectDTO.setNavigationDtl(dtl);
-            return subjectDTO;
+
+            return SubjectDTO.builder()
+                    .subject(model)
+                    .navigationDtl(dtl)
+                    .build();
         }
     }
 }

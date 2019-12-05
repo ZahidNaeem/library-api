@@ -19,6 +19,7 @@ import java.util.List;
 @Table(name = "author", schema = "library", catalog = "")
 public class AuthorEntity extends Auditable<Long> {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "author_id")
     private Long authorId;
 

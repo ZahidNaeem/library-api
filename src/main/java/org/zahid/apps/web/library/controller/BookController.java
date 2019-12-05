@@ -1,6 +1,5 @@
 package org.zahid.apps.web.library.controller;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/book")
+@RequestMapping("book")
 public class BookController {
 
     private static final Logger LOG = LogManager.getLogger(BookController.class);
@@ -134,22 +133,31 @@ public class BookController {
     }
 
     private static final BookDTO getBookDTO(List<BookModel> models, int indx) {
+        final NavigationDtl dtl = resetNavigation();
+        if (models.size() < 1) {
+            final BookModel model = new BookModel();
+            return BookDTO.builder()
+                    .book(model)
+                    .navigationDtl(dtl)
+                    .build();
+        }
         if (indx < 0 || indx > models.size() - 1) {
+            LOG.info("models.size(): {}", models.size());
             LOG.info("Index in getBookDTO(): {}", indx);
             throw new IndexOutOfBoundsException();
         } else {
-            final NavigationDtl dtl = resetNavigation();
             final BookModel model = models.get(indx);
-            final BookDTO bookDTO = new BookDTO();
-            bookDTO.setBook(model);
             if (indx > 0) {
                 dtl.setFirst(false);
             }
             if (indx < models.size() - 1) {
                 dtl.setLast(false);
             }
-            bookDTO.setNavigationDtl(dtl);
-            return bookDTO;
+
+            return BookDTO.builder()
+                    .book(model)
+                    .navigationDtl(dtl)
+                    .build();
         }
     }
 }
