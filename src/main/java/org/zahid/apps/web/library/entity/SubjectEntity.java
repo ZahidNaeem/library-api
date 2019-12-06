@@ -20,7 +20,7 @@ import java.util.List;
         @UniqueConstraint(columnNames = {"subject_code"}),
         @UniqueConstraint(columnNames = {"subject_name"})
 })
-public class SubjectEntity {
+public class SubjectEntity extends Auditable<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "subject_id")

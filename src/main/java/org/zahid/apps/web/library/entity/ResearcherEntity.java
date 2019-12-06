@@ -19,7 +19,7 @@ import java.util.List;
 @Table(name = "researcher", schema = "library", catalog = "", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"researcher_name"})
 })
-public class ResearcherEntity {
+public class ResearcherEntity extends Auditable<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "researcher_id")
