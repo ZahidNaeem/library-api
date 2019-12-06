@@ -59,7 +59,7 @@ public abstract class SubjectMapper {
         return subjects;
     }
 
-    public long map(SubjectEntity value) {
+    public Long map(SubjectEntity value) {
         return value != null ? value.getSubjectId() : null;
     }
 
