@@ -4,11 +4,13 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.zahid.apps.web.library.dto.SubjectDTO;
 import org.zahid.apps.web.library.entity.SubjectEntity;
 import org.zahid.apps.web.library.entity.NavigationDtl;
+import org.zahid.apps.web.library.exception.SubjectNotFoundException;
 import org.zahid.apps.web.library.mapper.SubjectMapper;
 import org.zahid.apps.web.library.model.SubjectModel;
 import org.zahid.apps.web.library.service.SubjectService;
@@ -88,11 +90,20 @@ public class SubjectController {
         final SubjectEntity subject = mapper.toSubject(model);
 //    Below line added, because when converted from model to SubjectEntity, there is no subject set in book list.
         setSubjectForBooks(subject);
-        final SubjectEntity subjectSaved = subjectService.save(subject);
-        final SubjectModel savedModel = mapper.fromSubject(subjectSaved);
-        indx[0] = this.findAll().indexOf(savedModel);
-        LOG.info("Index in saveSubject(): {}", indx[0]);
-        return getSubjectDTO(findAll(), indx[0]);
+        final SubjectEntity[] subjectSaved = new SubjectEntity[1];
+        try {
+            subjectSaved[0] = subjectService.save(subject);
+            final SubjectModel savedModel = mapper.fromSubject(subjectSaved[0]);
+            indx[0] = this.findAll().indexOf(savedModel);
+            LOG.info("Index in saveSubject(): {}", indx[0]);
+            return getSubjectDTO(findAll(), indx[0]);
+        } catch (DataIntegrityViolationException e) {
+            LOG.error("Duplicate entry found");
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @PostMapping(path = "saveAll", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
