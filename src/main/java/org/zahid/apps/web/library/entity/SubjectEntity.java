@@ -16,12 +16,18 @@ import java.util.List;
 @AllArgsConstructor
 @JsonIdentityInfo(scope = SubjectEntity.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "subjectId")
 @Entity
-@Table(name = "subject", schema = "library", catalog = "")
+@Table(name = "subject", schema = "library", catalog = "", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"subject_code"}),
+        @UniqueConstraint(columnNames = {"subject_name"})
+})
 public class SubjectEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "subject_id")
     private Long subjectId;
+
+    @Column(name = "subject_code")
+    private String subjectCode;
 
     @Column(name = "subject_name")
     private String subjectName;

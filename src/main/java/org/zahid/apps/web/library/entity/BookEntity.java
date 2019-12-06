@@ -16,7 +16,9 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @JsonIdentityInfo(scope = BookEntity.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "bookId")
 @Entity
-@Table(name = "book", schema = "library", catalog = "")
+@Table(name = "book", schema = "library", catalog = "", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"book_name"})
+})
 public class BookEntity extends Auditable<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

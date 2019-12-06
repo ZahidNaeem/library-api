@@ -16,7 +16,9 @@ import java.util.List;
 @AllArgsConstructor
 @JsonIdentityInfo(scope = ShelfEntity.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "shelfId")
 @Entity
-@Table(name = "shelf", schema = "library", catalog = "")
+@Table(name = "shelf", schema = "library", catalog = "", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"shelf_name"})
+})
 public class ShelfEntity extends Auditable<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

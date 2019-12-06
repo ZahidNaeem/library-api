@@ -16,7 +16,9 @@ import java.util.List;
 @AllArgsConstructor
 @JsonIdentityInfo(scope = ResearcherEntity.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "researcherId")
 @Entity
-@Table(name = "researcher", schema = "library", catalog = "")
+@Table(name = "researcher", schema = "library", catalog = "", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"researcher_name"})
+})
 public class ResearcherEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -60,10 +60,10 @@ public abstract class SubjectMapper {
     }
 
     public long map(SubjectEntity value) {
-        return value.getSubjectId();
+        return value != null ? value.getSubjectId() : null;
     }
 
-    public SubjectEntity map(long value) {
-        return subjectService.findById(value);
+    public SubjectEntity map(Long value) {
+        return value != null ? subjectService.findById(value) : null;
     }
 }

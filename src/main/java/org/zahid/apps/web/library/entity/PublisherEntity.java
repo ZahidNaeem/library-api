@@ -16,7 +16,9 @@ import java.util.List;
 @AllArgsConstructor
 @JsonIdentityInfo(scope = PublisherEntity.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "publisherId")
 @Entity
-@Table(name = "publisher", schema = "library", catalog = "")
+@Table(name = "publisher", schema = "library", catalog = "", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"publisher_name"})
+})
 public class PublisherEntity extends Auditable<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

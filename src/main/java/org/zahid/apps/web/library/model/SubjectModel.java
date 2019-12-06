@@ -15,6 +15,8 @@ public class SubjectModel {
 
     private Long subjectId;
 
+    private String subjectCode;
+
     private String subjectName;
 
     private Long parentSubjectId;
