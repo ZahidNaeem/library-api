@@ -4,7 +4,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.zahid.apps.web.library.dto.ShelfDTO;
 import org.zahid.apps.web.library.entity.ShelfEntity;
@@ -38,75 +40,75 @@ public class ShelfController {
     }
 
     @GetMapping("all")
-    public List<ShelfModel> findAll() {
-        return mapper.mapShelfEntitiesToShelfModels(shelfService.findAll());
+    public ResponseEntity<List<ShelfModel>> findAll() {
+        return ResponseEntity.ok(mapper.mapShelfEntitiesToShelfModels(shelfService.findAll()));
     }
 
     @GetMapping("{id}")
-    public ShelfDTO findById(@PathVariable("id") final Long id) {
+    public ResponseEntity<ShelfDTO> findById(@PathVariable("id") final Long id) {
         final ShelfModel model = mapper.fromShelf(shelfService.findById(id));
-        indx[0] = findAll().indexOf(model);
+        indx[0] = findAll().getBody().indexOf(model);
         LOG.info("Index in findById(): {}", indx[0]);
-        return getShelfDTO(findAll(), indx[0]);
+        return ResponseEntity.ok(getShelfDTO(findAll().getBody(), indx[0]));
     }
 
     @GetMapping("{id}/name")
-    public String getShelfName(@PathVariable("id") final Long id) {
-        return shelfService.findById(id).getShelfName();
+    public ResponseEntity<String> getShelfName(@PathVariable("id") final Long id) {
+        return ResponseEntity.ok(shelfService.findById(id).getShelfName());
     }
 
     @GetMapping("first")
-    public ShelfDTO first() {
+    public ResponseEntity<ShelfDTO> first() {
         indx[0] = 0;
         LOG.info("Index in first(): {}", indx[0]);
-        return getShelfDTO(findAll(), indx[0]);
+        return ResponseEntity.ok(getShelfDTO(findAll().getBody(), indx[0]));
     }
 
     @GetMapping("previous")
-    public ShelfDTO previous() {
+    public ResponseEntity<ShelfDTO> previous() {
         indx[0]--;
         LOG.info("Index in previous(): {}", indx[0]);
-        return getShelfDTO(findAll(), indx[0]);
+        return ResponseEntity.ok(getShelfDTO(findAll().getBody(), indx[0]));
     }
 
     @GetMapping("next")
-    public ShelfDTO next() {
+    public ResponseEntity<ShelfDTO> next() {
         indx[0]++;
         LOG.info("Index in next(): {}", indx[0]);
-        return getShelfDTO(findAll(), indx[0]);
+        return ResponseEntity.ok(getShelfDTO(findAll().getBody(), indx[0]));
     }
 
     @GetMapping("last")
-    public ShelfDTO last() {
-        indx[0] = findAll().size() - 1;
+    public ResponseEntity<ShelfDTO> last() {
+        indx[0] = findAll().getBody().size() - 1;
         LOG.info("Index in last(): {}", indx[0]);
-        return getShelfDTO(findAll(), indx[0]);
+        return ResponseEntity.ok(getShelfDTO(findAll().getBody(), indx[0]));
     }
 
     @PostMapping(path = "save", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ShelfDTO save(@RequestBody final ShelfModel model) {
+    public ResponseEntity<ShelfDTO> save(@RequestBody final ShelfModel model) {
         final ShelfEntity shelf = mapper.toShelf(model);
 //    Below line added, because when converted from model to ShelfEntity, there is no shelf set in book list.
         setShelfForBooks(shelf);
         final ShelfEntity shelfSaved = shelfService.save(shelf);
         final ShelfModel savedModel = mapper.fromShelf(shelfSaved);
-        indx[0] = this.findAll().indexOf(savedModel);
+        indx[0] = this.findAll().getBody().indexOf(savedModel);
         LOG.info("Index in saveShelf(): {}", indx[0]);
-        return getShelfDTO(findAll(), indx[0]);
+        return ResponseEntity.ok(getShelfDTO(findAll().getBody(), indx[0]));
     }
 
     @PostMapping(path = "saveAll", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ShelfEntity> saveAll(@RequestBody final List<ShelfModel> models) {
+    public ResponseEntity<List<ShelfEntity>> saveAll(@RequestBody final List<ShelfModel> models) {
         final List<ShelfEntity> shelfs = mapper.mapShelfModelsToShelfs(models);
         //    Below line added, because when converted from model to ShelfEntity, there is no shelf set in book list.
         shelfs.forEach(shelf -> {
             setShelfForBooks(shelf);
         });
-        return shelfService.save(new HashSet<>(shelfs));
+        return ResponseEntity.ok(shelfService.save(new HashSet<>(shelfs)));
     }
 
     @DeleteMapping("/delete/{id}")
-    public ShelfDTO deleteById(@PathVariable("id") final Long id) {
+    public ResponseEntity<ShelfDTO> deleteById(@PathVariable("id") final Long id) {
         if (!shelfService.exists(id)) {
             throw new IllegalArgumentException("ShelfEntity with id: " + id + " does not exist");
         } else {
@@ -114,16 +116,16 @@ public class ShelfController {
                 shelfService.deleteById(id);
                 indx[0]--;
                 LOG.info("Index in deleteShelfById(): {}", indx[0]);
-                return getShelfDTO(findAll(), indx[0]);
+                return ResponseEntity.ok(getShelfDTO(findAll().getBody(), indx[0]));
             } catch (Exception e) {
                 e.printStackTrace();
+                return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
-        return null;
     }
 
     @DeleteMapping(path = "delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ShelfDTO delete(@RequestBody final ShelfModel model) {
+    public ResponseEntity<ShelfDTO> delete(@RequestBody final ShelfModel model) {
         LOG.info("Index: {}", indx);
         if (null == model || null == model.getShelfId() || !shelfService.exists(model.getShelfId())) {
             throw new IllegalArgumentException("ShelfEntity does not exist");
@@ -132,12 +134,12 @@ public class ShelfController {
                 shelfService.delete(mapper.toShelf(model));
                 indx[0]--;
                 LOG.info("Index in deleteShelf(): {}", indx[0]);
-                return getShelfDTO(findAll(), indx[0]);
+                return ResponseEntity.ok(getShelfDTO(findAll().getBody(), indx[0]));
             } catch (Exception e) {
                 e.printStackTrace();
+                return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
-        return null;
     }
 
     private static final NavigationDtl resetNavigation() {

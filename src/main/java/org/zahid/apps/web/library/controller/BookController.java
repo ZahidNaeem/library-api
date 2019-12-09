@@ -3,7 +3,9 @@ package org.zahid.apps.web.library.controller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.zahid.apps.web.library.dto.BookDTO;
 import org.zahid.apps.web.library.entity.BookEntity;
@@ -29,69 +31,69 @@ public class BookController {
     private final int[] indx = {-1};
 
     @GetMapping("all")
-    public List<BookModel> findAll() {
-        return mapper.mapBookEntitiesToBookModels(bookService.findAll());
+    public ResponseEntity<List<BookModel>> findAll() {
+        return ResponseEntity.ok(mapper.mapBookEntitiesToBookModels(bookService.findAll()));
     }
 
     @GetMapping("{id}")
-    public BookDTO findById(@PathVariable("id") final Long id) {
+    public ResponseEntity<BookDTO> findById(@PathVariable("id") final Long id) {
         final BookModel model = mapper.fromBook(bookService.findById(id));
-        indx[0] = findAll().indexOf(model);
+        indx[0] = findAll().getBody().indexOf(model);
         LOG.info("Index in findById(): {}", indx[0]);
-        return getBookDTO(findAll(), indx[0]);
+        return ResponseEntity.ok(getBookDTO(findAll().getBody(), indx[0]));
     }
 
     @GetMapping("{id}/name")
-    public String getBookName(@PathVariable("id") final Long id) {
-        return bookService.findById(id).getBookName();
+    public ResponseEntity<String> getBookName(@PathVariable("id") final Long id) {
+        return ResponseEntity.ok(bookService.findById(id).getBookName());
     }
 
     @GetMapping("first")
-    public BookDTO first() {
+    public ResponseEntity<BookDTO> first() {
         indx[0] = 0;
         LOG.info("Index in first(): {}", indx[0]);
-        return getBookDTO(findAll(), indx[0]);
+        return ResponseEntity.ok(getBookDTO(findAll().getBody(), indx[0]));
     }
 
     @GetMapping("previous")
-    public BookDTO previous() {
+    public ResponseEntity<BookDTO> previous() {
         indx[0]--;
         LOG.info("Index in previous(): {}", indx[0]);
-        return getBookDTO(findAll(), indx[0]);
+        return ResponseEntity.ok(getBookDTO(findAll().getBody(), indx[0]));
     }
 
     @GetMapping("next")
-    public BookDTO next() {
+    public ResponseEntity<BookDTO> next() {
         indx[0]++;
         LOG.info("Index in next(): {}", indx[0]);
-        return getBookDTO(findAll(), indx[0]);
+        return ResponseEntity.ok(getBookDTO(findAll().getBody(), indx[0]));
     }
 
     @GetMapping("last")
-    public BookDTO last() {
-        indx[0] = findAll().size() - 1;
+    public ResponseEntity<BookDTO> last() {
+        indx[0] = findAll().getBody().size() - 1;
         LOG.info("Index in last(): {}", indx[0]);
-        return getBookDTO(findAll(), indx[0]);
+        return ResponseEntity.ok(getBookDTO(findAll().getBody(), indx[0]));
     }
 
     @PostMapping(path = "save", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public BookDTO save(@RequestBody final BookModel model) {
+    public ResponseEntity<BookDTO> save(@RequestBody final BookModel model) {
         final BookEntity book = mapper.toBook(model);
         final BookEntity bookSaved = bookService.save(book);
         final BookModel savedModel = mapper.fromBook(bookSaved);
-        indx[0] = this.findAll().indexOf(savedModel);
+        indx[0] = this.findAll().getBody().indexOf(savedModel);
         LOG.info("Index in saveBook(): {}", indx[0]);
-        return getBookDTO(findAll(), indx[0]);
+        return ResponseEntity.ok(getBookDTO(findAll().getBody(), indx[0]));
     }
 
     @PostMapping(path = "saveAll", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<BookEntity> saveAll(@RequestBody final List<BookModel> models) {
+    public ResponseEntity<List<BookEntity>> saveAll(@RequestBody final List<BookModel> models) {
         final List<BookEntity> books = mapper.mapBookModelsToBookEntities(models);
-        return bookService.save(new HashSet<>(books));
+        return ResponseEntity.ok(bookService.save(new HashSet<>(books)));
     }
 
     @DeleteMapping("/delete/{id}")
-    public BookDTO deleteById(@PathVariable("id") final Long id) {
+    public ResponseEntity<BookDTO> deleteById(@PathVariable("id") final Long id) {
         if (!bookService.exists(id)) {
             throw new IllegalArgumentException("BookEntity with id: " + id + " does not exist");
         } else {
@@ -99,16 +101,16 @@ public class BookController {
                 bookService.deleteById(id);
                 indx[0]--;
                 LOG.info("Index in deleteBookById(): {}", indx[0]);
-                return getBookDTO(findAll(), indx[0]);
+                return ResponseEntity.ok(getBookDTO(findAll().getBody(), indx[0]));
             } catch (Exception e) {
                 e.printStackTrace();
+                return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
-        return null;
     }
 
     @DeleteMapping(path = "delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public BookDTO delete(@RequestBody final BookModel model) {
+    public ResponseEntity<BookDTO> delete(@RequestBody final BookModel model) {
         LOG.info("Index: {}", indx);
         if (null == model || null == model.getBookId() || !bookService.exists(model.getBookId())) {
             throw new IllegalArgumentException("BookEntity does not exist");
@@ -117,12 +119,12 @@ public class BookController {
                 bookService.delete(mapper.toBook(model));
                 indx[0]--;
                 LOG.info("Index in deleteBook(): {}", indx[0]);
-                return getBookDTO(findAll(), indx[0]);
+                return ResponseEntity.ok(getBookDTO(findAll().getBody(), indx[0]));
             } catch (Exception e) {
                 e.printStackTrace();
+                return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
-        return null;
     }
 
     private static final NavigationDtl resetNavigation() {

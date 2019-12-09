@@ -4,7 +4,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.zahid.apps.web.library.dto.ResearcherDTO;
 import org.zahid.apps.web.library.entity.ResearcherEntity;
@@ -38,75 +40,75 @@ public class ResearcherController {
     }
 
     @GetMapping("all")
-    public List<ResearcherModel> findAll() {
-        return mapper.mapResearcherEntitiesToResearcherModels(researcherService.findAll());
+    public ResponseEntity<List<ResearcherModel>> findAll() {
+        return ResponseEntity.ok(mapper.mapResearcherEntitiesToResearcherModels(researcherService.findAll()));
     }
 
     @GetMapping("{id}")
-    public ResearcherDTO findById(@PathVariable("id") final Long id) {
+    public ResponseEntity<ResearcherDTO> findById(@PathVariable("id") final Long id) {
         final ResearcherModel model = mapper.fromResearcher(researcherService.findById(id));
-        indx[0] = findAll().indexOf(model);
+        indx[0] = findAll().getBody().indexOf(model);
         LOG.info("Index in findById(): {}", indx[0]);
-        return getResearcherDTO(findAll(), indx[0]);
+        return ResponseEntity.ok(getResearcherDTO(findAll().getBody(), indx[0]));
     }
 
     @GetMapping("{id}/name")
-    public String getResearcherName(@PathVariable("id") final Long id) {
-        return researcherService.findById(id).getResearcherName();
+    public ResponseEntity<String> getResearcherName(@PathVariable("id") final Long id) {
+        return ResponseEntity.ok(researcherService.findById(id).getResearcherName());
     }
 
     @GetMapping("first")
-    public ResearcherDTO first() {
+    public ResponseEntity<ResearcherDTO> first() {
         indx[0] = 0;
         LOG.info("Index in first(): {}", indx[0]);
-        return getResearcherDTO(findAll(), indx[0]);
+        return ResponseEntity.ok(getResearcherDTO(findAll().getBody(), indx[0]));
     }
 
     @GetMapping("previous")
-    public ResearcherDTO previous() {
+    public ResponseEntity<ResearcherDTO> previous() {
         indx[0]--;
         LOG.info("Index in previous(): {}", indx[0]);
-        return getResearcherDTO(findAll(), indx[0]);
+        return ResponseEntity.ok(getResearcherDTO(findAll().getBody(), indx[0]));
     }
 
     @GetMapping("next")
-    public ResearcherDTO next() {
+    public ResponseEntity<ResearcherDTO> next() {
         indx[0]++;
         LOG.info("Index in next(): {}", indx[0]);
-        return getResearcherDTO(findAll(), indx[0]);
+        return ResponseEntity.ok(getResearcherDTO(findAll().getBody(), indx[0]));
     }
 
     @GetMapping("last")
-    public ResearcherDTO last() {
-        indx[0] = findAll().size() - 1;
+    public ResponseEntity<ResearcherDTO> last() {
+        indx[0] = findAll().getBody().size() - 1;
         LOG.info("Index in last(): {}", indx[0]);
-        return getResearcherDTO(findAll(), indx[0]);
+        return ResponseEntity.ok(getResearcherDTO(findAll().getBody(), indx[0]));
     }
 
     @PostMapping(path = "save", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResearcherDTO save(@RequestBody final ResearcherModel model) {
+    public ResponseEntity<ResearcherDTO> save(@RequestBody final ResearcherModel model) {
         final ResearcherEntity researcher = mapper.toResearcher(model);
 //    Below line added, because when converted from model to ResearcherEntity, there is no researcher set in book list.
         setResearcherForBooks(researcher);
         final ResearcherEntity researcherSaved = researcherService.save(researcher);
         final ResearcherModel savedModel = mapper.fromResearcher(researcherSaved);
-        indx[0] = this.findAll().indexOf(savedModel);
+        indx[0] = this.findAll().getBody().indexOf(savedModel);
         LOG.info("Index in saveResearcher(): {}", indx[0]);
-        return getResearcherDTO(findAll(), indx[0]);
+        return ResponseEntity.ok(getResearcherDTO(findAll().getBody(), indx[0]));
     }
 
     @PostMapping(path = "saveAll", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ResearcherEntity> saveAll(@RequestBody final List<ResearcherModel> models) {
+    public ResponseEntity<List<ResearcherEntity>> saveAll(@RequestBody final List<ResearcherModel> models) {
         final List<ResearcherEntity> researchers = mapper.mapResearcherModelsToResearchers(models);
         //    Below line added, because when converted from model to ResearcherEntity, there is no researcher set in book list.
         researchers.forEach(researcher -> {
             setResearcherForBooks(researcher);
         });
-        return researcherService.save(new HashSet<>(researchers));
+        return ResponseEntity.ok(researcherService.save(new HashSet<>(researchers)));
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResearcherDTO deleteById(@PathVariable("id") final Long id) {
+    public ResponseEntity<ResearcherDTO> deleteById(@PathVariable("id") final Long id) {
         if (!researcherService.exists(id)) {
             throw new IllegalArgumentException("ResearcherEntity with id: " + id + " does not exist");
         } else {
@@ -114,16 +116,16 @@ public class ResearcherController {
                 researcherService.deleteById(id);
                 indx[0]--;
                 LOG.info("Index in deleteResearcherById(): {}", indx[0]);
-                return getResearcherDTO(findAll(), indx[0]);
+                return ResponseEntity.ok(getResearcherDTO(findAll().getBody(), indx[0]));
             } catch (Exception e) {
                 e.printStackTrace();
+                return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
-        return null;
     }
 
     @DeleteMapping(path = "delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResearcherDTO delete(@RequestBody final ResearcherModel model) {
+    public ResponseEntity<ResearcherDTO> delete(@RequestBody final ResearcherModel model) {
         LOG.info("Index: {}", indx);
         if (null == model || null == model.getResearcherId() || !researcherService.exists(model.getResearcherId())) {
             throw new IllegalArgumentException("ResearcherEntity does not exist");
@@ -132,12 +134,12 @@ public class ResearcherController {
                 researcherService.delete(mapper.toResearcher(model));
                 indx[0]--;
                 LOG.info("Index in deleteResearcher(): {}", indx[0]);
-                return getResearcherDTO(findAll(), indx[0]);
+                return ResponseEntity.ok(getResearcherDTO(findAll().getBody(), indx[0]));
             } catch (Exception e) {
                 e.printStackTrace();
+                return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
-        return null;
     }
 
     private static final NavigationDtl resetNavigation() {
