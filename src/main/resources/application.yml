@@ -6,9 +6,9 @@ spring:
   #  Datasource configurations
   datasource:
     #    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/library?useSSL=false
-    username: root
-    password: 1234
+    url: jdbc:oracle:thin:@localhost:1521/xe
+    username: library
+    password: library
   #    Email configurations
   mail:
     host: smtp.gmail.com
@@ -35,7 +35,7 @@ spring:
       ddl-auto: update
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        dialect: org.hibernate.dialect.Oracle10gDialect
         enable_lazy_load_no_trans: true
         jdbc:
           batch_size: 20
