@@ -19,7 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 
 @RestController
-@RequestMapping("shelf")
+@RequestMapping("shelfs")
 public class ShelfController {
 
     private static final Logger LOG = LogManager.getLogger(ShelfController.class);
@@ -39,7 +39,7 @@ public class ShelfController {
         }
     }
 
-    @GetMapping("all")
+    @GetMapping
     public ResponseEntity<List<ShelfModel>> findAll() {
         return ResponseEntity.ok(mapper.mapShelfEntitiesToShelfModels(shelfService.findAll()));
     }
@@ -85,7 +85,7 @@ public class ShelfController {
         return ResponseEntity.ok(getShelfDTO(findAll().getBody(), indx[0]));
     }
 
-    @PostMapping(path = "save", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ShelfDTO> save(@RequestBody final ShelfModel model) {
         final ShelfEntity shelf = mapper.toShelf(model);
 //    Below line added, because when converted from model to ShelfEntity, there is no shelf set in book list.
@@ -97,7 +97,7 @@ public class ShelfController {
         return ResponseEntity.ok(getShelfDTO(findAll().getBody(), indx[0]));
     }
 
-    @PostMapping(path = "saveAll", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ShelfEntity>> saveAll(@RequestBody final List<ShelfModel> models) {
         final List<ShelfEntity> shelfs = mapper.mapShelfModelsToShelfs(models);
         //    Below line added, because when converted from model to ShelfEntity, there is no shelf set in book list.
@@ -107,7 +107,7 @@ public class ShelfController {
         return ResponseEntity.ok(shelfService.save(new HashSet<>(shelfs)));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<ShelfDTO> deleteById(@PathVariable("id") final Long id) {
         if (!shelfService.exists(id)) {
             throw new IllegalArgumentException("ShelfEntity with id: " + id + " does not exist");
@@ -124,7 +124,7 @@ public class ShelfController {
         }
     }
 
-    @DeleteMapping(path = "delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ShelfDTO> delete(@RequestBody final ShelfModel model) {
         LOG.info("Index: {}", indx);
         if (null == model || null == model.getShelfId() || !shelfService.exists(model.getShelfId())) {

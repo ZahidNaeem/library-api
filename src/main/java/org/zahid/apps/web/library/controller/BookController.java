@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 
 @RestController
-@RequestMapping("book")
+@RequestMapping("books")
 public class BookController {
 
     private static final Logger LOG = LogManager.getLogger(BookController.class);
@@ -30,7 +30,7 @@ public class BookController {
 
     private final int[] indx = {-1};
 
-    @GetMapping("all")
+    @GetMapping
     public ResponseEntity<List<BookModel>> findAll() {
         return ResponseEntity.ok(mapper.mapBookEntitiesToBookModels(bookService.findAll()));
     }
@@ -76,7 +76,7 @@ public class BookController {
         return ResponseEntity.ok(getBookDTO(findAll().getBody(), indx[0]));
     }
 
-    @PostMapping(path = "save", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BookDTO> save(@RequestBody final BookModel model) {
         final BookEntity book = mapper.toBook(model);
         final BookEntity bookSaved = bookService.save(book);
@@ -86,13 +86,13 @@ public class BookController {
         return ResponseEntity.ok(getBookDTO(findAll().getBody(), indx[0]));
     }
 
-    @PostMapping(path = "saveAll", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<BookEntity>> saveAll(@RequestBody final List<BookModel> models) {
         final List<BookEntity> books = mapper.mapBookModelsToBookEntities(models);
         return ResponseEntity.ok(bookService.save(new HashSet<>(books)));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<BookDTO> deleteById(@PathVariable("id") final Long id) {
         if (!bookService.exists(id)) {
             throw new IllegalArgumentException("BookEntity with id: " + id + " does not exist");
@@ -109,7 +109,7 @@ public class BookController {
         }
     }
 
-    @DeleteMapping(path = "delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BookDTO> delete(@RequestBody final BookModel model) {
         LOG.info("Index: {}", indx);
         if (null == model || null == model.getBookId() || !bookService.exists(model.getBookId())) {

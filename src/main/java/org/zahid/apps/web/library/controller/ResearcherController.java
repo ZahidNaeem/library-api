@@ -19,7 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 
 @RestController
-@RequestMapping("researcher")
+@RequestMapping("researchers")
 public class ResearcherController {
 
     private static final Logger LOG = LogManager.getLogger(ResearcherController.class);
@@ -39,7 +39,7 @@ public class ResearcherController {
         }
     }
 
-    @GetMapping("all")
+    @GetMapping
     public ResponseEntity<List<ResearcherModel>> findAll() {
         return ResponseEntity.ok(mapper.mapResearcherEntitiesToResearcherModels(researcherService.findAll()));
     }
@@ -85,7 +85,7 @@ public class ResearcherController {
         return ResponseEntity.ok(getResearcherDTO(findAll().getBody(), indx[0]));
     }
 
-    @PostMapping(path = "save", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResearcherDTO> save(@RequestBody final ResearcherModel model) {
         final ResearcherEntity researcher = mapper.toResearcher(model);
 //    Below line added, because when converted from model to ResearcherEntity, there is no researcher set in book list.
@@ -97,7 +97,7 @@ public class ResearcherController {
         return ResponseEntity.ok(getResearcherDTO(findAll().getBody(), indx[0]));
     }
 
-    @PostMapping(path = "saveAll", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ResearcherEntity>> saveAll(@RequestBody final List<ResearcherModel> models) {
         final List<ResearcherEntity> researchers = mapper.mapResearcherModelsToResearchers(models);
         //    Below line added, because when converted from model to ResearcherEntity, there is no researcher set in book list.
@@ -107,7 +107,7 @@ public class ResearcherController {
         return ResponseEntity.ok(researcherService.save(new HashSet<>(researchers)));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<ResearcherDTO> deleteById(@PathVariable("id") final Long id) {
         if (!researcherService.exists(id)) {
             throw new IllegalArgumentException("ResearcherEntity with id: " + id + " does not exist");
@@ -124,7 +124,7 @@ public class ResearcherController {
         }
     }
 
-    @DeleteMapping(path = "delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResearcherDTO> delete(@RequestBody final ResearcherModel model) {
         LOG.info("Index: {}", indx);
         if (null == model || null == model.getResearcherId() || !researcherService.exists(model.getResearcherId())) {

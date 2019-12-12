@@ -19,7 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 
 @RestController
-@RequestMapping("publisher")
+@RequestMapping("publishers")
 public class PublisherController {
 
     private static final Logger LOG = LogManager.getLogger(PublisherController.class);
@@ -39,7 +39,7 @@ public class PublisherController {
         }
     }
 
-    @GetMapping("all")
+    @GetMapping
     public ResponseEntity<List<PublisherModel>> findAll() {
         return ResponseEntity.ok(mapper.mapPublisherEntitiesToPublisherModels(publisherService.findAll()));
     }
@@ -85,7 +85,7 @@ public class PublisherController {
         return ResponseEntity.ok(getPublisherDTO(findAll().getBody(), indx[0]));
     }
 
-    @PostMapping(path = "save", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PublisherDTO> save(@RequestBody final PublisherModel model) {
         final PublisherEntity publisher = mapper.toPublisher(model);
 //    Below line added, because when converted from model to PublisherEntity, there is no publisher set in book list.
@@ -97,7 +97,7 @@ public class PublisherController {
         return ResponseEntity.ok(getPublisherDTO(findAll().getBody(), indx[0]));
     }
 
-    @PostMapping(path = "saveAll", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PublisherEntity>> saveAll(@RequestBody final List<PublisherModel> models) {
         final List<PublisherEntity> publishers = mapper.mapPublisherModelsToPublishers(models);
         //    Below line added, because when converted from model to PublisherEntity, there is no publisher set in book list.
@@ -107,7 +107,7 @@ public class PublisherController {
         return ResponseEntity.ok(publisherService.save(new HashSet<>(publishers)));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<PublisherDTO> deleteById(@PathVariable("id") final Long id) {
         if (!publisherService.exists(id)) {
             throw new IllegalArgumentException("PublisherEntity with id: " + id + " does not exist");
@@ -124,7 +124,7 @@ public class PublisherController {
         }
     }
 
-    @DeleteMapping(path = "delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PublisherDTO> delete(@RequestBody final PublisherModel model) {
         LOG.info("Index: {}", indx);
         if (null == model || null == model.getPublisherId() || !publisherService.exists(model.getPublisherId())) {

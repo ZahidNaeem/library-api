@@ -25,7 +25,7 @@ import org.zahid.apps.web.library.model.SubjectModel;
 import org.zahid.apps.web.library.service.SubjectService;
 
 @RestController
-@RequestMapping("subject")
+@RequestMapping("subjects")
 public class SubjectController {
 
   private static final Logger LOG = LogManager.getLogger(SubjectController.class);
@@ -45,7 +45,7 @@ public class SubjectController {
     }
   }
 
-  @GetMapping("all")
+  @GetMapping
   public ResponseEntity<List<SubjectModel>> findAll() {
     return ResponseEntity.ok(mapper.mapSubjectEntitiesToSubjectModels(subjectService.findAll()));
   }
@@ -91,7 +91,7 @@ public class SubjectController {
     return ResponseEntity.ok(getSubjectDTO(findAll().getBody(), indx[0]));
   }
 
-  @PostMapping(path = "save", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<SubjectDTO> save(@RequestBody final SubjectModel model) {
     final SubjectEntity subject = mapper.toSubject(model);
 //    Below line added, because when converted from model to SubjectEntity, there is no subject set in book list.
@@ -113,7 +113,7 @@ public class SubjectController {
     }
   }
 
-  @PostMapping(path = "saveAll", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<List<SubjectEntity>> saveAll(@RequestBody final List<SubjectModel> models) {
     final List<SubjectEntity> subjects = mapper.mapSubjectModelsToSubjects(models);
     //    Below line added, because when converted from model to SubjectEntity, there is no subject set in book list.
@@ -123,7 +123,7 @@ public class SubjectController {
     return ResponseEntity.ok(subjectService.save(new HashSet<>(subjects)));
   }
 
-  @DeleteMapping("/delete/{id}")
+  @DeleteMapping("{id}")
   public ResponseEntity<SubjectDTO> deleteById(@PathVariable("id") final Long id) {
     if (!subjectService.exists(id)) {
       throw new IllegalArgumentException("SubjectEntity with id: " + id + " does not exist");
@@ -140,7 +140,7 @@ public class SubjectController {
     }
   }
 
-  @DeleteMapping(path = "delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<SubjectDTO> delete(@RequestBody final SubjectModel model) {
     LOG.info("Index: {}", indx);
     if (null == model || null == model.getSubjectId() || !subjectService

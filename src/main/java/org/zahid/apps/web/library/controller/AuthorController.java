@@ -24,7 +24,7 @@ import org.zahid.apps.web.library.model.AuthorModel;
 import org.zahid.apps.web.library.service.AuthorService;
 
 @RestController
-@RequestMapping("author")
+@RequestMapping("authors")
 public class AuthorController {
 
   private static final Logger LOG = LogManager.getLogger(AuthorController.class);
@@ -44,7 +44,7 @@ public class AuthorController {
     }
   }
 
-  @GetMapping("all")
+  @GetMapping
   public ResponseEntity<List<AuthorModel>> findAll() {
     return ResponseEntity.ok(mapper.mapAuthorEntitiesToAuthorModels(authorService.findAll()));
   }
@@ -90,7 +90,7 @@ public class AuthorController {
     return ResponseEntity.ok(getAuthorDTO(findAll().getBody(), indx[0]));
   }
 
-  @PostMapping(path = "save", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<AuthorDTO> save(@RequestBody final AuthorModel model) {
     final AuthorEntity author = mapper.toAuthor(model);
 //    Below line added, because when converted from model to AuthorEntity, there is no author set in book list.
@@ -102,7 +102,7 @@ public class AuthorController {
     return ResponseEntity.ok(getAuthorDTO(findAll().getBody(), indx[0]));
   }
 
-  @PostMapping(path = "saveAll", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<List<AuthorEntity>> saveAll(@RequestBody final List<AuthorModel> models) {
     final List<AuthorEntity> authors = mapper.mapAuthorModelsToAuthors(models);
     //    Below line added, because when converted from model to AuthorEntity, there is no author set in book list.
@@ -112,7 +112,7 @@ public class AuthorController {
     return ResponseEntity.ok(authorService.save(new HashSet<>(authors)));
   }
 
-  @DeleteMapping("/delete/{id}")
+  @DeleteMapping("{id}")
   public ResponseEntity<AuthorDTO> deleteById(@PathVariable("id") final Long id) {
     if (!authorService.exists(id)) {
       throw new IllegalArgumentException("AuthorEntity with id: " + id + " does not exist");
@@ -129,7 +129,7 @@ public class AuthorController {
     }
   }
 
-  @DeleteMapping(path = "delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<AuthorDTO> delete(@RequestBody final AuthorModel model) {
     LOG.info("Index: {}", indx);
     if (null == model || null == model.getAuthorId() || !authorService
