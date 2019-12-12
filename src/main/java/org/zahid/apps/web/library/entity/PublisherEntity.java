@@ -2,6 +2,7 @@ package org.zahid.apps.web.library.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,6 +26,7 @@ public class PublisherEntity extends Auditable<Long> {
     @Column(name = "publisher_id")
     private Long publisherId;
 
+    @NotNull
     @Column(name = "publisher_name")
     private String publisherName;
 

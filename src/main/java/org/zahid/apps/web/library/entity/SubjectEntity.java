@@ -2,6 +2,7 @@ package org.zahid.apps.web.library.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,9 +27,11 @@ public class SubjectEntity extends Auditable<Long> {
     @Column(name = "subject_id")
     private Long subjectId;
 
+    @NotNull
     @Column(name = "subject_code")
     private String subjectCode;
 
+    @NotNull
     @Column(name = "subject_name")
     private String subjectName;
 
