@@ -9,8 +9,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @SpringBootTest
 public class LibraryApplicationTests {
 
-    @Test
+    /*@Test
     public void contextLoads() {
-    }
+    }*/
 
 }

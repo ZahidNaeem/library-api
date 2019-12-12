@@ -13,19 +13,19 @@ import org.zahid.apps.web.library.service.GmailService;
 @SpringBootTest
 public class MailServiceTest {
 
- @Autowired
+ /*@Autowired
  private GmailService gmailService;
 
     @DisplayName("Send email")
     @Test
     void sendMail() {
-        /*try {
+        try {
             gmailService.sendMessage("Test Email", "To reset you account password, please click on below link:\nhttp://localhost:3000", "hzahidnaeem@gmail.com");
         } catch (MessagingException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
 //        mailService.sendEmail("Test Email", "Test", "hzahidnaeem@gmail.com");
-    }
+    }*/
 }

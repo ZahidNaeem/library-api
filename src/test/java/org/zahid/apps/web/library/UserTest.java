@@ -16,12 +16,12 @@ import static junit.framework.TestCase.assertTrue;
 @SpringBootTest
 public class UserTest {
 
-    @Autowired
+    /*@Autowired
     private UserRepo userRepo;
 
     @DisplayName("User exists by email")
     @Test
     void existsByEmail() {
         assertTrue(userRepo.existsByEmail("abc@xyz.com"));
-    }
+    }*/
 }
