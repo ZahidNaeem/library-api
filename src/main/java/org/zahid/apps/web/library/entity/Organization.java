@@ -15,7 +15,7 @@ import java.util.List;
  * The persistent class for the ORGANIZATION database table.
  */
 @Entity
-@Table(name = "ORGANIZATION", uniqueConstraints = {
+@Table(name = "ORGANIZATION", schema = "library", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"ORGANIZATION_NAME"})
 })
 @JsonIdentityInfo(scope = Organization.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "organizationCode")

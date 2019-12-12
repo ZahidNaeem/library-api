@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "USER", uniqueConstraints = {
+@Table(name = "LIB_USER", schema = "library", uniqueConstraints = {
         @UniqueConstraint(columnNames = {
                 "username"
         }),
@@ -28,7 +28,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class User extends Auditable<Long> {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @NotBlank

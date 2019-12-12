@@ -10,7 +10,7 @@ import org.zahid.apps.web.library.enumeration.RoleName;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ROLE", uniqueConstraints = {
+@Table(name = "ROLE", schema = "library", uniqueConstraints = {
         @UniqueConstraint(columnNames = {
                 "name"
         })
@@ -21,7 +21,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class Role extends Auditable<Long> {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
   @Enumerated(EnumType.STRING)
