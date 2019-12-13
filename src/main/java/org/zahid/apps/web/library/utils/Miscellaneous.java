@@ -3,11 +3,8 @@ package org.zahid.apps.web.library.utils;
 import java.math.BigDecimal;
 import java.sql.SQLType;
 import java.sql.Types;
-import java.util.HashSet;
-import java.util.MissingResourceException;
-import java.util.Optional;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,62 +27,62 @@ import org.zahid.apps.web.library.security.service.UserPrincipal;
 @Component
 public class Miscellaneous {
 
-  private static final Logger LOG = LogManager.getLogger(Miscellaneous.class);
-  private static final String SERVLET_START = "/reportservlet?repName=";
-  private static ConfigProperties configProperties;
-  private static JdbcTemplate jdbcTemplate;
-  private static SimpleJdbcCall simpleJdbcCall;
-  private static NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private static final Logger LOG = LogManager.getLogger(Miscellaneous.class);
+    private static final String SERVLET_START = "/reportservlet?repName=";
+    private static ConfigProperties configProperties;
+    private static JdbcTemplate jdbcTemplate;
+    private static SimpleJdbcCall simpleJdbcCall;
+    private static NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-  @Autowired
-  public Miscellaneous(final ConfigProperties configProperties, final JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
-    this.configProperties = configProperties;
-    this.jdbcTemplate = jdbcTemplate;
-    this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
-  }
-
-  public static Exception getNestedException(Exception rootException) {
-    if (rootException.getCause() == null) {
-      LOG.log(Level.INFO, "Last Exception: {}", rootException);
-      return rootException;
-    } else {
-      Exception cause = (Exception) rootException.getCause();
-      LOG.log(Level.INFO, rootException.getClass().getName() + "Exception Cause: {0}", cause);
-      return getNestedException(cause);
+    @Autowired
+    public Miscellaneous(final ConfigProperties configProperties, final JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+        this.configProperties = configProperties;
+        this.jdbcTemplate = jdbcTemplate;
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
-  }
 
-  public static String getResourceMessage(String rsrcBundle, String key)
-      throws NullPointerException, MissingResourceException, ClassCastException {
-    ResourceBundle bundle = ResourceBundle.getBundle(rsrcBundle);
-    return bundle.getString(key);
-  }
+    public static Exception getNestedException(Exception rootException) {
+        if (rootException.getCause() == null) {
+            LOG.log(Level.INFO, "Last Exception: {}", rootException);
+            return rootException;
+        } else {
+            Exception cause = (Exception) rootException.getCause();
+            LOG.log(Level.INFO, rootException.getClass().getName() + "Exception Cause: {0}", cause);
+            return getNestedException(cause);
+        }
+    }
 
-  public static ResourceBundle getResourceBundle(String bundle)
-      throws NullPointerException, MissingResourceException {
-    return ResourceBundle.getBundle(bundle);
-  }
+    public static String getResourceMessage(String rsrcBundle, String key)
+            throws NullPointerException, MissingResourceException, ClassCastException {
+        ResourceBundle bundle = ResourceBundle.getBundle(rsrcBundle);
+        return bundle.getString(key);
+    }
 
-  public static String convertDBError(Exception e) {
-    final String[] resourceMessage = {null};
-    final boolean[] found = {false};
-    String errorMessage = Miscellaneous.getNestedException(e).getMessage();
-    Set<ResourceBundle> rbList = new HashSet<>();
-    rbList.add(Miscellaneous.getResourceBundle("dbconstraints"));
-    rbList.add(Miscellaneous.getResourceBundle("dberrors"));
+    public static ResourceBundle getResourceBundle(String bundle)
+            throws NullPointerException, MissingResourceException {
+        return ResourceBundle.getBundle(bundle);
+    }
 
-    rbList.stream().filter(f -> false == found[0]).forEach(rb -> {
+    public static String convertDBError(Exception e) {
+        final String[] resourceMessage = {null};
+        final boolean[] found = {false};
+        String errorMessage = Miscellaneous.getNestedException(e).getMessage();
+        Set<ResourceBundle> rbList = new HashSet<>();
+        rbList.add(Miscellaneous.getResourceBundle("dbconstraints"));
+        rbList.add(Miscellaneous.getResourceBundle("dberrors"));
+
+        rbList.stream().filter(f -> false == found[0]).forEach(rb -> {
 //          rbList.forEach(rb -> {
-      rb.keySet()
-          .stream()
-          .filter(key -> errorMessage.toUpperCase().contains(key.toUpperCase()))
-          .map(s -> Miscellaneous.getResourceMessage(rb.getBaseBundleName(), s))
-          .forEach(message -> {
-            LOG.log(Level.INFO, "Message: {0}", message);
-            found[0] = true;
-            resourceMessage[0] = message;
-          });
-    });
+            rb.keySet()
+                    .stream()
+                    .filter(key -> errorMessage.toUpperCase().contains(key.toUpperCase()))
+                    .map(s -> Miscellaneous.getResourceMessage(rb.getBaseBundleName(), s))
+                    .forEach(message -> {
+                        LOG.log(Level.INFO, "Message: {0}", message);
+                        found[0] = true;
+                        resourceMessage[0] = message;
+                    });
+        });
 
 //        outer:
 //        for (ResourceBundle rb : rbList) {
@@ -98,8 +95,8 @@ public class Miscellaneous {
 //            }
 //        }
 
-    return resourceMessage[0];
-  }
+        return resourceMessage[0];
+    }
 
 //    public static boolean exists(String operationClass, Long id) throws ClassNotFoundException, NoSuchMethodException {
 //        Class aClass = Class.forName(operationClass);
@@ -185,35 +182,45 @@ public class Miscellaneous {
     return result;
   }*/
 
-/*  public static Integer exists(String table, String column, Long columnValue) {
-    Integer result = null;
-    SqlParameterSource namedParameters = new MapSqlParameterSource()
-        .addValue("P_TABLE", table)
-        .addValue("P_COLUMN", column)
-        .addValue("P_COLUMN_VALUE", columnValue);
-    result = namedParameterJdbcTemplate.queryForObject(
-        "SELECT RECORD_EXISTS (:P_TABLE, :P_COLUMN, :P_COLUMN_VALUE) FROM DUAL", namedParameters, Integer.class);
-    return result;
-  }*/
-
-  public static final String callReport(String repName, JSONObject params) {
-    String reportURL =
-        SERVLET_START + repName + (params != null ? "&params=" + params.toString() : "");
-    LOG.info("Report URL: " + reportURL);
-    return reportURL;
-  }
-
-  public static Optional<Organization> getCurrentOrganization() {
-    final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-    if (authentication == null ||
-        !authentication.isAuthenticated() ||
-        authentication instanceof AnonymousAuthenticationToken) {
-      return Optional.empty();
+    public static Integer exists(String table, String column, Long columnValue) {
+        Integer result = null;
+        SqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("P_TABLE", table)
+                .addValue("P_COLUMN", column)
+                .addValue("P_COLUMN_VALUE", columnValue);
+        result = namedParameterJdbcTemplate.queryForObject(
+                "SELECT RECORD_EXISTS (:P_TABLE, :P_COLUMN, :P_COLUMN_VALUE) FROM DUAL", namedParameters, Integer.class);
+        return result;
     }
 
-    final UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 
-    return Optional.ofNullable(userPrincipal.getOrganization());
-  }
+    public static String getSubjectHierarchy(final Long subjectId) {
+        String result = null;
+        SqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("P_SUBJECT_ID", subjectId);
+        result = namedParameterJdbcTemplate.queryForObject(
+                "SELECT GET_SUBJECT_HIERARCHY (:P_SUBJECT_ID) FROM DUAL", namedParameters, String.class);
+        return result;
+    }
+
+    public static final String callReport(String repName, JSONObject params) {
+        String reportURL =
+                SERVLET_START + repName + (params != null ? "&params=" + params.toString() : "");
+        LOG.info("Report URL: " + reportURL);
+        return reportURL;
+    }
+
+    public static Optional<Organization> getCurrentOrganization() {
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null ||
+                !authentication.isAuthenticated() ||
+                authentication instanceof AnonymousAuthenticationToken) {
+            return Optional.empty();
+        }
+
+        final UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+
+        return Optional.ofNullable(userPrincipal.getOrganization());
+    }
 }

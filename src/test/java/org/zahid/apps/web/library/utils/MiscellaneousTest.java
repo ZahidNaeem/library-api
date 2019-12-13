@@ -11,10 +11,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @SpringBootTest
 public class MiscellaneousTest {
 
-  @DisplayName("Record Exists")
-  @Test
-  void recordExists() {
-    final Integer actual = 1;
-    Assert.assertEquals(Miscellaneous.exists("SUBJECT", "SUBJECT_ID", 6L), actual);
-  }
+    @DisplayName("Record Exists")
+    @Test
+    void recordExists() {
+        final Integer expected = 1;
+        Assert.assertEquals(expected, Miscellaneous.exists("SUBJECT", "SUBJECT_ID", 6L));
+    }
 }
