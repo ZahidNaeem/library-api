@@ -20,6 +20,7 @@
     <mapstruct.version>1.3.0.Final</mapstruct.version>
     <junit-jupiter.version>5.5.1</junit-jupiter.version>
     <mockito.version>2.24.0</mockito.version>
+    <springfox.swagger.version>2.9.2</springfox.swagger.version>
   </properties>
 
   <!--    <dependencyManagement>
@@ -191,6 +192,19 @@
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-gmail</artifactId>
       <version>v1-rev105-1.25.0</version>
+    </dependency>
+<!--    Spring Fox-->
+    <dependency>
+      <groupId>io.springfox</groupId>
+      <artifactId>springfox-swagger2</artifactId>
+      <version>${springfox.swagger.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.springfox</groupId>
+      <artifactId>springfox-swagger-ui</artifactId>
+      <version>${springfox.swagger.version}</version>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 
