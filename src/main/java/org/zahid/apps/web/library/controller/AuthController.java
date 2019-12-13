@@ -150,7 +150,7 @@ public class AuthController {
 
         if (responseEntity != null && responseEntity.getBody().equals(true)) {
             try {
-                final boolean mailSent = gmailService.sendMessage("Welcome to Point of Sale Application", "To reset you account password, please click on below link:\nhttp://localhost:3000", email);
+                final boolean mailSent = gmailService.sendMessage("Welcome to Library Application", "To reset you account password, please click on below link:\nhttp://localhost:3000", email);
                 if (mailSent) {
                     return ResponseEntity.ok("Recovery email sent");
                 } else {
