@@ -19,7 +19,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<BookEntity> findAll() {
-        return bookRepo.findAll();
+        return bookRepo.findAllByOrderByBookIdAsc();
     }
 
     @Override

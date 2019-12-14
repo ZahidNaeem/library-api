@@ -19,7 +19,7 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public List<SubjectEntity> findAll() {
-        return subjectRepo.findAll();
+        return subjectRepo.findAllByOrderBySubjectIdAsc();
     }
 
     @Override

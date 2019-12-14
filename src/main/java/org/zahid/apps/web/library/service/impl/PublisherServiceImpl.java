@@ -19,7 +19,7 @@ public class PublisherServiceImpl implements PublisherService {
 
     @Override
     public List<PublisherEntity> findAll() {
-        return publisherRepo.findAll();
+        return publisherRepo.findAllByOrderByPublisherIdAsc();
     }
 
     @Override

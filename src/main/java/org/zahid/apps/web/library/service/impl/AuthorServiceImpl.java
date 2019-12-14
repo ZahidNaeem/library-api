@@ -19,7 +19,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public List<AuthorEntity> findAll() {
-        return authorRepo.findAll();
+        return authorRepo.findAllByOrderByAuthorIdAsc();
     }
 
     @Override

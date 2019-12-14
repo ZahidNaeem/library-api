@@ -19,7 +19,7 @@ public class ShelfServiceImpl implements ShelfService {
 
     @Override
     public List<ShelfEntity> findAll() {
-        return shelfRepo.findAll();
+        return shelfRepo.findAllByOrderByShelfIdAsc();
     }
 
     @Override

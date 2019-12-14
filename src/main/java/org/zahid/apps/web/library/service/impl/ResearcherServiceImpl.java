@@ -19,7 +19,7 @@ public class ResearcherServiceImpl implements ResearcherService {
 
     @Override
     public List<ResearcherEntity> findAll() {
-        return researcherRepo.findAll();
+        return researcherRepo.findAllByOrderByResearcherIdAsc();
     }
 
     @Override
