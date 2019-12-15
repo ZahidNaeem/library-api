@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Builder
 @Data
@@ -17,7 +18,7 @@ import javax.validation.constraints.NotNull;
 @JsonIdentityInfo(scope = RackEntity.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "rackId")
 @Entity
 @Table(name = "rack", schema = "library", catalog = "", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"rack_name"})
+        @UniqueConstraint(columnNames = {"rack_id", "rack_name"})
 })
 public class RackEntity extends Auditable<Long> {
     @Id
@@ -31,6 +32,9 @@ public class RackEntity extends Auditable<Long> {
 
     @Column(name = "remarks")
     private String remarks;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "rack")
+    private List<VolumeEntity> volumes;
 
     @ManyToOne
     @JoinColumn(name = "shelf_id")

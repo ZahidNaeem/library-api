@@ -7,32 +7,35 @@ import lombok.NoArgsConstructor;
 import org.zahid.apps.web.library.entity.Auditable;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookModel extends Auditable<Long> {    
-    
+public class BookModel extends Auditable<Long> {
+
     private Long bookId;
-    
+
     private String bookName;
-    
+
     private Timestamp publicationDate;
-    
+
     private String bookCondition;
-    
+
     private Byte purchased;
-    
+
+    private String remarks;
+
+    private List<VolumeModel> volumes;
+
     private Long author;
-    
+
     private Long subject;
-    
+
     private Long publisher;
-    
+
     private Long researcher;
 
     private Long shelf;
-
-    private String remarks;
 }

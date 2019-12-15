@@ -1,5 +1,6 @@
 package org.zahid.apps.web.library.controller;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,14 @@ public class BookController {
     private BookMapper mapper;
 
     private final int[] indx = {-1};
+
+    private static void setBookForVolumes(final BookEntity book) {
+        if (CollectionUtils.isNotEmpty(book.getVolumes())) {
+            book.getVolumes().forEach(volume -> {
+                volume.setBook(book);
+            });
+        }
+    }
 
     @GetMapping
     public ResponseEntity<List<BookModel>> findAll() {
@@ -79,6 +88,7 @@ public class BookController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BookDTO> save(@RequestBody final BookModel model) {
         final BookEntity book = mapper.toBook(model);
+        setBookForVolumes(book);
         final BookEntity bookSaved = bookService.save(book);
         final BookModel savedModel = mapper.fromBook(bookSaved);
         indx[0] = this.findAll().getBody().indexOf(savedModel);
@@ -89,6 +99,9 @@ public class BookController {
     @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<BookEntity>> saveAll(@RequestBody final List<BookModel> models) {
         final List<BookEntity> books = mapper.mapBookModelsToBookEntities(models);
+        books.forEach(book -> {
+            setBookForVolumes(book);
+        });
         return ResponseEntity.ok(bookService.save(new HashSet<>(books)));
     }
 

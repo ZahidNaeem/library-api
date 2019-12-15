@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Builder
 @Data
@@ -39,6 +40,12 @@ public class BookEntity extends Auditable<Long> {
     @Column(name = "purchased")
     private Byte purchased;
 
+    @Column(name = "remarks")
+    private String remarks;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "book")
+    private List<VolumeEntity> volumes;
+
     @ManyToOne
     @JoinColumn(name = "author_id")
     private AuthorEntity author;
@@ -58,7 +65,4 @@ public class BookEntity extends Auditable<Long> {
     @ManyToOne
     @JoinColumn(name = "shelf_id")
     private ShelfEntity shelf;
-
-    @Column(name = "remarks")
-    private String remarks;
 }

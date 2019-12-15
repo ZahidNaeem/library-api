@@ -1,5 +1,6 @@
 package org.zahid.apps.web.library.controller;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,14 @@ public class RackController {
     @Autowired
     private ShelfService shelfService;
 
+    private static void setRackForVolumes(final RackEntity rack) {
+        if (CollectionUtils.isNotEmpty(rack.getVolumes())) {
+            rack.getVolumes().forEach(volume -> {
+                volume.setRack(rack);
+            });
+        }
+    }
+
     @GetMapping
     public ResponseEntity<List<RackModel>> findAll() {
         return ResponseEntity.ok(mapper.mapRackEntitiesToRackModels(rackService.findAll()));
@@ -49,7 +58,9 @@ public class RackController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RackModel> save(@RequestBody final RackModel model) {
-        final RackEntity savedRack = rackService.save(mapper.toRack(model));
+        final RackEntity rack = mapper.toRack(model);
+        final RackEntity savedRack = rackService.save(rack);
+        setRackForVolumes(rack);
         return ResponseEntity.ok(mapper.fromRack(savedRack));
     }
 
@@ -58,6 +69,7 @@ public class RackController {
         final Set<RackEntity> racks = new HashSet<>();
         rackModel.forEach(model -> {
             final RackEntity rack = mapper.toRack(model);
+            setRackForVolumes(rack);
             racks.add(rack);
         });
         return ResponseEntity.ok(rackService.save(racks));
