@@ -15,11 +15,11 @@ public interface ShelfService {
 
     ShelfEntity save(ShelfEntity shelf);
 
-    List<ShelfEntity> save(Set<ShelfEntity> shelfs);
+    List<ShelfEntity> save(Set<ShelfEntity> shelves);
 
     void delete(ShelfEntity shelf);
 
-    void delete(Set<ShelfEntity> shelfs);
+    void delete(Set<ShelfEntity> shelves);
 
     void deleteById(Long id);
 
@@ -27,5 +27,5 @@ public interface ShelfService {
 
     void deleteAllInBatch();
 
-    void deleteInBatch(Set<ShelfEntity> shelfs);
+    void deleteInBatch(Set<ShelfEntity> shelves);
 }

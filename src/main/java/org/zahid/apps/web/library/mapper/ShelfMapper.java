@@ -32,25 +32,25 @@ public abstract class ShelfMapper {
         return bookMapper.mapBookModelsToBookEntities(models);
     }
 
-    public List<ShelfModel> mapShelfEntitiesToShelfModels(final List<ShelfEntity> shelfs) {
-        if (CollectionUtils.isEmpty(shelfs)) {
+    public List<ShelfModel> mapShelfEntitiesToShelfModels(final List<ShelfEntity> shelves) {
+        if (CollectionUtils.isEmpty(shelves)) {
             return new ArrayList<>();
         }
         final List<ShelfModel> models = new ArrayList<>();
-        shelfs.forEach(shelf -> {
+        shelves.forEach(shelf -> {
             models.add(this.fromShelf(shelf));
         });
         return models;
     }
 
-    public List<ShelfEntity> mapShelfModelsToShelfs(final List<ShelfModel> models) {
+    public List<ShelfEntity> mapShelfModelsToShelves(final List<ShelfModel> models) {
         if (CollectionUtils.isEmpty(models)) {
             return new ArrayList<>();
         }
-        final List<ShelfEntity> shelfs = new ArrayList<>();
+        final List<ShelfEntity> shelves = new ArrayList<>();
         models.forEach(model -> {
-            shelfs.add(this.toShelf(model));
+            shelves.add(this.toShelf(model));
         });
-        return shelfs;
+        return shelves;
     }
 }

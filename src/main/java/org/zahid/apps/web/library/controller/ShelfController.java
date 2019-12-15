@@ -19,7 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 
 @RestController
-@RequestMapping("shelfs")
+@RequestMapping("shelves")
 public class ShelfController {
 
     private static final Logger LOG = LogManager.getLogger(ShelfController.class);
@@ -99,12 +99,12 @@ public class ShelfController {
 
     @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ShelfEntity>> saveAll(@RequestBody final List<ShelfModel> models) {
-        final List<ShelfEntity> shelfs = mapper.mapShelfModelsToShelfs(models);
+        final List<ShelfEntity> shelves = mapper.mapShelfModelsToShelves(models);
         //    Below line added, because when converted from model to ShelfEntity, there is no shelf set in book list.
-        shelfs.forEach(shelf -> {
+        shelves.forEach(shelf -> {
             setShelfForBooks(shelf);
         });
-        return ResponseEntity.ok(shelfService.save(new HashSet<>(shelfs)));
+        return ResponseEntity.ok(shelfService.save(new HashSet<>(shelves)));
     }
 
     @DeleteMapping("{id}")

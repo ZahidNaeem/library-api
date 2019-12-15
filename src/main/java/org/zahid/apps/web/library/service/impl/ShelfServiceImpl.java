@@ -40,8 +40,8 @@ public class ShelfServiceImpl implements ShelfService {
     }
 
     @Override
-    public List<ShelfEntity> save(Set<ShelfEntity> shelfs) {
-        return shelfRepo.saveAll(shelfs);
+    public List<ShelfEntity> save(Set<ShelfEntity> shelves) {
+        return shelfRepo.saveAll(shelves);
     }
 
     @Override
@@ -50,8 +50,8 @@ public class ShelfServiceImpl implements ShelfService {
     }
 
     @Override
-    public void delete(Set<ShelfEntity> shelfs) {
-        shelfRepo.deleteAll(shelfs);
+    public void delete(Set<ShelfEntity> shelves) {
+        shelfRepo.deleteAll(shelves);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class ShelfServiceImpl implements ShelfService {
     }
 
     @Override
-    public void deleteInBatch(Set<ShelfEntity> shelfs) {
-        shelfRepo.deleteInBatch(shelfs);
+    public void deleteInBatch(Set<ShelfEntity> shelves) {
+        shelfRepo.deleteInBatch(shelves);
     }
 }
