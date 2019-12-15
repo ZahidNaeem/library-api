@@ -9,8 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.zahid.apps.web.library.dto.ShelfDTO;
-import org.zahid.apps.web.library.entity.ShelfEntity;
 import org.zahid.apps.web.library.entity.NavigationDtl;
+import org.zahid.apps.web.library.entity.ShelfEntity;
 import org.zahid.apps.web.library.mapper.ShelfMapper;
 import org.zahid.apps.web.library.model.ShelfModel;
 import org.zahid.apps.web.library.service.ShelfService;
@@ -35,6 +35,14 @@ public class ShelfController {
         if (CollectionUtils.isNotEmpty(shelf.getBooks())) {
             shelf.getBooks().forEach(book -> {
                 book.setShelf(shelf);
+            });
+        }
+    }
+
+    private static void setShelfForRacks(final ShelfEntity shelf) {
+        if (CollectionUtils.isNotEmpty(shelf.getRacks())) {
+            shelf.getRacks().forEach(rack -> {
+                rack.setShelf(shelf);
             });
         }
     }
@@ -90,6 +98,7 @@ public class ShelfController {
         final ShelfEntity shelf = mapper.toShelf(model);
 //    Below line added, because when converted from model to ShelfEntity, there is no shelf set in book list.
         setShelfForBooks(shelf);
+        setShelfForRacks(shelf);
         final ShelfEntity shelfSaved = shelfService.save(shelf);
         final ShelfModel savedModel = mapper.fromShelf(shelfSaved);
         indx[0] = this.findAll().getBody().indexOf(savedModel);
@@ -103,6 +112,7 @@ public class ShelfController {
         //    Below line added, because when converted from model to ShelfEntity, there is no shelf set in book list.
         shelves.forEach(shelf -> {
             setShelfForBooks(shelf);
+            setShelfForRacks(shelf);
         });
         return ResponseEntity.ok(shelfService.save(new HashSet<>(shelves)));
     }

@@ -21,4 +21,6 @@ public class ShelfModel extends Auditable<Long> {
     private String remarks;
 
     private List<BookModel> books;
+
+    private List<RackModel> racks;
 }

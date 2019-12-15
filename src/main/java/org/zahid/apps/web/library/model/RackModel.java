@@ -6,19 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.zahid.apps.web.library.entity.Auditable;
 
-import java.util.List;
-
 @Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResearcherModel extends Auditable<Long> {
-    
-    private Long researcherId;
-    
-    private String researcherName;
+public class RackModel extends Auditable<Long> {
 
+    private Long rackId;
+    private String rackName;
     private String remarks;
-    
-    private List<BookModel> books;
+    private Long shelf;
 }

@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.zahid.apps.web.library.entity.Auditable;
 
 import java.util.List;
-import org.zahid.apps.web.library.entity.Auditable;
 
 @Builder
 @Data

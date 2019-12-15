@@ -1,17 +1,11 @@
 package org.zahid.apps.web.library.utils;
 
-import java.math.BigDecimal;
-import java.sql.SQLType;
-import java.sql.Types;
-import java.util.*;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.SqlTypeValue;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -23,6 +17,8 @@ import org.springframework.stereotype.Component;
 import org.zahid.apps.web.library.config.ConfigProperties;
 import org.zahid.apps.web.library.entity.Organization;
 import org.zahid.apps.web.library.security.service.UserPrincipal;
+
+import java.util.*;
 
 @Component
 public class Miscellaneous {

@@ -5,13 +5,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.zahid.apps.web.library.entity.Role;
 import org.zahid.apps.web.library.entity.User;
-import org.zahid.apps.web.library.enumeration.RoleName;
 import org.zahid.apps.web.library.exception.ResourceNotFoundException;
 import org.zahid.apps.web.library.model.UserSummary;
 import org.zahid.apps.web.library.repo.RoleRepo;
@@ -20,8 +16,6 @@ import org.zahid.apps.web.library.security.CurrentUser;
 import org.zahid.apps.web.library.security.payload.request.ChangePasswordRequest;
 import org.zahid.apps.web.library.security.service.UserPrincipal;
 
-import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 

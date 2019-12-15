@@ -1,7 +1,5 @@
 package org.zahid.apps.web.library.mapper;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -11,6 +9,9 @@ import org.zahid.apps.web.library.entity.SubjectEntity;
 import org.zahid.apps.web.library.model.BookModel;
 import org.zahid.apps.web.library.model.SubjectModel;
 import org.zahid.apps.web.library.service.SubjectService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public abstract class SubjectMapper {
