@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "ORGANIZATION", schema = "library", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"ORGANIZATION_NAME"})
+        @UniqueConstraint(name = "organization_name_uk", columnNames = {"organization_name"})
 })
 @JsonIdentityInfo(scope = Organization.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "organizationCode")
 @Builder

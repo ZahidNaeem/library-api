@@ -18,7 +18,7 @@ import java.util.List;
 @JsonIdentityInfo(scope = AuthorEntity.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "authorId")
 @Entity
 @Table(name = "author", schema = "library", catalog = "", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"author_name"})
+        @UniqueConstraint(name = "author_name_uk", columnNames = {"author_name"})
 })
 public class AuthorEntity extends Auditable<Long> {
     @Id

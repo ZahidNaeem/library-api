@@ -10,10 +10,8 @@ import org.zahid.apps.web.library.enumeration.RoleName;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ROLE", schema = "library", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {
-                "name"
-        })
+@Table(name = "role", schema = "library", uniqueConstraints = {
+        @UniqueConstraint(name = "role_name_uk", columnNames = {"name"})
 })
 @Builder
 @Data

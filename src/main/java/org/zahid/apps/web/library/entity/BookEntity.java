@@ -19,7 +19,7 @@ import java.util.List;
 @JsonIdentityInfo(scope = BookEntity.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "bookId")
 @Entity
 @Table(name = "book", schema = "library", catalog = "", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"book_name"})
+        @UniqueConstraint(name = "book_name_uk", columnNames = {"book_name"})
 })
 public class BookEntity extends Auditable<Long> {
     @Id

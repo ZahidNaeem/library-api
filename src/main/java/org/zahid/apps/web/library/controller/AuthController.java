@@ -1,5 +1,6 @@
 package org.zahid.apps.web.library.controller;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -93,7 +94,7 @@ public class AuthController {
                 .organization(signUpRequest.getOrganization())
                 .build();
 
-        Set<String> strRoles = signUpRequest.getRole();
+        Set<String> strRoles = CollectionUtils.isNotEmpty(signUpRequest.getRole()) ? signUpRequest.getRole() : Set.of("user");
         Set<Role> roles = new HashSet<>();
 
         strRoles.forEach(role -> {

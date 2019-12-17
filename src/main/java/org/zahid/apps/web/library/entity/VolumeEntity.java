@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 @JsonIdentityInfo(scope = VolumeEntity.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "volumeId")
 @Entity
 @Table(name = "volume", schema = "library", catalog = "", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"volume_id", "volume_name"})
+        @UniqueConstraint(name = "book_id_volume_name_uk", columnNames = {"book_id", "volume_name"})
 })
 public class VolumeEntity extends Auditable<Long> {
     @Id

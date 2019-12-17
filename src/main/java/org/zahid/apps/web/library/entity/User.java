@@ -15,12 +15,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "LIB_USER", schema = "library", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {
-                "username"
-        }),
-        @UniqueConstraint(columnNames = {
-                "email"
-        })
+        @UniqueConstraint(name = "username_uk", columnNames = {"username"}),
+        @UniqueConstraint(name = "email_uk", columnNames = {"email"})
 })
 @Builder
 @Data

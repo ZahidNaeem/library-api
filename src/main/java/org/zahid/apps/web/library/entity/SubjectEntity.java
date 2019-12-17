@@ -18,8 +18,8 @@ import java.util.List;
 @JsonIdentityInfo(scope = SubjectEntity.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "subjectId")
 @Entity
 @Table(name = "subject", schema = "library", catalog = "", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"subject_code"}),
-        @UniqueConstraint(columnNames = {"subject_name"})
+        @UniqueConstraint(name = "subject_code_uk", columnNames = {"subject_code"}),
+        @UniqueConstraint(name = "subject_name_uk", columnNames = {"subject_name"})
 })
 public class SubjectEntity extends Auditable<Long> {
     @Id
