@@ -23,48 +23,48 @@ public abstract class ShelfMapper {
     @Autowired
     protected RackMapper rackMapper;
 
-    @Mapping(target = "books", expression = "java(shelf != null ? mapBookEntitiesToBookModels(shelf.getBooks()) : null)")
-    @Mapping(target = "racks", expression = "java(shelf != null ? mapRackEntitiesToRackModels(shelf.getRacks()) : null)")
-    public abstract ShelfModel fromShelf(final ShelfEntity shelf);
+    @Mapping(target = "books", expression = "java(shelf != null ? toBookModels(shelf.getBooks()) : null)")
+    @Mapping(target = "racks", expression = "java(shelf != null ? toRackModels(shelf.getRacks()) : null)")
+    public abstract ShelfModel toShelfModel(final ShelfEntity shelf);
 
-    @Mapping(target = "books", expression = "java(model != null ? mapBookModelsToBookEntities(model.getBooks()) : null)")
-    @Mapping(target = "racks", expression = "java(model != null ? mapRackModelsToRackEntities(model.getRacks()) : null)")
-    public abstract ShelfEntity toShelf(final ShelfModel model);
+    @Mapping(target = "books", expression = "java(model != null ? toBookEntities(model.getBooks()) : null)")
+    @Mapping(target = "racks", expression = "java(model != null ? toRackEntities(model.getRacks()) : null)")
+    public abstract ShelfEntity toShelfEntity(final ShelfModel model);
 
-    public List<BookModel> mapBookEntitiesToBookModels(final List<BookEntity> books) {
-        return bookMapper.mapBookEntitiesToBookModels(books);
+    public List<BookModel> toBookModels(final List<BookEntity> books) {
+        return bookMapper.toBookModels(books);
     }
 
-    public List<BookEntity> mapBookModelsToBookEntities(final List<BookModel> models) {
-        return bookMapper.mapBookModelsToBookEntities(models);
+    public List<BookEntity> toBookEntities(final List<BookModel> models) {
+        return bookMapper.toBookEntities(models);
     }
 
-    public List<RackModel> mapRackEntitiesToRackModels(final List<RackEntity> racks) {
-        return rackMapper.mapRackEntitiesToRackModels(racks);
+    public List<RackModel> toRackModels(final List<RackEntity> racks) {
+        return rackMapper.toRackModels(racks);
     }
 
-    public List<RackEntity> mapRackModelsToRackEntities(final List<RackModel> models) {
-        return rackMapper.mapRackModelsToRacks(models);
+    public List<RackEntity> toRackEntities(final List<RackModel> models) {
+        return rackMapper.toRackEntities(models);
     }
 
-    public List<ShelfModel> mapShelfEntitiesToShelfModels(final List<ShelfEntity> shelves) {
+    public List<ShelfModel> toShelfModels(final List<ShelfEntity> shelves) {
         if (CollectionUtils.isEmpty(shelves)) {
             return new ArrayList<>();
         }
         final List<ShelfModel> models = new ArrayList<>();
         shelves.forEach(shelf -> {
-            models.add(this.fromShelf(shelf));
+            models.add(this.toShelfModel(shelf));
         });
         return models;
     }
 
-    public List<ShelfEntity> mapShelfModelsToShelves(final List<ShelfModel> models) {
+    public List<ShelfEntity> toShelfEntities(final List<ShelfModel> models) {
         if (CollectionUtils.isEmpty(models)) {
             return new ArrayList<>();
         }
         final List<ShelfEntity> shelves = new ArrayList<>();
         models.forEach(model -> {
-            shelves.add(this.toShelf(model));
+            shelves.add(this.toShelfEntity(model));
         });
         return shelves;
     }

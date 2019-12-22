@@ -43,32 +43,32 @@ public class RackController {
 
     @GetMapping
     public ResponseEntity<List<RackModel>> findAll() {
-        return ResponseEntity.ok(mapper.mapRackEntitiesToRackModels(rackService.findAll()));
+        return ResponseEntity.ok(mapper.toRackModels(rackService.findAll()));
     }
 
     @GetMapping("{id}")
     public ResponseEntity<RackModel> findById(@PathVariable("id") final Long id) {
-        return ResponseEntity.ok(mapper.fromRack(rackService.findById(id)));
+        return ResponseEntity.ok(mapper.toRackModel(rackService.findById(id)));
     }
 
     @GetMapping("shelf/{shelfId}")
     public ResponseEntity<List<RackModel>> findByShelf(@PathVariable("shelfId") final Long shelfId) {
-        return ResponseEntity.ok(mapper.mapRackEntitiesToRackModels(rackService.findAllByShelf(shelfService.findById(shelfId))));
+        return ResponseEntity.ok(mapper.toRackModels(rackService.findAllByShelf(shelfService.findById(shelfId))));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RackModel> save(@RequestBody final RackModel model) {
-        final RackEntity rack = mapper.toRack(model);
+        final RackEntity rack = mapper.toRackEntity(model);
         final RackEntity savedRack = rackService.save(rack);
         setRackForVolumes(rack);
-        return ResponseEntity.ok(mapper.fromRack(savedRack));
+        return ResponseEntity.ok(mapper.toRackModel(savedRack));
     }
 
     @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<RackEntity>> saveAll(@RequestBody final Set<RackModel> rackModel) {
         final Set<RackEntity> racks = new HashSet<>();
         rackModel.forEach(model -> {
-            final RackEntity rack = mapper.toRack(model);
+            final RackEntity rack = mapper.toRackEntity(model);
             setRackForVolumes(rack);
             racks.add(rack);
         });
@@ -97,7 +97,7 @@ public class RackController {
             throw new IllegalArgumentException("Item rack does not exist");
         } else {
             try {
-                rackService.delete(mapper.toRack(model));
+                rackService.delete(mapper.toRackEntity(model));
                 return ResponseEntity.ok(true);
             } catch (Exception e) {
                 e.printStackTrace();

@@ -22,40 +22,40 @@ public abstract class SubjectMapper {
   @Autowired
   protected SubjectService subjectService;
 
-  @Mapping(target = "books", expression = "java(subject != null ? mapBookEntitiesToBookModels(subject.getBooks()) : null)")
+  @Mapping(target = "books", expression = "java(subject != null ? toBookModels(subject.getBooks()) : null)")
   @Mapping(target = "parentSubjectId", expression = "java(subject != null && subject.getParentSubjectId() != null ? subject.getParentSubjectId().getSubjectId() : null)")
-  public abstract SubjectModel fromSubject(final SubjectEntity subject);
+  public abstract SubjectModel toSubjectModel(final SubjectEntity subject);
 
-  @Mapping(target = "books", expression = "java(model != null ? mapBookModelsToBookEntities(model.getBooks()) : null)")
+  @Mapping(target = "books", expression = "java(model != null ? toBookEntities(model.getBooks()) : null)")
   @Mapping(target = "parentSubjectId", expression = "java(model != null && model.getParentSubjectId() != null ? subjectService.findById(model.getParentSubjectId()) : null)")
-  public abstract SubjectEntity toSubject(final SubjectModel model);
+  public abstract SubjectEntity toSubjectEntity(final SubjectModel model);
 
-  public List<BookModel> mapBookEntitiesToBookModels(final List<BookEntity> books) {
-    return bookMapper.mapBookEntitiesToBookModels(books);
+  public List<BookModel> toBookModels(final List<BookEntity> books) {
+    return bookMapper.toBookModels(books);
   }
 
-  public List<BookEntity> mapBookModelsToBookEntities(final List<BookModel> models) {
-    return bookMapper.mapBookModelsToBookEntities(models);
+  public List<BookEntity> toBookEntities(final List<BookModel> models) {
+    return bookMapper.toBookEntities(models);
   }
 
-  public List<SubjectModel> mapSubjectEntitiesToSubjectModels(final List<SubjectEntity> subjects) {
+  public List<SubjectModel> toSubjectModels(final List<SubjectEntity> subjects) {
     if (CollectionUtils.isEmpty(subjects)) {
       return new ArrayList<>();
     }
     final List<SubjectModel> models = new ArrayList<>();
     subjects.forEach(subject -> {
-      models.add(this.fromSubject(subject));
+      models.add(this.toSubjectModel(subject));
     });
     return models;
   }
 
-  public List<SubjectEntity> mapSubjectModelsToSubjects(final List<SubjectModel> models) {
+  public List<SubjectEntity> toSubjectEntities(final List<SubjectModel> models) {
     if (CollectionUtils.isEmpty(models)) {
       return new ArrayList<>();
     }
     final List<SubjectEntity> subjects = new ArrayList<>();
     models.forEach(model -> {
-      subjects.add(this.toSubject(model));
+      subjects.add(this.toSubjectEntity(model));
     });
     return subjects;
   }

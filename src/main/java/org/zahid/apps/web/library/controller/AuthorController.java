@@ -41,12 +41,12 @@ public class AuthorController {
 
   @GetMapping
   public ResponseEntity<List<AuthorModel>> findAll() {
-    return ResponseEntity.ok(mapper.mapAuthorEntitiesToAuthorModels(authorService.findAll()));
+    return ResponseEntity.ok(mapper.toAuthorModels(authorService.findAll()));
   }
 
   @GetMapping("{id}")
   public ResponseEntity<AuthorDTO> findById(@PathVariable("id") final Long id) {
-    final AuthorModel model = mapper.fromAuthor(authorService.findById(id));
+    final AuthorModel model = mapper.toAuthorModel(authorService.findById(id));
     indx[0] = findAll().getBody().indexOf(model);
     LOG.info("Index in findById(): {}", indx[0]);
     return ResponseEntity.ok(getAuthorDTO(findAll().getBody(), indx[0]));
@@ -87,11 +87,11 @@ public class AuthorController {
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<AuthorDTO> save(@RequestBody final AuthorModel model) {
-    final AuthorEntity author = mapper.toAuthor(model);
+    final AuthorEntity author = mapper.toAuthorEntity(model);
 //    Below line added, because when converted from model to AuthorEntity, there is no author set in book list.
     setAuthorForBooks(author);
     final AuthorEntity authorSaved = authorService.save(author);
-    final AuthorModel savedModel = mapper.fromAuthor(authorSaved);
+    final AuthorModel savedModel = mapper.toAuthorModel(authorSaved);
     indx[0] = this.findAll().getBody().indexOf(savedModel);
     LOG.info("Index in saveAuthor(): {}", indx[0]);
     return ResponseEntity.ok(getAuthorDTO(findAll().getBody(), indx[0]));
@@ -99,7 +99,7 @@ public class AuthorController {
 
   @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<List<AuthorEntity>> saveAll(@RequestBody final List<AuthorModel> models) {
-    final List<AuthorEntity> authors = mapper.mapAuthorModelsToAuthors(models);
+    final List<AuthorEntity> authors = mapper.toAuthorEntities(models);
     //    Below line added, because when converted from model to AuthorEntity, there is no author set in book list.
     authors.forEach(author -> {
       setAuthorForBooks(author);
@@ -132,7 +132,7 @@ public class AuthorController {
       throw new IllegalArgumentException("AuthorEntity does not exist");
     } else {
       try {
-        authorService.delete(mapper.toAuthor(model));
+        authorService.delete(mapper.toAuthorEntity(model));
         indx[0]--;
         LOG.info("Index in deleteAuthor(): {}", indx[0]);
         return ResponseEntity.ok(getAuthorDTO(findAll().getBody(), indx[0]));

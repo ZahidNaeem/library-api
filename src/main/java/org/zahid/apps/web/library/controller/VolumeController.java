@@ -34,30 +34,30 @@ public class VolumeController {
 
     @GetMapping
     public ResponseEntity<List<VolumeModel>> findAll() {
-        return ResponseEntity.ok(mapper.mapVolumeEntitiesToVolumeModels(volumeService.findAll()));
+        return ResponseEntity.ok(mapper.toVolumeModels(volumeService.findAll()));
     }
 
     @GetMapping("{id}")
     public ResponseEntity<VolumeModel> findById(@PathVariable("id") final Long id) {
-        return ResponseEntity.ok(mapper.fromVolume(volumeService.findById(id)));
+        return ResponseEntity.ok(mapper.toVolumeModel(volumeService.findById(id)));
     }
 
     @GetMapping("book/{bookId}")
     public ResponseEntity<List<VolumeModel>> findByBook(@PathVariable("bookId") final Long bookId) {
-        return ResponseEntity.ok(mapper.mapVolumeEntitiesToVolumeModels(volumeService.findAllByBook(bookService.findById(bookId))));
+        return ResponseEntity.ok(mapper.toVolumeModels(volumeService.findAllByBook(bookService.findById(bookId))));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<VolumeModel> save(@RequestBody final VolumeModel model) {
-        final VolumeEntity savedVolume = volumeService.save(mapper.toVolume(model));
-        return ResponseEntity.ok(mapper.fromVolume(savedVolume));
+        final VolumeEntity savedVolume = volumeService.save(mapper.toVolumeEntity(model));
+        return ResponseEntity.ok(mapper.toVolumeModel(savedVolume));
     }
 
     @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<VolumeEntity>> saveAll(@RequestBody final Set<VolumeModel> volumeModel) {
         final Set<VolumeEntity> volumes = new HashSet<>();
         volumeModel.forEach(model -> {
-            final VolumeEntity volume = mapper.toVolume(model);
+            final VolumeEntity volume = mapper.toVolumeEntity(model);
             volumes.add(volume);
         });
         return ResponseEntity.ok(volumeService.save(volumes));
@@ -85,7 +85,7 @@ public class VolumeController {
             throw new IllegalArgumentException("Item volume does not exist");
         } else {
             try {
-                volumeService.delete(mapper.toVolume(model));
+                volumeService.delete(mapper.toVolumeEntity(model));
                 return ResponseEntity.ok(true);
             } catch (Exception e) {
                 e.printStackTrace();

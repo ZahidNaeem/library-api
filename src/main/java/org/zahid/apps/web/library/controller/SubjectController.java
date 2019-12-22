@@ -43,12 +43,12 @@ public class SubjectController {
 
     @GetMapping
     public ResponseEntity<List<SubjectModel>> findAll() {
-        return ResponseEntity.ok(mapper.mapSubjectEntitiesToSubjectModels(subjectService.findAll()));
+        return ResponseEntity.ok(mapper.toSubjectModels(subjectService.findAll()));
     }
 
     @GetMapping("{id}")
     public ResponseEntity<SubjectDTO> findById(@PathVariable("id") final Long id) {
-        final SubjectModel model = mapper.fromSubject(subjectService.findById(id));
+        final SubjectModel model = mapper.toSubjectModel(subjectService.findById(id));
         indx[0] = findAll().getBody().indexOf(model);
         LOG.info("Index in findById(): {}", indx[0]);
         return ResponseEntity.ok(getSubjectDTO(findAll().getBody(), indx[0]));
@@ -94,13 +94,13 @@ public class SubjectController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SubjectDTO> save(@RequestBody final SubjectModel model) {
-        final SubjectEntity subject = mapper.toSubject(model);
+        final SubjectEntity subject = mapper.toSubjectEntity(model);
 //    Below line added, because when converted from model to SubjectEntity, there is no subject set in book list.
         setSubjectForBooks(subject);
         final SubjectEntity[] subjectSaved = new SubjectEntity[1];
         try {
             subjectSaved[0] = subjectService.save(subject);
-            final SubjectModel savedModel = mapper.fromSubject(subjectSaved[0]);
+            final SubjectModel savedModel = mapper.toSubjectModel(subjectSaved[0]);
             indx[0] = this.findAll().getBody().indexOf(savedModel);
             LOG.info("Index in saveSubject(): {}", indx[0]);
             return ResponseEntity.ok(getSubjectDTO(findAll().getBody(), indx[0]));
@@ -116,7 +116,7 @@ public class SubjectController {
 
     @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<SubjectEntity>> saveAll(@RequestBody final List<SubjectModel> models) {
-        final List<SubjectEntity> subjects = mapper.mapSubjectModelsToSubjects(models);
+        final List<SubjectEntity> subjects = mapper.toSubjectEntities(models);
         //    Below line added, because when converted from model to SubjectEntity, there is no subject set in book list.
         subjects.forEach(subject -> {
             setSubjectForBooks(subject);
@@ -149,7 +149,7 @@ public class SubjectController {
             throw new IllegalArgumentException("SubjectEntity does not exist");
         } else {
             try {
-                subjectService.delete(mapper.toSubject(model));
+                subjectService.delete(mapper.toSubjectEntity(model));
                 indx[0]--;
                 LOG.info("Index in deleteSubject(): {}", indx[0]);
                 return ResponseEntity.ok(getSubjectDTO(findAll().getBody(), indx[0]));

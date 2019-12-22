@@ -18,38 +18,38 @@ public abstract class PublisherMapper {
     @Autowired
     protected BookMapper bookMapper;
 
-    @Mapping(target = "books", expression = "java(publisher != null ? mapBookEntitiesToBookModels(publisher.getBooks()) : null)")
-    public abstract PublisherModel fromPublisher(final PublisherEntity publisher);
+    @Mapping(target = "books", expression = "java(publisher != null ? toBookModels(publisher.getBooks()) : null)")
+    public abstract PublisherModel toPublisherModel(final PublisherEntity publisher);
 
-    @Mapping(target = "books", expression = "java(model != null ? mapBookModelsToBookEntities(model.getBooks()) : null)")
-    public abstract PublisherEntity toPublisher(final PublisherModel model);
+    @Mapping(target = "books", expression = "java(model != null ? toBookEntities(model.getBooks()) : null)")
+    public abstract PublisherEntity toPublisherEntity(final PublisherModel model);
 
-    public List<BookModel> mapBookEntitiesToBookModels(final List<BookEntity> books) {
-        return bookMapper.mapBookEntitiesToBookModels(books);
+    public List<BookModel> toBookModels(final List<BookEntity> books) {
+        return bookMapper.toBookModels(books);
     }
 
-    public List<BookEntity> mapBookModelsToBookEntities(final List<BookModel> models) {
-        return bookMapper.mapBookModelsToBookEntities(models);
+    public List<BookEntity> toBookEntities(final List<BookModel> models) {
+        return bookMapper.toBookEntities(models);
     }
 
-    public List<PublisherModel> mapPublisherEntitiesToPublisherModels(final List<PublisherEntity> publishers) {
+    public List<PublisherModel> toPublisherModels(final List<PublisherEntity> publishers) {
         if (CollectionUtils.isEmpty(publishers)) {
             return new ArrayList<>();
         }
         final List<PublisherModel> models = new ArrayList<>();
         publishers.forEach(publisher -> {
-            models.add(this.fromPublisher(publisher));
+            models.add(this.toPublisherModel(publisher));
         });
         return models;
     }
 
-    public List<PublisherEntity> mapPublisherModelsToPublishers(final List<PublisherModel> models) {
+    public List<PublisherEntity> toPublisherEntities(final List<PublisherModel> models) {
         if (CollectionUtils.isEmpty(models)) {
             return new ArrayList<>();
         }
         final List<PublisherEntity> publishers = new ArrayList<>();
         models.forEach(model -> {
-            publishers.add(this.toPublisher(model));
+            publishers.add(this.toPublisherEntity(model));
         });
         return publishers;
     }

@@ -41,12 +41,12 @@ public class BookController {
 
     @GetMapping
     public ResponseEntity<List<BookModel>> findAll() {
-        return ResponseEntity.ok(mapper.mapBookEntitiesToBookModels(bookService.findAll()));
+        return ResponseEntity.ok(mapper.toBookModels(bookService.findAll()));
     }
 
     @GetMapping("{id}")
     public ResponseEntity<BookDTO> findById(@PathVariable("id") final Long id) {
-        final BookModel model = mapper.fromBook(bookService.findById(id));
+        final BookModel model = mapper.toBookModel(bookService.findById(id));
         indx[0] = findAll().getBody().indexOf(model);
         LOG.info("Index in findById(): {}", indx[0]);
         return ResponseEntity.ok(getBookDTO(findAll().getBody(), indx[0]));
@@ -87,10 +87,10 @@ public class BookController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BookDTO> save(@RequestBody final BookModel model) {
-        final BookEntity book = mapper.toBook(model);
+        final BookEntity book = mapper.toBookEntity(model);
         setBookForVolumes(book);
         final BookEntity bookSaved = bookService.save(book);
-        final BookModel savedModel = mapper.fromBook(bookSaved);
+        final BookModel savedModel = mapper.toBookModel(bookSaved);
         indx[0] = this.findAll().getBody().indexOf(savedModel);
         LOG.info("Index in saveBook(): {}", indx[0]);
         return ResponseEntity.ok(getBookDTO(findAll().getBody(), indx[0]));
@@ -98,7 +98,7 @@ public class BookController {
 
     @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<BookEntity>> saveAll(@RequestBody final List<BookModel> models) {
-        final List<BookEntity> books = mapper.mapBookModelsToBookEntities(models);
+        final List<BookEntity> books = mapper.toBookEntities(models);
         books.forEach(book -> {
             setBookForVolumes(book);
         });
@@ -129,7 +129,7 @@ public class BookController {
             throw new IllegalArgumentException("BookEntity does not exist");
         } else {
             try {
-                bookService.delete(mapper.toBook(model));
+                bookService.delete(mapper.toBookEntity(model));
                 indx[0]--;
                 LOG.info("Index in deleteBook(): {}", indx[0]);
                 return ResponseEntity.ok(getBookDTO(findAll().getBody(), indx[0]));

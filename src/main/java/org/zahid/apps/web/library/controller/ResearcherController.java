@@ -41,12 +41,12 @@ public class ResearcherController {
 
     @GetMapping
     public ResponseEntity<List<ResearcherModel>> findAll() {
-        return ResponseEntity.ok(mapper.mapResearcherEntitiesToResearcherModels(researcherService.findAll()));
+        return ResponseEntity.ok(mapper.toResearcherModels(researcherService.findAll()));
     }
 
     @GetMapping("{id}")
     public ResponseEntity<ResearcherDTO> findById(@PathVariable("id") final Long id) {
-        final ResearcherModel model = mapper.fromResearcher(researcherService.findById(id));
+        final ResearcherModel model = mapper.toResearcherModel(researcherService.findById(id));
         indx[0] = findAll().getBody().indexOf(model);
         LOG.info("Index in findById(): {}", indx[0]);
         return ResponseEntity.ok(getResearcherDTO(findAll().getBody(), indx[0]));
@@ -87,11 +87,11 @@ public class ResearcherController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResearcherDTO> save(@RequestBody final ResearcherModel model) {
-        final ResearcherEntity researcher = mapper.toResearcher(model);
+        final ResearcherEntity researcher = mapper.toResearcherEntity(model);
 //    Below line added, because when converted from model to ResearcherEntity, there is no researcher set in book list.
         setResearcherForBooks(researcher);
         final ResearcherEntity researcherSaved = researcherService.save(researcher);
-        final ResearcherModel savedModel = mapper.fromResearcher(researcherSaved);
+        final ResearcherModel savedModel = mapper.toResearcherModel(researcherSaved);
         indx[0] = this.findAll().getBody().indexOf(savedModel);
         LOG.info("Index in saveResearcher(): {}", indx[0]);
         return ResponseEntity.ok(getResearcherDTO(findAll().getBody(), indx[0]));
@@ -99,7 +99,7 @@ public class ResearcherController {
 
     @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ResearcherEntity>> saveAll(@RequestBody final List<ResearcherModel> models) {
-        final List<ResearcherEntity> researchers = mapper.mapResearcherModelsToResearchers(models);
+        final List<ResearcherEntity> researchers = mapper.toResearcherEntities(models);
         //    Below line added, because when converted from model to ResearcherEntity, there is no researcher set in book list.
         researchers.forEach(researcher -> {
             setResearcherForBooks(researcher);
@@ -131,7 +131,7 @@ public class ResearcherController {
             throw new IllegalArgumentException("ResearcherEntity does not exist");
         } else {
             try {
-                researcherService.delete(mapper.toResearcher(model));
+                researcherService.delete(mapper.toResearcherEntity(model));
                 indx[0]--;
                 LOG.info("Index in deleteResearcher(): {}", indx[0]);
                 return ResponseEntity.ok(getResearcherDTO(findAll().getBody(), indx[0]));

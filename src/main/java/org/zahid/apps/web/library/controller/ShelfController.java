@@ -49,12 +49,12 @@ public class ShelfController {
 
     @GetMapping
     public ResponseEntity<List<ShelfModel>> findAll() {
-        return ResponseEntity.ok(mapper.mapShelfEntitiesToShelfModels(shelfService.findAll()));
+        return ResponseEntity.ok(mapper.toShelfModels(shelfService.findAll()));
     }
 
     @GetMapping("{id}")
     public ResponseEntity<ShelfDTO> findById(@PathVariable("id") final Long id) {
-        final ShelfModel model = mapper.fromShelf(shelfService.findById(id));
+        final ShelfModel model = mapper.toShelfModel(shelfService.findById(id));
         indx[0] = findAll().getBody().indexOf(model);
         LOG.info("Index in findById(): {}", indx[0]);
         return ResponseEntity.ok(getShelfDTO(findAll().getBody(), indx[0]));
@@ -95,12 +95,12 @@ public class ShelfController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ShelfDTO> save(@RequestBody final ShelfModel model) {
-        final ShelfEntity shelf = mapper.toShelf(model);
+        final ShelfEntity shelf = mapper.toShelfEntity(model);
 //    Below line added, because when converted from model to ShelfEntity, there is no shelf set in book list.
         setShelfForBooks(shelf);
         setShelfForRacks(shelf);
         final ShelfEntity shelfSaved = shelfService.save(shelf);
-        final ShelfModel savedModel = mapper.fromShelf(shelfSaved);
+        final ShelfModel savedModel = mapper.toShelfModel(shelfSaved);
         indx[0] = this.findAll().getBody().indexOf(savedModel);
         LOG.info("Index in saveShelf(): {}", indx[0]);
         return ResponseEntity.ok(getShelfDTO(findAll().getBody(), indx[0]));
@@ -108,7 +108,7 @@ public class ShelfController {
 
     @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ShelfEntity>> saveAll(@RequestBody final List<ShelfModel> models) {
-        final List<ShelfEntity> shelves = mapper.mapShelfModelsToShelves(models);
+        final List<ShelfEntity> shelves = mapper.toShelfEntities(models);
         //    Below line added, because when converted from model to ShelfEntity, there is no shelf set in book list.
         shelves.forEach(shelf -> {
             setShelfForBooks(shelf);
@@ -141,7 +141,7 @@ public class ShelfController {
             throw new IllegalArgumentException("ShelfEntity does not exist");
         } else {
             try {
-                shelfService.delete(mapper.toShelf(model));
+                shelfService.delete(mapper.toShelfEntity(model));
                 indx[0]--;
                 LOG.info("Index in deleteShelf(): {}", indx[0]);
                 return ResponseEntity.ok(getShelfDTO(findAll().getBody(), indx[0]));

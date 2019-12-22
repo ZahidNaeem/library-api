@@ -130,7 +130,7 @@ public class AuthController {
 
         userModel.setRoles(roles);
 
-        final User result = userRepo.save(userMapper.toUser(userModel));
+        final User result = userRepo.save(userMapper.toUserEntity(userModel));
 
         final URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath().path("/users/{username}")

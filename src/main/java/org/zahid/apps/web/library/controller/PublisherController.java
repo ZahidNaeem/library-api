@@ -41,12 +41,12 @@ public class PublisherController {
 
     @GetMapping
     public ResponseEntity<List<PublisherModel>> findAll() {
-        return ResponseEntity.ok(mapper.mapPublisherEntitiesToPublisherModels(publisherService.findAll()));
+        return ResponseEntity.ok(mapper.toPublisherModels(publisherService.findAll()));
     }
 
     @GetMapping("{id}")
     public ResponseEntity<PublisherDTO> findById(@PathVariable("id") final Long id) {
-        final PublisherModel model = mapper.fromPublisher(publisherService.findById(id));
+        final PublisherModel model = mapper.toPublisherModel(publisherService.findById(id));
         indx[0] = findAll().getBody().indexOf(model);
         LOG.info("Index in findById(): {}", indx[0]);
         return ResponseEntity.ok(getPublisherDTO(findAll().getBody(), indx[0]));
@@ -87,11 +87,11 @@ public class PublisherController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PublisherDTO> save(@RequestBody final PublisherModel model) {
-        final PublisherEntity publisher = mapper.toPublisher(model);
+        final PublisherEntity publisher = mapper.toPublisherEntity(model);
 //    Below line added, because when converted from model to PublisherEntity, there is no publisher set in book list.
         setPublisherForBooks(publisher);
         final PublisherEntity publisherSaved = publisherService.save(publisher);
-        final PublisherModel savedModel = mapper.fromPublisher(publisherSaved);
+        final PublisherModel savedModel = mapper.toPublisherModel(publisherSaved);
         indx[0] = this.findAll().getBody().indexOf(savedModel);
         LOG.info("Index in savePublisher(): {}", indx[0]);
         return ResponseEntity.ok(getPublisherDTO(findAll().getBody(), indx[0]));
@@ -99,7 +99,7 @@ public class PublisherController {
 
     @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PublisherEntity>> saveAll(@RequestBody final List<PublisherModel> models) {
-        final List<PublisherEntity> publishers = mapper.mapPublisherModelsToPublishers(models);
+        final List<PublisherEntity> publishers = mapper.toPublisherEntities(models);
         //    Below line added, because when converted from model to PublisherEntity, there is no publisher set in book list.
         publishers.forEach(publisher -> {
             setPublisherForBooks(publisher);
@@ -131,7 +131,7 @@ public class PublisherController {
             throw new IllegalArgumentException("PublisherEntity does not exist");
         } else {
             try {
-                publisherService.delete(mapper.toPublisher(model));
+                publisherService.delete(mapper.toPublisherEntity(model));
                 indx[0]--;
                 LOG.info("Index in deletePublisher(): {}", indx[0]);
                 return ResponseEntity.ok(getPublisherDTO(findAll().getBody(), indx[0]));

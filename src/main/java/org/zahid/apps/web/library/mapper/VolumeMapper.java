@@ -23,30 +23,30 @@ public abstract class VolumeMapper {
 
     @Mapping(target = "book", expression = "java(volume != null && volume.getBook() != null ? volume.getBook().getBookId() : null)")
     @Mapping(target = "rack", expression = "java(volume != null && volume.getRack() != null ? volume.getRack().getRackId() : null)")
-    public abstract VolumeModel fromVolume(final VolumeEntity volume);
+    public abstract VolumeModel toVolumeModel(final VolumeEntity volume);
 
     @Mapping(target = "book", expression = "java(model != null && model.getBook() != null ? bookService.findById(model.getBook()) : null)")
     @Mapping(target = "rack", expression = "java(model != null && model.getRack() != null ? rackService.findById(model.getRack()) : null)")
-    public abstract VolumeEntity toVolume(final VolumeModel model);
+    public abstract VolumeEntity toVolumeEntity(final VolumeModel model);
 
-    public List<VolumeModel> mapVolumeEntitiesToVolumeModels(final List<VolumeEntity> volumes) {
+    public List<VolumeModel> toVolumeModels(final List<VolumeEntity> volumes) {
         if (CollectionUtils.isEmpty(volumes)) {
             return new ArrayList<>();
         }
         final List<VolumeModel> models = new ArrayList<>();
         volumes.forEach(volume -> {
-            models.add(this.fromVolume(volume));
+            models.add(this.toVolumeModel(volume));
         });
         return models;
     }
 
-    public List<VolumeEntity> mapVolumeModelsToVolumes(final List<VolumeModel> models) {
+    public List<VolumeEntity> toVolumeEntities(final List<VolumeModel> models) {
         if (CollectionUtils.isEmpty(models)) {
             return new ArrayList<>();
         }
         final List<VolumeEntity> volumes = new ArrayList<>();
         models.forEach(model -> {
-            volumes.add(this.toVolume(model));
+            volumes.add(this.toVolumeEntity(model));
         });
         return volumes;
     }
