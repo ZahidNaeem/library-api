@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.zahid.apps.web.library.entity.RackEntity;
 import org.zahid.apps.web.library.mapper.RackMapper;
+import org.zahid.apps.web.library.model.RackDetail;
 import org.zahid.apps.web.library.model.RackModel;
 import org.zahid.apps.web.library.service.RackService;
 import org.zahid.apps.web.library.service.ShelfService;
@@ -44,6 +45,11 @@ public class RackController {
     @GetMapping
     public ResponseEntity<List<RackModel>> findAll() {
         return ResponseEntity.ok(mapper.toRackModels(rackService.findAll()));
+    }
+
+    @GetMapping("details")
+    public ResponseEntity<List<RackDetail>> findAllDetails() {
+        return ResponseEntity.ok(mapper.toRackDetails(rackService.findAll()));
     }
 
     @GetMapping("{id}")

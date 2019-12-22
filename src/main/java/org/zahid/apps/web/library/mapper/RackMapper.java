@@ -6,6 +6,7 @@ import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zahid.apps.web.library.entity.RackEntity;
 import org.zahid.apps.web.library.entity.VolumeEntity;
+import org.zahid.apps.web.library.model.RackDetail;
 import org.zahid.apps.web.library.model.RackModel;
 import org.zahid.apps.web.library.model.VolumeModel;
 import org.zahid.apps.web.library.service.ShelfService;
@@ -30,6 +31,10 @@ public abstract class RackMapper {
     @Mapping(target = "volumes", expression = "java(model != null ? toVolumeEntities(model.getVolumes()) : null)")
     public abstract RackEntity toRackEntity(final RackModel model);
 
+    @Mapping(target = "shelfId", expression = "java(rack != null && rack.getShelf() != null ? rack.getShelf().getShelfId() : null)")
+    @Mapping(target = "shelfName", expression = "java(rack != null && rack.getShelf() != null ? rack.getShelf().getShelfName() : null)")
+    public abstract RackDetail toRackDetail(final RackEntity rack);
+
     public List<RackModel> toRackModels(final List<RackEntity> racks) {
         if (CollectionUtils.isEmpty(racks)) {
             return new ArrayList<>();
@@ -50,6 +55,17 @@ public abstract class RackMapper {
             racks.add(this.toRackEntity(model));
         });
         return racks;
+    }
+
+    public List<RackDetail> toRackDetails(final List<RackEntity> racks) {
+        if (CollectionUtils.isEmpty(racks)) {
+            return new ArrayList<>();
+        }
+        final List<RackDetail> details = new ArrayList<>();
+        racks.forEach(rack -> {
+            details.add(this.toRackDetail(rack));
+        });
+        return details;
     }
 
     public List<VolumeModel> toVolumeModels(final List<VolumeEntity> volumes) {
