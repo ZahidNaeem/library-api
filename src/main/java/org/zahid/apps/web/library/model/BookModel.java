@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.zahid.apps.web.library.entity.Auditable;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 @Builder
@@ -19,11 +20,11 @@ public class BookModel extends Auditable<Long> {
 
     private String bookName;
 
-    private Timestamp publicationDate;
+    private Date publicationDate;
 
     private String bookCondition;
 
-    private Byte purchased;
+    private Integer purchased;
 
     private String remarks;
 

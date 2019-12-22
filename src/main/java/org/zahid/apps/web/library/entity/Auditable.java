@@ -24,15 +24,15 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 public abstract class Auditable<U> {
 
     @CreatedBy
-    @Column(name = "CREATED_BY")
+    @Column(name = "CREATED_BY", updatable = false)
     protected U createdBy;
 
-    @Column(name = "CREATE_ORGANIZATION")
+    @Column(name = "CREATE_ORGANIZATION", updatable = false)
     protected U createOrganization;
 
     @CreatedDate
     @Temporal(TIMESTAMP)
-    @Column(name = "CREATION_DATE")
+    @Column(name = "CREATION_DATE", updatable = false)
     protected Date creationDate;
 
     @LastModifiedBy

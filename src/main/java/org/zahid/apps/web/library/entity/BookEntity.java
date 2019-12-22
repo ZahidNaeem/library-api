@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 @Builder
@@ -32,13 +33,13 @@ public class BookEntity extends Auditable<Long> {
     private String bookName;
 
     @Column(name = "publication_date")
-    private Timestamp publicationDate;
+    private Date publicationDate;
 
     @Column(name = "book_condition")
     private String bookCondition;
 
     @Column(name = "purchased")
-    private Byte purchased;
+    private Integer purchased;
 
     @Column(name = "remarks")
     private String remarks;
