@@ -24,9 +24,8 @@ public class PublisherServiceImpl implements PublisherService {
 
     @Override
     public PublisherEntity findById(Long id) {
-        return Optional.ofNullable(publisherRepo.findById(id))
-                .map(publisher -> publisher.get())
-                .orElseThrow(() -> new PublisherNotFoundException("Publisher with id: " + id + " not found"));
+        return publisherRepo.findById(id)
+                .orElse(new PublisherEntity());
     }
 
     @Override

@@ -24,9 +24,8 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public AuthorEntity findById(Long id) {
-        return Optional.ofNullable(authorRepo.findById(id))
-                .map(author -> author.get())
-                .orElseThrow(() -> new AuthorNotFoundException("Author with id: " + id + " not found"));
+        return authorRepo.findById(id)
+                .orElse(new AuthorEntity());
     }
 
     @Override

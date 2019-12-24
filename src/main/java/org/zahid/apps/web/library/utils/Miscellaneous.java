@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -16,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.zahid.apps.web.library.config.ConfigProperties;
 import org.zahid.apps.web.library.entity.Organization;
+import org.zahid.apps.web.library.model.BookModel;
 import org.zahid.apps.web.library.security.service.UserPrincipal;
 
 import java.util.*;
@@ -186,6 +188,17 @@ public class Miscellaneous {
                 .addValue("P_COLUMN_VALUE", columnValue);
         result = namedParameterJdbcTemplate.queryForObject(
                 "SELECT RECORD_EXISTS (:P_TABLE, :P_COLUMN, :P_COLUMN_VALUE) FROM DUAL", namedParameters, Integer.class);
+        return result;
+    }
+
+    public static List<BookModel> searchBookByCriteria(final Integer author, final Integer subject, final Integer publisher, final Integer researcher) {
+        final String sql = "SELECT * FROM BOOK B WHERE (:AUTHOR IS NULL OR B.AUTHOR_ID = :AUTHOR) AND (:SUBJECT IS NULL OR B.SUBJECT_ID = :SUBJECT) AND (:PUBLISHER IS NULL OR B.PUBLISHER_ID = :PUBLISHER) AND (:RESEARCHER IS NULL OR B.RESEARCHER_ID = :RESEARCHER)";
+        SqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("AUTHOR", author)
+                .addValue("SUBJECT", subject)
+                .addValue("PUBLISHER", publisher)
+                .addValue("RESEARCHER", researcher);
+        final List<BookModel> result = namedParameterJdbcTemplate.query(sql, namedParameters, new BeanPropertyRowMapper<BookModel>(BookModel.class));
         return result;
     }
 

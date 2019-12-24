@@ -24,9 +24,8 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public SubjectEntity findById(Long id) {
-        return Optional.ofNullable(subjectRepo.findById(id))
-                .map(subject -> subject.get())
-                .orElseThrow(() -> new SubjectNotFoundException("Subject with id: " + id + " not found."));
+        return subjectRepo.findById(id)
+                .orElse(new SubjectEntity());
     }
 
     @Override

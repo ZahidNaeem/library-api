@@ -30,9 +30,8 @@ public class VolumeServiceImpl implements VolumeService {
 
     @Override
     public VolumeEntity findById(Long id) {
-        return Optional.ofNullable(volumeRepo.findById(id))
-                .map(volume -> volume.get())
-                .orElseThrow(() -> new VolumeNotFoundException("Volume with id: " + id + " not found"));
+        return volumeRepo.findById(id)
+                .orElse(new VolumeEntity());
     }
 
     @Override

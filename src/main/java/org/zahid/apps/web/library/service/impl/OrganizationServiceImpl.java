@@ -17,15 +17,13 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Override
     public Organization findById(final Long id) {
-        return Optional.ofNullable(organizationRepo.findById(id))
-                .map(organization -> organization.get())
-                .orElseThrow(() -> new OrganizationNotFoundException("Item with id " + id + " not found"));
+        return organizationRepo.findById(id)
+                .orElse(new Organization());
     }
 
     @Override
     public Organization findByOrganizationName(final String organizationName) {
-        return Optional.ofNullable(organizationRepo.findByOrganizationName(organizationName))
-                .map(organization -> organization.get())
-                .orElseThrow(() -> new OrganizationNotFoundException("Item with name '" + organizationName + "' not found"));
+        return organizationRepo.findByOrganizationName(organizationName)
+                .orElse(null);
     }
 }

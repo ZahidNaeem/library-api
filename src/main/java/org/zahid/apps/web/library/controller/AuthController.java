@@ -19,10 +19,10 @@ import org.zahid.apps.web.library.model.UserModel;
 import org.zahid.apps.web.library.repo.RoleRepo;
 import org.zahid.apps.web.library.repo.UserRepo;
 import org.zahid.apps.web.library.security.jwt.JwtProvider;
-import org.zahid.apps.web.library.security.payload.request.LoginRequest;
-import org.zahid.apps.web.library.security.payload.request.SignUpRequest;
-import org.zahid.apps.web.library.security.payload.response.ApiResponse;
-import org.zahid.apps.web.library.security.payload.response.JwtAuthenticationResponse;
+import org.zahid.apps.web.library.payload.request.LoginRequest;
+import org.zahid.apps.web.library.payload.request.SignUpRequest;
+import org.zahid.apps.web.library.payload.response.ApiResponse;
+import org.zahid.apps.web.library.payload.response.JwtAuthenticationResponse;
 import org.zahid.apps.web.library.service.GmailService;
 
 import javax.mail.MessagingException;

@@ -1,4 +1,4 @@
-package org.zahid.apps.web.library.security.payload.response;
+package org.zahid.apps.web.library.payload.response;
 
 public class ApiResponse {
   private Boolean success;

@@ -24,9 +24,8 @@ public class ShelfServiceImpl implements ShelfService {
 
     @Override
     public ShelfEntity findById(Long id) {
-        return Optional.ofNullable(shelfRepo.findById(id))
-                .map(shelf -> shelf.get())
-                .orElseThrow(() -> new ShelfNotFoundException("Shelf with id: " + id + " not found"));
+        return shelfRepo.findById(id)
+                .orElse(new ShelfEntity());
     }
 
     @Override

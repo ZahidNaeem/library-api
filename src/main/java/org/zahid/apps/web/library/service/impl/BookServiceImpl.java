@@ -1,18 +1,22 @@
 package org.zahid.apps.web.library.service.impl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zahid.apps.web.library.entity.BookEntity;
-import org.zahid.apps.web.library.exception.BookNotFoundException;
+import org.zahid.apps.web.library.model.BookModel;
 import org.zahid.apps.web.library.repo.BookRepo;
 import org.zahid.apps.web.library.service.BookService;
+import org.zahid.apps.web.library.utils.Miscellaneous;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
 public class BookServiceImpl implements BookService {
+
+    private static final Logger LOG = LogManager.getLogger(BookServiceImpl.class);
 
     @Autowired
     private BookRepo bookRepo;
@@ -23,10 +27,14 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public List<BookModel> searchByCriteria(final Integer author, final Integer subject, final Integer publisher, final Integer researcher) {
+        return Miscellaneous.searchBookByCriteria(author, subject, publisher, researcher);
+    }
+
+    @Override
     public BookEntity findById(Long id) {
-        return Optional.ofNullable(bookRepo.findById(id))
-                .map(book -> book.get())
-                .orElseThrow(() -> new BookNotFoundException("Book with id: " + id + " not found"));
+        return bookRepo.findById(id)
+                .orElse(new BookEntity());
     }
 
     @Override

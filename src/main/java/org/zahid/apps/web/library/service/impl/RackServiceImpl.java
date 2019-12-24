@@ -30,9 +30,8 @@ public class RackServiceImpl implements RackService {
 
     @Override
     public RackEntity findById(Long id) {
-        return Optional.ofNullable(rackRepo.findById(id))
-                .map(rack -> rack.get())
-                .orElseThrow(() -> new RackNotFoundException("Rack with id: " + id + " not found"));
+        return rackRepo.findById(id)
+                .orElse(new RackEntity());
     }
 
     @Override

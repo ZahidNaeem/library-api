@@ -24,9 +24,8 @@ public class ResearcherServiceImpl implements ResearcherService {
 
     @Override
     public ResearcherEntity findById(Long id) {
-        return Optional.ofNullable(researcherRepo.findById(id))
-                .map(researcher -> researcher.get())
-                .orElseThrow(() -> new ResearcherNotFoundException("Researcher with id: " + id + " not found"));
+        return researcherRepo.findById(id)
+                .orElse(new ResearcherEntity());
     }
 
     @Override

@@ -1,4 +1,4 @@
-package org.zahid.apps.web.library.security.payload.request;
+package org.zahid.apps.web.library.payload.request;
 
 import javax.validation.constraints.NotBlank;
 

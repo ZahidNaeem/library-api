@@ -13,6 +13,7 @@ import org.zahid.apps.web.library.entity.BookEntity;
 import org.zahid.apps.web.library.entity.NavigationDtl;
 import org.zahid.apps.web.library.mapper.BookMapper;
 import org.zahid.apps.web.library.model.BookModel;
+import org.zahid.apps.web.library.payload.request.SearchBookRequest;
 import org.zahid.apps.web.library.service.BookService;
 
 import java.util.HashSet;
@@ -138,6 +139,11 @@ public class BookController {
                 return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
+    }
+
+    @GetMapping(name = "search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<BookModel>> searchBookByCriteria(@RequestBody final SearchBookRequest request){
+        return ResponseEntity.ok(bookService.searchByCriteria(request.getAuthor(), request.getSubject(), request.getPublisher(), request.getResearcher()));
     }
 
     private static final NavigationDtl resetNavigation() {
