@@ -18,14 +18,14 @@ import java.util.List;
 @SpringBootTest
 public class BookTest {
 
-    @Autowired
-    private BookService bookService;
-
-    @DisplayName("Search book by author, subject, publisher and researcher")
-    @Test
-    void searchBook() {
-        final List<BookModel> bookModels = bookService.searchByCriteria(2, 7, null, 63);
-        final int size = bookModels.size();
-        Assert.assertEquals(1, size);
-    }
+//    @Autowired
+//    private BookService bookService;
+//
+//    @DisplayName("Search book by author, subject, publisher and researcher")
+//    @Test
+//    void searchBook() {
+//        final List<BookModel> bookModels = bookService.searchByCriteria(2, 7, null, 63);
+//        final int size = bookModels.size();
+//        Assert.assertEquals(1, size);
+//    }
 }

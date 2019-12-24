@@ -33,7 +33,11 @@ public class Miscellaneous {
     private static NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Autowired
-    public Miscellaneous(final ConfigProperties configProperties, final JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+    public Miscellaneous(
+            final ConfigProperties configProperties,
+            final JdbcTemplate jdbcTemplate,
+            final NamedParameterJdbcTemplate namedParameterJdbcTemplate
+            ) {
         this.configProperties = configProperties;
         this.jdbcTemplate = jdbcTemplate;
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
