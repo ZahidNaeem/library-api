@@ -141,8 +141,9 @@ public class BookController {
         }
     }
 
-    @GetMapping(path = "search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<BookModel>> searchBookByCriteria(@RequestBody final SearchBookRequest request){
+        LOG.info("Request: {}", request);
         return ResponseEntity.ok(bookService.searchByCriteria(request.getAuthor(), request.getSubject(), request.getPublisher(), request.getResearcher()));
     }
 
