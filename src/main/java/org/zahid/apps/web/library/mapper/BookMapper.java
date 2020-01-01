@@ -8,6 +8,7 @@ import org.zahid.apps.web.library.entity.BookEntity;
 import org.zahid.apps.web.library.entity.VolumeEntity;
 import org.zahid.apps.web.library.model.BookModel;
 import org.zahid.apps.web.library.model.VolumeModel;
+import org.zahid.apps.web.library.payload.response.SearchBookResponse;
 import org.zahid.apps.web.library.service.*;
 
 import java.util.ArrayList;
@@ -50,6 +51,18 @@ public abstract class BookMapper {
     @Mapping(target = "volumes", expression = "java(model != null ? toVolumeEntities(model.getVolumes()) : null)")
     public abstract BookEntity toBookEntity(final BookModel model);
 
+    /*@Mapping(target = "authorId", expression = "java(book != null && book.getAuthor() != null ? book.getAuthor().getAuthorId() : null)")
+    @Mapping(target = "authorName", expression = "java(book != null && book.getAuthor() != null ? book.getAuthor().getAuthorName() : null)")
+    @Mapping(target = "subjectId", expression = "java(book != null && book.getSubject() != null ? book.getSubject().getSubjectId() : null)")
+    @Mapping(target = "subjectName", expression = "java(book != null && book.getSubject() != null ? book.getSubject().getSubjectName() : null)")
+    @Mapping(target = "publisherId", expression = "java(book != null && book.getPublisher() != null ? book.getPublisher().getPublisherId() : null)")
+    @Mapping(target = "publisherName", expression = "java(book != null && book.getPublisher() != null ? book.getPublisher().getPublisherName() : null)")
+    @Mapping(target = "researcherId", expression = "java(book != null && book.getResearcher() != null ? book.getResearcher().getResearcherId() : null)")
+    @Mapping(target = "researcherName", expression = "java(book != null && book.getResearcher() != null ? book.getResearcher().getResearcherName() : null)")
+    @Mapping(target = "shelfId", expression = "java(book != null && book.getShelf() != null ? book.getShelf().getShelfId() : null)")
+    @Mapping(target = "shelfName", expression = "java(book != null && book.getShelf() != null ? book.getShelf().getShelfName() : null)")
+    public abstract SearchBookResponse toSearchBookResponse(final BookEntity book);*/
+
     public List<BookModel> toBookModels(final List<BookEntity> Books) {
         if (CollectionUtils.isEmpty(Books)) {
             return new ArrayList<>();
@@ -71,6 +84,17 @@ public abstract class BookMapper {
         });
         return books;
     }
+
+    /*public List<SearchBookResponse> toSearchBookResponses(final List<BookEntity> Books) {
+        if (CollectionUtils.isEmpty(Books)) {
+            return new ArrayList<>();
+        }
+        final List<SearchBookResponse> searchBookResponses = new ArrayList<>();
+        Books.forEach(BookEntity -> {
+            searchBookResponses.add(this.toSearchBookResponse(BookEntity));
+        });
+        return searchBookResponses;
+    }*/
 
     public List<VolumeModel> toVolumeModels(final List<VolumeEntity> volumes) {
         return volumeMapper.toVolumeModels(volumes);

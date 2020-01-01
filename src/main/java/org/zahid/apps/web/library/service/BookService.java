@@ -2,6 +2,7 @@ package org.zahid.apps.web.library.service;
 
 import org.zahid.apps.web.library.entity.BookEntity;
 import org.zahid.apps.web.library.model.BookModel;
+import org.zahid.apps.web.library.payload.response.SearchBookResponse;
 
 import java.util.List;
 import java.util.Set;
@@ -10,7 +11,7 @@ public interface BookService {
 
     List<BookEntity> findAll();
 
-    List<BookModel> searchByCriteria(final Integer author, final Integer subject, final Integer publisher, final Integer researcher);
+    List<SearchBookResponse> searchByCriteria(final Integer author, final Integer subject, final Integer publisher, final Integer researcher);
 
     BookEntity findById(final Long id);
 

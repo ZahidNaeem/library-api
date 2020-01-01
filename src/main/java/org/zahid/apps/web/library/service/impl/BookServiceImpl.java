@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zahid.apps.web.library.entity.BookEntity;
 import org.zahid.apps.web.library.model.BookModel;
+import org.zahid.apps.web.library.payload.response.SearchBookResponse;
 import org.zahid.apps.web.library.repo.BookRepo;
 import org.zahid.apps.web.library.service.BookService;
 import org.zahid.apps.web.library.utils.Miscellaneous;
@@ -27,7 +28,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookModel> searchByCriteria(final Integer author, final Integer subject, final Integer publisher, final Integer researcher) {
+    public List<SearchBookResponse> searchByCriteria(final Integer author, final Integer subject, final Integer publisher, final Integer researcher) {
         return Miscellaneous.searchBookByCriteria(author, subject, publisher, researcher);
     }
 

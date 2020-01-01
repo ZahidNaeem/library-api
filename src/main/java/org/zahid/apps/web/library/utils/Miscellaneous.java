@@ -16,8 +16,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.zahid.apps.web.library.config.ConfigProperties;
+import org.zahid.apps.web.library.entity.BookEntity;
 import org.zahid.apps.web.library.entity.Organization;
+import org.zahid.apps.web.library.mapper.BookMapper;
 import org.zahid.apps.web.library.model.BookModel;
+import org.zahid.apps.web.library.payload.response.SearchBookResponse;
 import org.zahid.apps.web.library.security.service.UserPrincipal;
 
 import java.util.*;
@@ -31,16 +34,19 @@ public class Miscellaneous {
     private static JdbcTemplate jdbcTemplate;
     private static SimpleJdbcCall simpleJdbcCall;
     private static NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private static BookMapper bookMapper;
 
     @Autowired
     public Miscellaneous(
             final ConfigProperties configProperties,
             final JdbcTemplate jdbcTemplate,
-            final NamedParameterJdbcTemplate namedParameterJdbcTemplate
-            ) {
+            final NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+            final BookMapper bookMapper
+    ) {
         this.configProperties = configProperties;
         this.jdbcTemplate = jdbcTemplate;
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+        this.bookMapper = bookMapper;
     }
 
     public static Exception getNestedException(Exception rootException) {
@@ -195,14 +201,44 @@ public class Miscellaneous {
         return result;
     }
 
-    public static List<BookModel> searchBookByCriteria(final Integer author, final Integer subject, final Integer publisher, final Integer researcher) {
-        final String sql = "SELECT * FROM BOOK B WHERE (:AUTHOR IS NULL OR B.AUTHOR_ID = :AUTHOR) AND (:SUBJECT IS NULL OR B.SUBJECT_ID = :SUBJECT) AND (:PUBLISHER IS NULL OR B.PUBLISHER_ID = :PUBLISHER) AND (:RESEARCHER IS NULL OR B.RESEARCHER_ID = :RESEARCHER)";
+    public static List<SearchBookResponse> searchBookByCriteria(final Integer author, final Integer subject, final Integer publisher, final Integer researcher) {
+        final String sql = "SELECT B.BOOK_ID\n" +
+                "      ,B.BOOK_NAME\n" +
+                "      ,B.PUBLICATION_DATE\n" +
+                "      ,B.BOOK_CONDITION\n" +
+                "      ,B.PURCHASED\n" +
+                "      ,A.AUTHOR_ID\n" +
+                "      ,A.AUTHOR_NAME\n" +
+                "      ,S.SUBJECT_ID\n" +
+                "      ,S.SUBJECT_NAME\n" +
+                "      ,P.PUBLISHER_ID\n" +
+                "      ,P.PUBLISHER_NAME\n" +
+                "      ,R.RESEARCHER_ID\n" +
+                "      ,R.RESEARCHER_NAME\n" +
+                "      ,F.SHELF_ID\n" +
+                "      ,F.SHELF_NAME\n" +
+                "      ,B.REMARKS\n" +
+                "  FROM BOOK B\n" +
+                "      ,AUTHOR A\n" +
+                "      ,SUBJECT S\n" +
+                "      ,PUBLISHER P\n" +
+                "      ,RESEARCHER R\n" +
+                "      ,SHELF F\n" +
+                " WHERE     B.AUTHOR_ID = A.AUTHOR_ID(+)\n" +
+                "       AND B.SUBJECT_ID = S.SUBJECT_ID(+)\n" +
+                "       AND B.PUBLISHER_ID = P.PUBLISHER_ID(+)\n" +
+                "       AND B.RESEARCHER_ID = R.RESEARCHER_ID(+)\n" +
+                "       AND B.SHELF_ID = F.SHELF_ID(+)\n" +
+                "       AND ( :AUTHOR IS NULL OR B.AUTHOR_ID = :AUTHOR)\n" +
+                "       AND ( :SUBJECT IS NULL OR B.SUBJECT_ID = :SUBJECT)\n" +
+                "       AND ( :PUBLISHER IS NULL OR B.PUBLISHER_ID = :PUBLISHER)\n" +
+                "       AND ( :RESEARCHER IS NULL OR B.RESEARCHER_ID = :RESEARCHER)";
         SqlParameterSource namedParameters = new MapSqlParameterSource()
                 .addValue("AUTHOR", author)
                 .addValue("SUBJECT", subject)
                 .addValue("PUBLISHER", publisher)
                 .addValue("RESEARCHER", researcher);
-        final List<BookModel> result = namedParameterJdbcTemplate.query(sql, namedParameters, new BeanPropertyRowMapper<BookModel>(BookModel.class));
+        final List<SearchBookResponse> result = namedParameterJdbcTemplate.query(sql, namedParameters, new BeanPropertyRowMapper<SearchBookResponse>(SearchBookResponse.class));
         return result;
     }
 
