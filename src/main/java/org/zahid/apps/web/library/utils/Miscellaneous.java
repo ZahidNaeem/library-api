@@ -215,8 +215,8 @@ public class Miscellaneous {
                 "      ,P.PUBLISHER_NAME\n" +
                 "      ,R.RESEARCHER_ID\n" +
                 "      ,R.RESEARCHER_NAME\n" +
-                "      ,F.SHELF_ID\n" +
-                "      ,F.SHELF_NAME\n" +
+//                "      ,F.SHELF_ID\n" +
+//                "      ,F.SHELF_NAME\n" +
                 "      ,B.REMARKS\n" +
                 "  FROM BOOK B\n" +
                 "      ,AUTHOR A\n" +

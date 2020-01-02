@@ -25,7 +25,7 @@ public class SearchBookResponse {
     private String publisherName;
     private Long researcherId;
     private String researcherName;
-    private Long shelfId;
-    private String shelfName;
+//    private Long shelfId;
+//    private String shelfName;
     private String remarks;
 }
