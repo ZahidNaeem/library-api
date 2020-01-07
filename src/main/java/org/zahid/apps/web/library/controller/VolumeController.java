@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.zahid.apps.web.library.entity.VolumeEntity;
 import org.zahid.apps.web.library.mapper.VolumeMapper;
 import org.zahid.apps.web.library.model.VolumeModel;
+import org.zahid.apps.web.library.payload.response.SearchVolumeResponse;
 import org.zahid.apps.web.library.service.VolumeService;
 import org.zahid.apps.web.library.service.BookService;
 
@@ -43,8 +44,9 @@ public class VolumeController {
     }
 
     @GetMapping("book/{bookId}")
-    public ResponseEntity<List<VolumeModel>> findByBook(@PathVariable("bookId") final Long bookId) {
-        return ResponseEntity.ok(mapper.toVolumeModels(volumeService.findAllByBook(bookService.findById(bookId))));
+    public ResponseEntity<List<SearchVolumeResponse>> findByBook(@PathVariable("bookId") final Long bookId) {
+//        return ResponseEntity.ok(mapper.toVolumeModels(volumeService.findAllByBook(bookService.findById(bookId))));
+        return ResponseEntity.ok(volumeService.findAllByBookId(bookId));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

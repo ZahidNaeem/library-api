@@ -21,6 +21,7 @@ import org.zahid.apps.web.library.entity.Organization;
 import org.zahid.apps.web.library.mapper.BookMapper;
 import org.zahid.apps.web.library.model.BookModel;
 import org.zahid.apps.web.library.payload.response.SearchBookResponse;
+import org.zahid.apps.web.library.payload.response.SearchVolumeResponse;
 import org.zahid.apps.web.library.security.service.UserPrincipal;
 
 import java.util.*;
@@ -242,6 +243,26 @@ public class Miscellaneous {
         return result;
     }
 
+    public static List<SearchVolumeResponse> searchVolumeByBookId(final Long bookId) {
+        final String sql = "SELECT V.VOLUME_ID\n" +
+                "      ,V.BOOK_ID\n" +
+                "      ,V.VOLUME_NAME\n" +
+                "      ,B.BOOK_NAME\n" +
+                "      ,'Shelf:' || S.SHELF_NAME || ' - Rack:' || R.RACK_NAME RACK_NAME\n" +
+                "      ,V.REMARKS\n" +
+                "  FROM VOLUME V\n" +
+                "      ,BOOK B\n" +
+                "      ,RACK R\n" +
+                "      ,SHELF S\n" +
+                " WHERE     V.BOOK_ID = B.BOOK_ID(+)\n" +
+                "       AND V.RACK_ID = R.RACK_ID(+)\n" +
+                "       AND R.SHELF_ID = S.SHELF_ID\n" +
+                "       AND V.BOOK_ID = :BOOK_ID";
+        SqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("BOOK_ID", bookId);
+        final List<SearchVolumeResponse> result = namedParameterJdbcTemplate.query(sql, namedParameters, new BeanPropertyRowMapper<SearchVolumeResponse>(SearchVolumeResponse.class));
+        return result;
+    }
 
     public static String getSubjectHierarchy(final Long subjectId) {
         String result = null;

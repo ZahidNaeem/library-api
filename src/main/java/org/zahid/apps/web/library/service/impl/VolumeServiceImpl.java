@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 import org.zahid.apps.web.library.entity.VolumeEntity;
 import org.zahid.apps.web.library.entity.BookEntity;
 import org.zahid.apps.web.library.exception.VolumeNotFoundException;
+import org.zahid.apps.web.library.payload.response.SearchVolumeResponse;
 import org.zahid.apps.web.library.repo.VolumeRepo;
 import org.zahid.apps.web.library.service.VolumeService;
+import org.zahid.apps.web.library.utils.Miscellaneous;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +28,12 @@ public class VolumeServiceImpl implements VolumeService {
     @Override
     public List<VolumeEntity> findAllByBook(final BookEntity book) {
         return volumeRepo.findAllByBookOrderByVolumeIdAsc(book);
+    }
+
+    @Override
+    public List<SearchVolumeResponse> findAllByBookId(Long id) {
+//        return volumeRepo.findAllByBookId(id);
+        return Miscellaneous.searchVolumeByBookId(id);
     }
 
     @Override
