@@ -43,6 +43,12 @@ public class VolumeController {
         return ResponseEntity.ok(mapper.toVolumeModel(volumeService.findById(id)));
     }
 
+    @GetMapping("resp/all")
+    public ResponseEntity<List<SearchVolumeResponse>> findAllSearchResponses() {
+//        return ResponseEntity.ok(mapper.toVolumeModels(volumeService.findAllByBook(bookService.findById(bookId))));
+        return ResponseEntity.ok(volumeService.findAllSearchResponses());
+    }
+
     @GetMapping("book/{bookId}")
     public ResponseEntity<List<SearchVolumeResponse>> findByBook(@PathVariable("bookId") final Long bookId) {
 //        return ResponseEntity.ok(mapper.toVolumeModels(volumeService.findAllByBook(bookService.findById(bookId))));

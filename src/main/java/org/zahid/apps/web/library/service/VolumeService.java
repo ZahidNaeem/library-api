@@ -13,6 +13,8 @@ public interface VolumeService {
 
     List<VolumeEntity> findAllByBook(final BookEntity book);
 
+    List<SearchVolumeResponse> findAllSearchResponses();
+
     List<SearchVolumeResponse> findAllByBookId(final Long id);
 
     VolumeEntity findById(final Long id);

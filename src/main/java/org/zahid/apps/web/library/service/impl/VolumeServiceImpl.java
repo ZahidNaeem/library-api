@@ -31,6 +31,11 @@ public class VolumeServiceImpl implements VolumeService {
     }
 
     @Override
+    public List<SearchVolumeResponse> findAllSearchResponses() {
+        return Miscellaneous.searchAllVolumes();
+    }
+
+    @Override
     public List<SearchVolumeResponse> findAllByBookId(Long id) {
 //        return volumeRepo.findAllByBookId(id);
         return Miscellaneous.searchVolumeByBookId(id);
