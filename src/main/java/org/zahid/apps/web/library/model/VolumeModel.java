@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.zahid.apps.web.library.entity.Auditable;
 
+import java.util.List;
+
 @Builder
 @Data
 @NoArgsConstructor
@@ -17,4 +19,5 @@ public class VolumeModel extends Auditable<Long> {
     private String remarks;
     private Long book;
     private Long rack;
+    private List<BookTransLineModel> bookTransLines;
 }
