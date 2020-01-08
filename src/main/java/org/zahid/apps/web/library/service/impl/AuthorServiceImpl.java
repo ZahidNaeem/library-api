@@ -3,12 +3,10 @@ package org.zahid.apps.web.library.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zahid.apps.web.library.entity.AuthorEntity;
-import org.zahid.apps.web.library.exception.AuthorNotFoundException;
 import org.zahid.apps.web.library.repo.AuthorRepo;
 import org.zahid.apps.web.library.service.AuthorService;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service

@@ -4,12 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zahid.apps.web.library.entity.RackEntity;
 import org.zahid.apps.web.library.entity.ShelfEntity;
-import org.zahid.apps.web.library.exception.RackNotFoundException;
 import org.zahid.apps.web.library.repo.RackRepo;
 import org.zahid.apps.web.library.service.RackService;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service

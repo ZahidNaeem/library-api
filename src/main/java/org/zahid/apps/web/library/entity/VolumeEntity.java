@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Builder
 @Data
@@ -39,4 +40,7 @@ public class VolumeEntity extends Auditable<Long> {
     @ManyToOne
     @JoinColumn(name = "rack_id")
     private RackEntity rack;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "volume")
+    private List<BookTransLineEntity> bookTransLines;
 }

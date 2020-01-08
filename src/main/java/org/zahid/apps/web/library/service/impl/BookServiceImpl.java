@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zahid.apps.web.library.entity.BookEntity;
-import org.zahid.apps.web.library.model.BookModel;
 import org.zahid.apps.web.library.payload.response.SearchBookResponse;
 import org.zahid.apps.web.library.repo.BookRepo;
 import org.zahid.apps.web.library.service.BookService;

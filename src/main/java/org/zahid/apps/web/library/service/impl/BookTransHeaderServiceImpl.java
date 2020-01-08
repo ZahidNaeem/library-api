@@ -1,0 +1,79 @@
+package org.zahid.apps.web.library.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.zahid.apps.web.library.entity.BookTransHeaderEntity;
+import org.zahid.apps.web.library.entity.ReaderEntity;
+import org.zahid.apps.web.library.repo.BookTransHeaderRepo;
+import org.zahid.apps.web.library.service.BookTransHeaderService;
+
+import java.util.List;
+import java.util.Set;
+
+@Service
+public class BookTransHeaderServiceImpl implements BookTransHeaderService {
+
+    @Autowired
+    private BookTransHeaderRepo bookTransHeaderRepo;
+
+    @Override
+    public List<BookTransHeaderEntity> findAll() {
+        return bookTransHeaderRepo.findAllByOrderByBookTransHeaderIdAsc();
+    }
+
+    @Override
+    public List<BookTransHeaderEntity> findAllByReader(final ReaderEntity reader) {
+        return bookTransHeaderRepo.findAllByReaderOrderByBookTransHeaderIdAsc(reader);
+    }
+
+    @Override
+    public BookTransHeaderEntity findById(Long id) {
+        return bookTransHeaderRepo.findById(id)
+                .orElse(new BookTransHeaderEntity());
+    }
+
+    @Override
+    public boolean exists(Long id) {
+        return bookTransHeaderRepo.existsById(id);
+    }
+
+    @Override
+    public BookTransHeaderEntity save(BookTransHeaderEntity bookTransHeader) {
+        return bookTransHeaderRepo.save(bookTransHeader);
+    }
+
+    @Override
+    public List<BookTransHeaderEntity> save(Set<BookTransHeaderEntity> shelves) {
+        return bookTransHeaderRepo.saveAll(shelves);
+    }
+
+    @Override
+    public void delete(BookTransHeaderEntity bookTransHeader) {
+        bookTransHeaderRepo.delete(bookTransHeader);
+    }
+
+    @Override
+    public void delete(Set<BookTransHeaderEntity> shelves) {
+        bookTransHeaderRepo.deleteAll(shelves);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        bookTransHeaderRepo.deleteById(id);
+    }
+
+    @Override
+    public void deleteAll() {
+        bookTransHeaderRepo.deleteAll();
+    }
+
+    @Override
+    public void deleteAllInBatch() {
+        bookTransHeaderRepo.deleteAllInBatch();
+    }
+
+    @Override
+    public void deleteInBatch(Set<BookTransHeaderEntity> shelves) {
+        bookTransHeaderRepo.deleteInBatch(shelves);
+    }
+}

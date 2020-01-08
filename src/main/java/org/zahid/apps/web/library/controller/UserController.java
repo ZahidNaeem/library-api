@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import org.zahid.apps.web.library.entity.User;
 import org.zahid.apps.web.library.exception.ResourceNotFoundException;
 import org.zahid.apps.web.library.model.UserSummary;
+import org.zahid.apps.web.library.payload.request.ChangePasswordRequest;
 import org.zahid.apps.web.library.repo.RoleRepo;
 import org.zahid.apps.web.library.repo.UserRepo;
 import org.zahid.apps.web.library.security.CurrentUser;
-import org.zahid.apps.web.library.payload.request.ChangePasswordRequest;
 import org.zahid.apps.web.library.security.service.UserPrincipal;
 
 import java.util.Set;

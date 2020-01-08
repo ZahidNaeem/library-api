@@ -8,7 +8,6 @@ import org.zahid.apps.web.library.entity.BookEntity;
 import org.zahid.apps.web.library.entity.VolumeEntity;
 import org.zahid.apps.web.library.model.BookModel;
 import org.zahid.apps.web.library.model.VolumeModel;
-import org.zahid.apps.web.library.payload.response.SearchBookResponse;
 import org.zahid.apps.web.library.service.*;
 
 import java.util.ArrayList;

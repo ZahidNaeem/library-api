@@ -1,7 +1,6 @@
 package org.zahid.apps.web.library.service;
 
 import org.zahid.apps.web.library.entity.BookEntity;
-import org.zahid.apps.web.library.model.BookModel;
 import org.zahid.apps.web.library.payload.response.SearchBookResponse;
 
 import java.util.List;

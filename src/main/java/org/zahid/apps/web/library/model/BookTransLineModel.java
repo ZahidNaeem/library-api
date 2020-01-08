@@ -10,12 +10,9 @@ import org.zahid.apps.web.library.entity.Auditable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RackDetail extends Auditable<Long> {
+public class BookTransLineModel extends Auditable<Long> {
 
-    private Long rackId;
-    private String rackName;
-    private String remarks;
-//    private List<VolumeModel> volumes;
-    private Long shelfId;
-    private String shelfName;
+    private Long lineId;
+    private Long volume;
+    private Long bookTransHeader;
 }

@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.zahid.apps.web.library.entity.Auditable;
 
-import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 

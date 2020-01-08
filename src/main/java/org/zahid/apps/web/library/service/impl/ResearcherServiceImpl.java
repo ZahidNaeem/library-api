@@ -3,12 +3,10 @@ package org.zahid.apps.web.library.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zahid.apps.web.library.entity.ResearcherEntity;
-import org.zahid.apps.web.library.exception.ResearcherNotFoundException;
 import org.zahid.apps.web.library.repo.ResearcherRepo;
 import org.zahid.apps.web.library.service.ResearcherService;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
