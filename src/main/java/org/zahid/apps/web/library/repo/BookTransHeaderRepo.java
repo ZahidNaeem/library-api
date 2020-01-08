@@ -7,7 +7,7 @@ import org.zahid.apps.web.library.entity.ReaderEntity;
 import java.util.List;
 
 public interface BookTransHeaderRepo extends JpaRepository<BookTransHeaderEntity, Long> {
-    List<BookTransHeaderEntity> findAllByOrderByBookTransHeaderIdAsc();
+    List<BookTransHeaderEntity> findAllByOrderByHeaderIdAsc();
 
-    List<BookTransHeaderEntity> findAllByReaderOrderByBookTransHeaderIdAsc(final ReaderEntity reader);
+    List<BookTransHeaderEntity> findAllByReaderOrderByHeaderIdAsc(final ReaderEntity reader);
 }

@@ -18,12 +18,12 @@ public class BookTransHeaderServiceImpl implements BookTransHeaderService {
 
     @Override
     public List<BookTransHeaderEntity> findAll() {
-        return bookTransHeaderRepo.findAllByOrderByBookTransHeaderIdAsc();
+        return bookTransHeaderRepo.findAllByOrderByHeaderIdAsc();
     }
 
     @Override
     public List<BookTransHeaderEntity> findAllByReader(final ReaderEntity reader) {
-        return bookTransHeaderRepo.findAllByReaderOrderByBookTransHeaderIdAsc(reader);
+        return bookTransHeaderRepo.findAllByReaderOrderByHeaderIdAsc(reader);
     }
 
     @Override
