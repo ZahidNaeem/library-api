@@ -26,7 +26,8 @@ public class CommonConfig {
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
-        final String origin = "http://" + configProperties.getApp().get("server") + ":" + configProperties.getApp().get("port");
+//        final String origin = "http://" + configProperties.getApp().get("server") + ":" + configProperties.getApp().get("port");
+        final String origin = "*";
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
