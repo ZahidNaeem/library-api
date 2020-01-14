@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Builder
 @Data
@@ -22,10 +23,12 @@ public class BookTransLineEntity extends Auditable<Long> {
     @Column(name = "line_id")
     private Long lineId;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "volume_id")
     private VolumeEntity volume;
 
+//    @NotNull
     @ManyToOne
     @JoinColumn(name = "header_id")
     private BookTransHeaderEntity bookTransHeader;

@@ -29,9 +29,11 @@ public class BookTransHeaderEntity extends Auditable<Long> {
     @Column(name = "trans_type")
     private String transType;
 
+    @NotNull
     @Column(name = "trans_date")
     private Date transDate;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "reader_id")
     private ReaderEntity reader;
