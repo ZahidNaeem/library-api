@@ -27,6 +27,10 @@ public class RackEntity extends Auditable<Long> {
     private Long rackId;
 
     @NotNull
+    @Column(name = "row_key")
+    private String rowKey;
+
+    @NotNull
     @Column(name = "rack_name")
     private String rackName;
 

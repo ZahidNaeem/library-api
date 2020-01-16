@@ -15,6 +15,7 @@ import java.util.List;
 public class VolumeModel extends Auditable<Long> {
 
     private Long volumeId;
+    private String rowKey;
     private String volumeName;
     private String remarks;
     private Long book;

@@ -13,6 +13,7 @@ import org.zahid.apps.web.library.entity.Auditable;
 public class BookTransLineModel extends Auditable<Long> {
 
     private Long lineId;
+    private String rowKey;
     private Long volume;
     private Long bookTransHeader;
 }

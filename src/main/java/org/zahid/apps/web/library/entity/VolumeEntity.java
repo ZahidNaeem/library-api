@@ -27,6 +27,10 @@ public class VolumeEntity extends Auditable<Long> {
     private Long volumeId;
 
     @NotNull
+    @Column(name = "row_key")
+    private String rowKey;
+
+    @NotNull
     @Column(name = "volume_name")
     private String volumeName;
 

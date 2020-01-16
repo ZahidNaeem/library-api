@@ -24,11 +24,15 @@ public class BookTransLineEntity extends Auditable<Long> {
     private Long lineId;
 
     @NotNull
+    @Column(name = "row_key")
+    private String rowKey;
+
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "volume_id")
     private VolumeEntity volume;
 
-//    @NotNull
+    //    @NotNull
     @ManyToOne
     @JoinColumn(name = "header_id")
     private BookTransHeaderEntity bookTransHeader;
