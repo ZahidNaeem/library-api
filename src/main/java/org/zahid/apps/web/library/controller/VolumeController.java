@@ -3,12 +3,14 @@ package org.zahid.apps.web.library.controller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.zahid.apps.web.library.entity.VolumeEntity;
 import org.zahid.apps.web.library.mapper.VolumeMapper;
 import org.zahid.apps.web.library.model.VolumeModel;
+import org.zahid.apps.web.library.payload.response.LibraryResponse;
 import org.zahid.apps.web.library.payload.response.SearchVolumeResponse;
 import org.zahid.apps.web.library.service.BookService;
 import org.zahid.apps.web.library.service.VolumeService;
@@ -34,70 +36,120 @@ public class VolumeController {
     private BookService bookService;
 
     @GetMapping
-    public ResponseEntity<List<VolumeModel>> findAll() {
-        return ResponseEntity.ok(mapper.toVolumeModels(volumeService.findAll()));
+    public LibraryResponse<List<VolumeModel>> findAll() {
+        return LibraryResponse
+                .<List<VolumeModel>>builder()
+                .code(HttpStatus.OK.value())
+                .message("")
+                .entity(ResponseEntity.ok(mapper.toVolumeModels(volumeService.findAll())))
+                .build();
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<VolumeModel> findById(@PathVariable("id") final Long id) {
-        return ResponseEntity.ok(mapper.toVolumeModel(volumeService.findById(id)));
+    public LibraryResponse<VolumeModel> findById(@PathVariable("id") final Long id) {
+        return LibraryResponse
+                .<VolumeModel>builder()
+                .code(HttpStatus.OK.value())
+                .message("")
+                .entity(ResponseEntity.ok(mapper.toVolumeModel(volumeService.findById(id))))
+                .build();
     }
 
     @GetMapping("resp/all")
-    public ResponseEntity<List<SearchVolumeResponse>> findAllSearchResponses() {
-//        return ResponseEntity.ok(mapper.toVolumeModels(volumeService.findAllByBook(bookService.findById(bookId))));
-        return ResponseEntity.ok(volumeService.findAllSearchResponses());
+    public LibraryResponse<List<SearchVolumeResponse>> findAllSearchResponses() {
+//        return LibraryResponse(mapper.toVolumeModels(volumeService.findAllByBook(bookService.findById(bookId))));
+        return LibraryResponse
+                .<List<SearchVolumeResponse>>builder()
+                .code(HttpStatus.OK.value())
+                .message("")
+                .entity(ResponseEntity.ok(volumeService.findAllSearchResponses()))
+                .build();
     }
 
     @GetMapping("book/{bookId}")
-    public ResponseEntity<List<SearchVolumeResponse>> findByBook(@PathVariable("bookId") final Long bookId) {
-//        return ResponseEntity.ok(mapper.toVolumeModels(volumeService.findAllByBook(bookService.findById(bookId))));
-        return ResponseEntity.ok(volumeService.findAllByBookId(bookId));
+    public LibraryResponse<List<SearchVolumeResponse>> findByBook(@PathVariable("bookId") final Long bookId) {
+//        return LibraryResponse(mapper.toVolumeModels(volumeService.findAllByBook(bookService.findById(bookId))));
+        return LibraryResponse
+                .<List<SearchVolumeResponse>>builder()
+                .code(HttpStatus.OK.value())
+                .message("")
+                .entity(ResponseEntity.ok(volumeService.findAllSearchResponses()))
+                .build();
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<VolumeModel> save(@RequestBody final VolumeModel model) {
+    public LibraryResponse<VolumeModel> save(@RequestBody final VolumeModel model) {
         final VolumeEntity savedVolume = volumeService.save(mapper.toVolumeEntity(model));
-        return ResponseEntity.ok(mapper.toVolumeModel(savedVolume));
+        return LibraryResponse
+                .<VolumeModel>builder()
+                .code(HttpStatus.OK.value())
+                .message("")
+                .entity(ResponseEntity.ok(mapper.toVolumeModel(savedVolume)))
+                .build();
     }
 
     @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<VolumeEntity>> saveAll(@RequestBody final Set<VolumeModel> volumeModel) {
+    public LibraryResponse<List<VolumeEntity>> saveAll(@RequestBody final Set<VolumeModel> volumeModel) {
         final Set<VolumeEntity> volumes = new HashSet<>();
         volumeModel.forEach(model -> {
             final VolumeEntity volume = mapper.toVolumeEntity(model);
             volumes.add(volume);
         });
-        return ResponseEntity.ok(volumeService.save(volumes));
+        return LibraryResponse
+                .<List<VolumeEntity>>builder()
+                .code(HttpStatus.OK.value())
+                .message("")
+                .entity(ResponseEntity.ok(volumeService.save(volumes)))
+                .build();
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Boolean> deleteById(@PathVariable("id") final Long id) {
+    public LibraryResponse<Boolean> deleteById(@PathVariable("id") final Long id) {
         if (!volumeService.exists(id)) {
             throw new IllegalArgumentException("Item volume with id: " + id + " does not exist");
         } else {
             try {
                 volumeService.deleteById(id);
-                return ResponseEntity.ok(true);
+                return LibraryResponse
+                        .<Boolean>builder()
+                        .code(HttpStatus.OK.value())
+                        .message("")
+                        .entity(ResponseEntity.ok(true))
+                        .build();
             } catch (Exception e) {
                 e.printStackTrace();
-                return ResponseEntity.ok(false);
+                return LibraryResponse
+                        .<Boolean>builder()
+                        .code(HttpStatus.OK.value())
+                        .message("")
+                        .entity(ResponseEntity.ok(false))
+                        .build();
             }
         }
     }
 
     @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> delete(@RequestBody final VolumeModel model) {
+    public LibraryResponse<Boolean> delete(@RequestBody final VolumeModel model) {
         if (null == model || null == model.getVolumeId() || !volumeService
                 .exists(model.getVolumeId())) {
             throw new IllegalArgumentException("Item volume does not exist");
         } else {
             try {
                 volumeService.delete(mapper.toVolumeEntity(model));
-                return ResponseEntity.ok(true);
+                return LibraryResponse
+                        .<Boolean>builder()
+                        .code(HttpStatus.OK.value())
+                        .message("")
+                        .entity(ResponseEntity.ok(true))
+                        .build();
             } catch (Exception e) {
                 e.printStackTrace();
-                return ResponseEntity.ok(false);
+                return LibraryResponse
+                        .<Boolean>builder()
+                        .code(HttpStatus.OK.value())
+                        .message("")
+                        .entity(ResponseEntity.ok(false))
+                        .build();
             }
         }
     }
