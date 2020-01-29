@@ -13,6 +13,7 @@ import org.zahid.apps.web.library.entity.NavigationDtl;
 import org.zahid.apps.web.library.entity.BookTransHeaderEntity;
 import org.zahid.apps.web.library.mapper.BookTransHeaderMapper;
 import org.zahid.apps.web.library.model.BookTransHeaderModel;
+import org.zahid.apps.web.library.payload.response.ApiResponse;
 import org.zahid.apps.web.library.service.BookTransHeaderService;
 
 import java.util.HashSet;
@@ -40,72 +41,128 @@ public class BookTransHeaderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BookTransHeaderModel>> findAll() {
-        return ResponseEntity.ok(mapper.toBookTransHeaderModels(bookTransHeaderService.findAll()));
+    public ResponseEntity<ApiResponse<List<BookTransHeaderModel>>> findAll() {
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<BookTransHeaderModel>>builder()
+                        .success(true)
+                        .message("findAll response")
+                        .entity(mapper.toBookTransHeaderModels(bookTransHeaderService.findAll()))
+                        .build()
+        );
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<BookTransHeaderDTO> findById(@PathVariable("id") final Long id) {
+    public ResponseEntity<ApiResponse<BookTransHeaderDTO>> findById(@PathVariable("id") final Long id) {
         final BookTransHeaderModel model = mapper.toBookTransHeaderModel(bookTransHeaderService.findById(id));
-        indx[0] = findAll().getBody().indexOf(model);
+        indx[0] = findAll().getBody().getEntity().indexOf(model);
         LOG.info("Index in findById(): {}", indx[0]);
-        return ResponseEntity.ok(getBookTransHeaderDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<BookTransHeaderDTO>builder()
+                        .success(true)
+                        .message("findById response")
+                        .entity(getBookTransHeaderDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("first")
-    public ResponseEntity<BookTransHeaderDTO> first() {
+    public ResponseEntity<ApiResponse<BookTransHeaderDTO>> first() {
         indx[0] = 0;
         LOG.info("Index in first(): {}", indx[0]);
-        return ResponseEntity.ok(getBookTransHeaderDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<BookTransHeaderDTO>builder()
+                        .success(true)
+                        .message("first response")
+                        .entity(getBookTransHeaderDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("previous")
-    public ResponseEntity<BookTransHeaderDTO> previous() {
+    public ResponseEntity<ApiResponse<BookTransHeaderDTO>> previous() {
         indx[0]--;
         LOG.info("Index in previous(): {}", indx[0]);
-        return ResponseEntity.ok(getBookTransHeaderDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<BookTransHeaderDTO>builder()
+                        .success(true)
+                        .message("previous response")
+                        .entity(getBookTransHeaderDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("next")
-    public ResponseEntity<BookTransHeaderDTO> next() {
+    public ResponseEntity<ApiResponse<BookTransHeaderDTO>> next() {
         indx[0]++;
         LOG.info("Index in next(): {}", indx[0]);
-        return ResponseEntity.ok(getBookTransHeaderDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<BookTransHeaderDTO>builder()
+                        .success(true)
+                        .message("next response")
+                        .entity(getBookTransHeaderDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("last")
-    public ResponseEntity<BookTransHeaderDTO> last() {
-        indx[0] = findAll().getBody().size() - 1;
+    public ResponseEntity<ApiResponse<BookTransHeaderDTO>> last() {
+        indx[0] = findAll().getBody().getEntity().size() - 1;
         LOG.info("Index in last(): {}", indx[0]);
-        return ResponseEntity.ok(getBookTransHeaderDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<BookTransHeaderDTO>builder()
+                        .success(true)
+                        .message("last response")
+                        .entity(getBookTransHeaderDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BookTransHeaderDTO> save(@RequestBody final BookTransHeaderModel model) {
+    public ResponseEntity<ApiResponse<BookTransHeaderDTO>> save(@RequestBody final BookTransHeaderModel model) {
         final BookTransHeaderEntity bookTransHeader = mapper.toBookTransHeaderEntity(model);
 //    Below line added, because when converted from model to BookTransHeaderEntity, there is no bookTransHeader set in book list.
         setBookTransHeaderForBookTransLines(bookTransHeader);
         setBookTransHeaderForBookTransLines(bookTransHeader);
         final BookTransHeaderEntity bookTransHeaderSaved = bookTransHeaderService.save(bookTransHeader);
         final BookTransHeaderModel savedModel = mapper.toBookTransHeaderModel(bookTransHeaderSaved);
-        indx[0] = this.findAll().getBody().indexOf(savedModel);
+        indx[0] = this.findAll().getBody().getEntity().indexOf(savedModel);
         LOG.info("Index in saveBookTransHeader(): {}", indx[0]);
-        return ResponseEntity.ok(getBookTransHeaderDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<BookTransHeaderDTO>builder()
+                        .success(true)
+                        .message("findById response")
+                        .entity(getBookTransHeaderDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<BookTransHeaderEntity>> saveAll(@RequestBody final List<BookTransHeaderModel> models) {
-        final List<BookTransHeaderEntity> shelves = mapper.toBookTransHeaderEntities(models);
+    public ResponseEntity<ApiResponse<List<BookTransHeaderEntity>>> saveAll(@RequestBody final List<BookTransHeaderModel> models) {
+        final List<BookTransHeaderEntity> bookTransHeaders = mapper.toBookTransHeaderEntities(models);
         //    Below line added, because when converted from model to BookTransHeaderEntity, there is no bookTransHeader set in book list.
-        shelves.forEach(bookTransHeader -> {
+        bookTransHeaders.forEach(bookTransHeader -> {
             setBookTransHeaderForBookTransLines(bookTransHeader);
             setBookTransHeaderForBookTransLines(bookTransHeader);
         });
-        return ResponseEntity.ok(bookTransHeaderService.save(new HashSet<>(shelves)));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<BookTransHeaderEntity>>builder()
+                        .success(true)
+                        .message("All bookTransHeaders saved seccessfully")
+                        .entity(bookTransHeaderService.save(new HashSet<>(bookTransHeaders)))
+                        .build()
+        );
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<BookTransHeaderDTO> deleteById(@PathVariable("id") final Long id) {
+    public ResponseEntity<ApiResponse<BookTransHeaderDTO>> deleteById(@PathVariable("id") final Long id) {
         if (!bookTransHeaderService.exists(id)) {
             throw new IllegalArgumentException("BookTransHeaderEntity with id: " + id + " does not exist");
         } else {
@@ -113,16 +170,28 @@ public class BookTransHeaderController {
                 bookTransHeaderService.deleteById(id);
                 indx[0]--;
                 LOG.info("Index in deleteBookTransHeaderById(): {}", indx[0]);
-                return ResponseEntity.ok(getBookTransHeaderDTO(findAll().getBody(), indx[0]));
+                return ResponseEntity.ok(
+                ApiResponse
+                        .<BookTransHeaderDTO>builder()
+                        .success(true)
+                        .message("Book Transaction deleted successfully")
+                        .entity(getBookTransHeaderDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
             } catch (Exception e) {
                 e.printStackTrace();
-                return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity(ApiResponse
+                        .<BookTransHeaderDTO>builder()
+                        .success(false)
+                        .message(e.getMessage())
+                        .entity(null)
+                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
     }
 
     @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BookTransHeaderDTO> delete(@RequestBody final BookTransHeaderModel model) {
+    public ResponseEntity<ApiResponse<BookTransHeaderDTO>> delete(@RequestBody final BookTransHeaderModel model) {
         LOG.info("Index: {}", indx);
         if (null == model || null == model.getHeaderId() || !bookTransHeaderService.exists(model.getHeaderId())) {
             throw new IllegalArgumentException("BookTransHeaderEntity does not exist");
@@ -131,10 +200,22 @@ public class BookTransHeaderController {
                 bookTransHeaderService.delete(mapper.toBookTransHeaderEntity(model));
                 indx[0]--;
                 LOG.info("Index in deleteBookTransHeader(): {}", indx[0]);
-                return ResponseEntity.ok(getBookTransHeaderDTO(findAll().getBody(), indx[0]));
+                return ResponseEntity.ok(
+                ApiResponse
+                        .<BookTransHeaderDTO>builder()
+                        .success(true)
+                        .message("Book Transaction deleted successfully")
+                        .entity(getBookTransHeaderDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
             } catch (Exception e) {
                 e.printStackTrace();
-                return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity(ApiResponse
+                        .<BookTransHeaderDTO>builder()
+                        .success(false)
+                        .message(e.getMessage())
+                        .entity(null)
+                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
     }

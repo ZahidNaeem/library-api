@@ -13,6 +13,7 @@ import org.zahid.apps.web.library.entity.NavigationDtl;
 import org.zahid.apps.web.library.entity.ShelfEntity;
 import org.zahid.apps.web.library.mapper.ShelfMapper;
 import org.zahid.apps.web.library.model.ShelfModel;
+import org.zahid.apps.web.library.payload.response.ApiResponse;
 import org.zahid.apps.web.library.service.ShelfService;
 
 import java.util.HashSet;
@@ -48,77 +49,140 @@ public class ShelfController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ShelfModel>> findAll() {
-        return ResponseEntity.ok(mapper.toShelfModels(shelfService.findAll()));
+    public ResponseEntity<ApiResponse<List<ShelfModel>>> findAll() {
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<ShelfModel>>builder()
+                        .success(true)
+                        .message("findAll response")
+                        .entity(mapper.toShelfModels(shelfService.findAll()))
+                        .build()
+        );
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ShelfDTO> findById(@PathVariable("id") final Long id) {
+    public ResponseEntity<ApiResponse<ShelfDTO>> findById(@PathVariable("id") final Long id) {
         final ShelfModel model = mapper.toShelfModel(shelfService.findById(id));
-        indx[0] = findAll().getBody().indexOf(model);
+        indx[0] = findAll().getBody().getEntity().indexOf(model);
         LOG.info("Index in findById(): {}", indx[0]);
-        return ResponseEntity.ok(getShelfDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<ShelfDTO>builder()
+                        .success(true)
+                        .message("findById response")
+                        .entity(getShelfDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("{id}/name")
-    public ResponseEntity<String> getShelfName(@PathVariable("id") final Long id) {
-        return ResponseEntity.ok(shelfService.findById(id).getShelfName());
+    public ResponseEntity<ApiResponse<String>> getShelfName(@PathVariable("id") final Long id) {
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<String>builder()
+                        .success(true)
+                        .message("getShelfName response")
+                        .entity(shelfService.findById(id).getShelfName())
+                        .build()
+        );
     }
 
     @GetMapping("first")
-    public ResponseEntity<ShelfDTO> first() {
+    public ResponseEntity<ApiResponse<ShelfDTO>> first() {
         indx[0] = 0;
         LOG.info("Index in first(): {}", indx[0]);
-        return ResponseEntity.ok(getShelfDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<ShelfDTO>builder()
+                        .success(true)
+                        .message("first response")
+                        .entity(getShelfDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("previous")
-    public ResponseEntity<ShelfDTO> previous() {
+    public ResponseEntity<ApiResponse<ShelfDTO>> previous() {
         indx[0]--;
         LOG.info("Index in previous(): {}", indx[0]);
-        return ResponseEntity.ok(getShelfDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<ShelfDTO>builder()
+                        .success(true)
+                        .message("previous response")
+                        .entity(getShelfDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("next")
-    public ResponseEntity<ShelfDTO> next() {
+    public ResponseEntity<ApiResponse<ShelfDTO>> next() {
         indx[0]++;
         LOG.info("Index in next(): {}", indx[0]);
-        return ResponseEntity.ok(getShelfDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<ShelfDTO>builder()
+                        .success(true)
+                        .message("next response")
+                        .entity(getShelfDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("last")
-    public ResponseEntity<ShelfDTO> last() {
-        indx[0] = findAll().getBody().size() - 1;
+    public ResponseEntity<ApiResponse<ShelfDTO>> last() {
+        indx[0] = findAll().getBody().getEntity().size() - 1;
         LOG.info("Index in last(): {}", indx[0]);
-        return ResponseEntity.ok(getShelfDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<ShelfDTO>builder()
+                        .success(true)
+                        .message("last response")
+                        .entity(getShelfDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ShelfDTO> save(@RequestBody final ShelfModel model) {
+    public ResponseEntity<ApiResponse<ShelfDTO>> save(@RequestBody final ShelfModel model) {
         final ShelfEntity shelf = mapper.toShelfEntity(model);
 //    Below line added, because when converted from model to ShelfEntity, there is no shelf set in book list.
         setShelfForBooks(shelf);
         setShelfForRacks(shelf);
         final ShelfEntity shelfSaved = shelfService.save(shelf);
         final ShelfModel savedModel = mapper.toShelfModel(shelfSaved);
-        indx[0] = this.findAll().getBody().indexOf(savedModel);
+        indx[0] = this.findAll().getBody().getEntity().indexOf(savedModel);
         LOG.info("Index in saveShelf(): {}", indx[0]);
-        return ResponseEntity.ok(getShelfDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<ShelfDTO>builder()
+                        .success(true)
+                        .message("Shelf saved successfully")
+                        .entity(getShelfDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ShelfEntity>> saveAll(@RequestBody final List<ShelfModel> models) {
+    public ResponseEntity<ApiResponse<List<ShelfEntity>>> saveAll(@RequestBody final List<ShelfModel> models) {
         final List<ShelfEntity> shelves = mapper.toShelfEntities(models);
         //    Below line added, because when converted from model to ShelfEntity, there is no shelf set in book list.
         shelves.forEach(shelf -> {
             setShelfForBooks(shelf);
             setShelfForRacks(shelf);
         });
-        return ResponseEntity.ok(shelfService.save(new HashSet<>(shelves)));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<ShelfEntity>>builder()
+                        .success(true)
+                        .message("All shelves saved seccessfully")
+                        .entity(shelfService.save(new HashSet<>(shelves)))
+                        .build()
+        );
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<ShelfDTO> deleteById(@PathVariable("id") final Long id) {
+    public ResponseEntity<ApiResponse<ShelfDTO>> deleteById(@PathVariable("id") final Long id) {
         if (!shelfService.exists(id)) {
             throw new IllegalArgumentException("ShelfEntity with id: " + id + " does not exist");
         } else {
@@ -126,16 +190,28 @@ public class ShelfController {
                 shelfService.deleteById(id);
                 indx[0]--;
                 LOG.info("Index in deleteShelfById(): {}", indx[0]);
-                return ResponseEntity.ok(getShelfDTO(findAll().getBody(), indx[0]));
+                return ResponseEntity.ok(
+                ApiResponse
+                        .<ShelfDTO>builder()
+                        .success(true)
+                        .message("Shelf deleted successfully")
+                        .entity(getShelfDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
             } catch (Exception e) {
                 e.printStackTrace();
-                return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity(ApiResponse
+                        .<ShelfDTO>builder()
+                        .success(false)
+                        .message(e.getMessage())
+                        .entity(null)
+                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
     }
 
     @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ShelfDTO> delete(@RequestBody final ShelfModel model) {
+    public ResponseEntity<ApiResponse<ShelfDTO>> delete(@RequestBody final ShelfModel model) {
         LOG.info("Index: {}", indx);
         if (null == model || null == model.getShelfId() || !shelfService.exists(model.getShelfId())) {
             throw new IllegalArgumentException("ShelfEntity does not exist");
@@ -144,10 +220,22 @@ public class ShelfController {
                 shelfService.delete(mapper.toShelfEntity(model));
                 indx[0]--;
                 LOG.info("Index in deleteShelf(): {}", indx[0]);
-                return ResponseEntity.ok(getShelfDTO(findAll().getBody(), indx[0]));
+                return ResponseEntity.ok(
+                ApiResponse
+                        .<ShelfDTO>builder()
+                        .success(true)
+                        .message("Shelf deleted successfully")
+                        .entity(getShelfDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
             } catch (Exception e) {
                 e.printStackTrace();
-                return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity(ApiResponse
+                        .<ShelfDTO>builder()
+                        .success(false)
+                        .message(e.getMessage())
+                        .entity(null)
+                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
     }

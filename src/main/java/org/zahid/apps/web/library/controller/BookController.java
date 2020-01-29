@@ -14,6 +14,7 @@ import org.zahid.apps.web.library.entity.NavigationDtl;
 import org.zahid.apps.web.library.mapper.BookMapper;
 import org.zahid.apps.web.library.model.BookModel;
 import org.zahid.apps.web.library.payload.request.SearchBookRequest;
+import org.zahid.apps.web.library.payload.response.ApiResponse;
 import org.zahid.apps.web.library.payload.response.SearchBookResponse;
 import org.zahid.apps.web.library.service.BookService;
 
@@ -42,73 +43,136 @@ public class BookController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BookModel>> findAll() {
-        return ResponseEntity.ok(mapper.toBookModels(bookService.findAll()));
+    public ResponseEntity<ApiResponse<List<BookModel>>> findAll() {
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<BookModel>>builder()
+                        .success(true)
+                        .message("findAll response")
+                        .entity(mapper.toBookModels(bookService.findAll()))
+                        .build()
+        );
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<BookDTO> findById(@PathVariable("id") final Long id) {
+    public ResponseEntity<ApiResponse<BookDTO>> findById(@PathVariable("id") final Long id) {
         final BookModel model = mapper.toBookModel(bookService.findById(id));
-        indx[0] = findAll().getBody().indexOf(model);
+        indx[0] = findAll().getBody().getEntity().indexOf(model);
         LOG.info("Index in findById(): {}", indx[0]);
-        return ResponseEntity.ok(getBookDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<BookDTO>builder()
+                        .success(true)
+                        .message("findById response")
+                        .entity(getBookDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("{id}/name")
-    public ResponseEntity<String> getBookName(@PathVariable("id") final Long id) {
-        return ResponseEntity.ok(bookService.findById(id).getBookName());
+    public ResponseEntity<ApiResponse<String>> getBookName(@PathVariable("id") final Long id) {
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<String>builder()
+                        .success(true)
+                        .message("getBookName response")
+                        .entity(bookService.findById(id).getBookName())
+                        .build()
+        );
     }
 
     @GetMapping("first")
-    public ResponseEntity<BookDTO> first() {
+    public ResponseEntity<ApiResponse<BookDTO>> first() {
         indx[0] = 0;
         LOG.info("Index in first(): {}", indx[0]);
-        return ResponseEntity.ok(getBookDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<BookDTO>builder()
+                        .success(true)
+                        .message("first record response")
+                        .entity(getBookDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("previous")
-    public ResponseEntity<BookDTO> previous() {
+    public ResponseEntity<ApiResponse<BookDTO>> previous() {
         indx[0]--;
         LOG.info("Index in previous(): {}", indx[0]);
-        return ResponseEntity.ok(getBookDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<BookDTO>builder()
+                        .success(true)
+                        .message("first record response")
+                        .entity(getBookDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("next")
-    public ResponseEntity<BookDTO> next() {
+    public ResponseEntity<ApiResponse<BookDTO>> next() {
         indx[0]++;
         LOG.info("Index in next(): {}", indx[0]);
-        return ResponseEntity.ok(getBookDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<BookDTO>builder()
+                        .success(true)
+                        .message("first record response")
+                        .entity(getBookDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("last")
-    public ResponseEntity<BookDTO> last() {
-        indx[0] = findAll().getBody().size() - 1;
+    public ResponseEntity<ApiResponse<BookDTO>> last() {
+        indx[0] = findAll().getBody().getEntity().size() - 1;
         LOG.info("Index in last(): {}", indx[0]);
-        return ResponseEntity.ok(getBookDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<BookDTO>builder()
+                        .success(true)
+                        .message("first record response")
+                        .entity(getBookDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BookDTO> save(@RequestBody final BookModel model) {
+    public ResponseEntity<ApiResponse<BookDTO>> save(@RequestBody final BookModel model) {
         final BookEntity book = mapper.toBookEntity(model);
         setBookForVolumes(book);
         final BookEntity bookSaved = bookService.save(book);
         final BookModel savedModel = mapper.toBookModel(bookSaved);
-        indx[0] = this.findAll().getBody().indexOf(savedModel);
+        indx[0] = this.findAll().getBody().getEntity().indexOf(savedModel);
         LOG.info("Index in saveBook(): {}", indx[0]);
-        return ResponseEntity.ok(getBookDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<BookDTO>builder()
+                        .success(true)
+                        .message("first record response")
+                        .entity(getBookDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<BookEntity>> saveAll(@RequestBody final List<BookModel> models) {
+    public ResponseEntity<ApiResponse<List<BookEntity>>> saveAll(@RequestBody final List<BookModel> models) {
         final List<BookEntity> books = mapper.toBookEntities(models);
         books.forEach(book -> {
             setBookForVolumes(book);
         });
-        return ResponseEntity.ok(bookService.save(new HashSet<>(books)));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<BookEntity>>builder()
+                        .success(true)
+                        .message("All books saved seccessfully")
+                        .entity(bookService.save(new HashSet<>(books)))
+                        .build()
+        );
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<BookDTO> deleteById(@PathVariable("id") final Long id) {
+    public ResponseEntity<ApiResponse<BookDTO>> deleteById(@PathVariable("id") final Long id) {
         if (!bookService.exists(id)) {
             throw new IllegalArgumentException("BookEntity with id: " + id + " does not exist");
         } else {
@@ -116,16 +180,28 @@ public class BookController {
                 bookService.deleteById(id);
                 indx[0]--;
                 LOG.info("Index in deleteBookById(): {}", indx[0]);
-                return ResponseEntity.ok(getBookDTO(findAll().getBody(), indx[0]));
+                return ResponseEntity.ok(
+                        ApiResponse
+                                .<BookDTO>builder()
+                                .success(true)
+                                .message("first record response")
+                                .entity(getBookDTO(findAll().getBody().getEntity(), indx[0]))
+                                .build()
+                );
             } catch (Exception e) {
                 e.printStackTrace();
-                return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity(ApiResponse
+                        .<BookDTO>builder()
+                        .success(false)
+                        .message(e.getMessage())
+                        .entity(null)
+                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
     }
 
     @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BookDTO> delete(@RequestBody final BookModel model) {
+    public ResponseEntity<ApiResponse<BookDTO>> delete(@RequestBody final BookModel model) {
         LOG.info("Index: {}", indx);
         if (null == model || null == model.getBookId() || !bookService.exists(model.getBookId())) {
             throw new IllegalArgumentException("BookEntity does not exist");
@@ -134,18 +210,37 @@ public class BookController {
                 bookService.delete(mapper.toBookEntity(model));
                 indx[0]--;
                 LOG.info("Index in deleteBook(): {}", indx[0]);
-                return ResponseEntity.ok(getBookDTO(findAll().getBody(), indx[0]));
+                return ResponseEntity.ok(
+                        ApiResponse
+                                .<BookDTO>builder()
+                                .success(true)
+                                .message("first record response")
+                                .entity(getBookDTO(findAll().getBody().getEntity(), indx[0]))
+                                .build()
+                );
             } catch (Exception e) {
                 e.printStackTrace();
-                return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity(ApiResponse
+                        .<BookDTO>builder()
+                        .success(false)
+                        .message(e.getMessage())
+                        .entity(null)
+                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
     }
 
     @PostMapping(path = "search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<SearchBookResponse>> searchBookByCriteria(@RequestBody final SearchBookRequest request){
+    public ResponseEntity<ApiResponse<List<SearchBookResponse>>> searchBookByCriteria(@RequestBody final SearchBookRequest request) {
         LOG.info("Request: {}", request);
-        return ResponseEntity.ok(bookService.searchByCriteria(request.getAuthor(), request.getSubject(), request.getPublisher(), request.getResearcher()));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<SearchBookResponse>>builder()
+                        .success(true)
+                        .message("Book deleted seccessfully")
+                        .entity(bookService.searchByCriteria(request.getAuthor(), request.getSubject(), request.getPublisher(), request.getResearcher()))
+                        .build()
+        );
     }
 
     private static final NavigationDtl resetNavigation() {

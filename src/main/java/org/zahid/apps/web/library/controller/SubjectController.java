@@ -14,6 +14,7 @@ import org.zahid.apps.web.library.entity.NavigationDtl;
 import org.zahid.apps.web.library.entity.SubjectEntity;
 import org.zahid.apps.web.library.mapper.SubjectMapper;
 import org.zahid.apps.web.library.model.SubjectModel;
+import org.zahid.apps.web.library.payload.response.ApiResponse;
 import org.zahid.apps.web.library.service.SubjectService;
 import org.zahid.apps.web.library.utils.Miscellaneous;
 
@@ -42,58 +43,114 @@ public class SubjectController {
     }
 
     @GetMapping
-    public ResponseEntity<List<SubjectModel>> findAll() {
-        return ResponseEntity.ok(mapper.toSubjectModels(subjectService.findAll()));
+    public ResponseEntity<ApiResponse<List<SubjectModel>>> findAll() {
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<SubjectModel>>builder()
+                        .success(true)
+                        .message("findAll response")
+                        .entity(mapper.toSubjectModels(subjectService.findAll()))
+                        .build()
+        );
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<SubjectDTO> findById(@PathVariable("id") final Long id) {
+    public ResponseEntity<ApiResponse<SubjectDTO>> findById(@PathVariable("id") final Long id) {
         final SubjectModel model = mapper.toSubjectModel(subjectService.findById(id));
-        indx[0] = findAll().getBody().indexOf(model);
+        indx[0] = findAll().getBody().getEntity().indexOf(model);
         LOG.info("Index in findById(): {}", indx[0]);
-        return ResponseEntity.ok(getSubjectDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<SubjectDTO>builder()
+                        .success(true)
+                        .message("findById response")
+                        .entity(getSubjectDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("{id}/name")
-    public ResponseEntity<String> getSubjectName(@PathVariable("id") final Long id) {
-        return ResponseEntity.ok(subjectService.findById(id).getSubjectName());
+    public ResponseEntity<ApiResponse<String>> getSubjectName(@PathVariable("id") final Long id) {
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<String>builder()
+                        .success(true)
+                        .message("getSubjectName response")
+                        .entity(subjectService.findById(id).getSubjectName())
+                        .build()
+        );
     }
 
     @GetMapping("hierarchy/{id}")
-    public ResponseEntity<String> getSubjectHierarchy(@PathVariable("id") final Long id) {
-        return ResponseEntity.ok(Miscellaneous.getSubjectHierarchy(id));
+    public ResponseEntity<ApiResponse<String>> getSubjectHierarchy(@PathVariable("id") final Long id) {
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<String>builder()
+                        .success(true)
+                        .message("getSubjectHierarchy response")
+                        .entity(Miscellaneous.getSubjectHierarchy(id))
+                        .build()
+        );
     }
 
     @GetMapping("first")
-    public ResponseEntity<SubjectDTO> first() {
+    public ResponseEntity<ApiResponse<SubjectDTO>> first() {
         indx[0] = 0;
         LOG.info("Index in first(): {}", indx[0]);
-        return ResponseEntity.ok(getSubjectDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<SubjectDTO>builder()
+                        .success(true)
+                        .message("first response")
+                        .entity(getSubjectDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("previous")
-    public ResponseEntity<SubjectDTO> previous() {
+    public ResponseEntity<ApiResponse<SubjectDTO>> previous() {
         indx[0]--;
         LOG.info("Index in previous(): {}", indx[0]);
-        return ResponseEntity.ok(getSubjectDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<SubjectDTO>builder()
+                        .success(true)
+                        .message("previous response")
+                        .entity(getSubjectDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("next")
-    public ResponseEntity<SubjectDTO> next() {
+    public ResponseEntity<ApiResponse<SubjectDTO>> next() {
         indx[0]++;
         LOG.info("Index in next(): {}", indx[0]);
-        return ResponseEntity.ok(getSubjectDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<SubjectDTO>builder()
+                        .success(true)
+                        .message("next response")
+                        .entity(getSubjectDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("last")
-    public ResponseEntity<SubjectDTO> last() {
-        indx[0] = findAll().getBody().size() - 1;
+    public ResponseEntity<ApiResponse<SubjectDTO>> last() {
+        indx[0] = findAll().getBody().getEntity().size() - 1;
         LOG.info("Index in last(): {}", indx[0]);
-        return ResponseEntity.ok(getSubjectDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<SubjectDTO>builder()
+                        .success(true)
+                        .message("last response")
+                        .entity(getSubjectDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SubjectDTO> save(@RequestBody final SubjectModel model) {
+    public ResponseEntity<ApiResponse<SubjectDTO>> save(@RequestBody final SubjectModel model) {
         final SubjectEntity subject = mapper.toSubjectEntity(model);
 //    Below line added, because when converted from model to SubjectEntity, there is no subject set in book list.
         setSubjectForBooks(subject);
@@ -101,31 +158,55 @@ public class SubjectController {
         try {
             subjectSaved[0] = subjectService.save(subject);
             final SubjectModel savedModel = mapper.toSubjectModel(subjectSaved[0]);
-            indx[0] = this.findAll().getBody().indexOf(savedModel);
+            indx[0] = this.findAll().getBody().getEntity().indexOf(savedModel);
             LOG.info("Index in saveSubject(): {}", indx[0]);
-            return ResponseEntity.ok(getSubjectDTO(findAll().getBody(), indx[0]));
+            return ResponseEntity.ok(
+                    ApiResponse
+                            .<SubjectDTO>builder()
+                            .success(true)
+                            .message("Subject saved successfully")
+                            .entity(getSubjectDTO(findAll().getBody().getEntity(), indx[0]))
+                            .build()
+            );
         } catch (DataIntegrityViolationException e) {
             LOG.error("Duplicate entry found");
 //      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ABC");
-            return new ResponseEntity("Duplicate entry found", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(ApiResponse
+                    .<SubjectDTO>builder()
+                    .success(false)
+                    .message("Duplicate entry found")
+                    .entity(null)
+                    .build(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(ApiResponse
+                        .<SubjectDTO>builder()
+                        .success(false)
+                        .message(e.getMessage())
+                        .entity(null)
+                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<SubjectEntity>> saveAll(@RequestBody final List<SubjectModel> models) {
+    public ResponseEntity<ApiResponse<List<SubjectEntity>>> saveAll(@RequestBody final List<SubjectModel> models) {
         final List<SubjectEntity> subjects = mapper.toSubjectEntities(models);
         //    Below line added, because when converted from model to SubjectEntity, there is no subject set in book list.
         subjects.forEach(subject -> {
             setSubjectForBooks(subject);
         });
-        return ResponseEntity.ok(subjectService.save(new HashSet<>(subjects)));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<SubjectEntity>>builder()
+                        .success(true)
+                        .message("All subjects saved seccessfully")
+                        .entity(subjectService.save(new HashSet<>(subjects)))
+                        .build()
+        );
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<SubjectDTO> deleteById(@PathVariable("id") final Long id) {
+    public ResponseEntity<ApiResponse<SubjectDTO>> deleteById(@PathVariable("id") final Long id) {
         if (!subjectService.exists(id)) {
             throw new IllegalArgumentException("SubjectEntity with id: " + id + " does not exist");
         } else {
@@ -133,16 +214,28 @@ public class SubjectController {
                 subjectService.deleteById(id);
                 indx[0]--;
                 LOG.info("Index in deleteSubjectById(): {}", indx[0]);
-                return ResponseEntity.ok(getSubjectDTO(findAll().getBody(), indx[0]));
+                return ResponseEntity.ok(
+                        ApiResponse
+                                .<SubjectDTO>builder()
+                                .success(true)
+                                .message("Subject deleted successfully")
+                                .entity(getSubjectDTO(findAll().getBody().getEntity(), indx[0]))
+                                .build()
+                );
             } catch (Exception e) {
                 e.printStackTrace();
-                return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity(ApiResponse
+                        .<SubjectDTO>builder()
+                        .success(false)
+                        .message(e.getMessage())
+                        .entity(null)
+                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
     }
 
     @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SubjectDTO> delete(@RequestBody final SubjectModel model) {
+    public ResponseEntity<ApiResponse<SubjectDTO>> delete(@RequestBody final SubjectModel model) {
         LOG.info("Index: {}", indx);
         if (null == model || null == model.getSubjectId() || !subjectService
                 .exists(model.getSubjectId())) {
@@ -152,10 +245,22 @@ public class SubjectController {
                 subjectService.delete(mapper.toSubjectEntity(model));
                 indx[0]--;
                 LOG.info("Index in deleteSubject(): {}", indx[0]);
-                return ResponseEntity.ok(getSubjectDTO(findAll().getBody(), indx[0]));
+                return ResponseEntity.ok(
+                        ApiResponse
+                                .<SubjectDTO>builder()
+                                .success(true)
+                                .message("Subject deleted successfully")
+                                .entity(getSubjectDTO(findAll().getBody().getEntity(), indx[0]))
+                                .build()
+                );
             } catch (Exception e) {
                 e.printStackTrace();
-                return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity(ApiResponse
+                        .<SubjectDTO>builder()
+                        .success(false)
+                        .message(e.getMessage())
+                        .entity(null)
+                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
     }

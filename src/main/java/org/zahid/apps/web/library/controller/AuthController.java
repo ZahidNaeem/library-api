@@ -58,7 +58,7 @@ public class AuthController {
     private GmailService gmailService;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<ApiResponse<JwtAuthenticationResponse>> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -70,19 +70,34 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         final String jwt = tokenProvider.generateJwtToken(authentication);
-        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<JwtAuthenticationResponse>builder()
+                        .success(true)
+                        .message("Login successfull")
+                        .entity(new JwtAuthenticationResponse(jwt))
+                        .build()
+        );
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+    public ResponseEntity<ApiResponse<Boolean>> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
         if (userRepo.existsByUsername(signUpRequest.getUsername())) {
-            return new ResponseEntity(new ApiResponse(false, "Username is already taken!"),
-                    HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(ApiResponse
+                    .<Boolean>builder()
+                    .success(false)
+                    .message("Username is already taken!")
+                    .entity(null)
+                    .build(), HttpStatus.BAD_REQUEST);
         }
 
         if (userRepo.existsByEmail(signUpRequest.getEmail())) {
-            return new ResponseEntity(new ApiResponse(false, "Email Address already in use!"),
-                    HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(ApiResponse
+                    .<Boolean>builder()
+                    .success(false)
+                    .message("Email Address already in use!")
+                    .entity(null)
+                    .build(), HttpStatus.BAD_REQUEST);
         }
 
         // Creating userModel's account
@@ -137,39 +152,76 @@ public class AuthController {
                 .buildAndExpand(result.getUsername()).toUri();
 
         return ResponseEntity.created(location)
-                .body(new ApiResponse(true, "User registered successfully"));
+                .body(
+                        ApiResponse
+                                .<Boolean>builder()
+                                .success(true)
+                                .message("User registered successfully")
+                                .entity(true)
+                                .build()
+                );
     }
 
     @GetMapping("/checkEmailExists")
-    public ResponseEntity<?> checkEmailExists(@RequestParam(value = "email") String email) {
-        return ResponseEntity.ok(userRepo.existsByEmail(email));
+    public ResponseEntity<ApiResponse<Boolean>> checkEmailExists(@RequestParam(value = "email") String email) {
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<Boolean>builder()
+                        .success(userRepo.existsByEmail(email))
+                        .message("Email already exists")
+                        .entity(userRepo.existsByEmail(email))
+                        .build()
+        );
     }
 
     @GetMapping("/recoverPassword")
-    public ResponseEntity<?> recoverPassword(@RequestParam(value = "email") String email) {
-        final ResponseEntity<?> responseEntity = checkEmailExists(email);
+    public ResponseEntity<ApiResponse<Boolean>> recoverPassword(@RequestParam(value = "email") String email) {
+        final ResponseEntity<ApiResponse<Boolean>> responseEntity = checkEmailExists(email);
 
-        if (responseEntity != null && responseEntity.getBody().equals(true)) {
+        if (responseEntity.getBody().equals(true)) {
             try {
                 final boolean mailSent = gmailService.sendMessage("Welcome to Library Application", "To reset you account password, please click on below link:\nhttp://localhost:3000", email);
                 if (mailSent) {
-                    return ResponseEntity.ok("Recovery email sent");
+                    return ResponseEntity.ok(
+                            ApiResponse
+                                    .<Boolean>builder()
+                                    .success(true)
+                                    .message("Recovery email sent")
+                                    .entity(null)
+                                    .build()
+                    );
                 } else {
-                    return new ResponseEntity(new ApiResponse(false, "Unknown error occurred"),
-                            HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity(ApiResponse
+                            .<Boolean>builder()
+                            .success(false)
+                            .message("Unknown error occurred")
+                            .entity(null)
+                            .build(), HttpStatus.BAD_REQUEST);
                 }
             } catch (MessagingException | IOException e) {
                 e.printStackTrace();
-                return new ResponseEntity(new ApiResponse(false, e.getMessage()),
-                        HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity(ApiResponse
+                        .<Boolean>builder()
+                        .success(false)
+                        .message(e.getMessage())
+                        .entity(null)
+                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
             } catch (Exception e) {
                 e.printStackTrace();
-                return new ResponseEntity(new ApiResponse(false, e.getMessage()),
-                        HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity(ApiResponse
+                        .<Boolean>builder()
+                        .success(false)
+                        .message(e.getMessage())
+                        .entity(null)
+                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } else {
-            return new ResponseEntity(new ApiResponse(false, "Email not registered"),
-                    HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(ApiResponse
+                    .<Boolean>builder()
+                    .success(false)
+                    .message("Email not registered")
+                    .entity(null)
+                    .build(), HttpStatus.BAD_REQUEST);
         }
     }
 }

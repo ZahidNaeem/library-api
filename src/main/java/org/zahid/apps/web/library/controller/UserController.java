@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import org.zahid.apps.web.library.entity.User;
 import org.zahid.apps.web.library.exception.ResourceNotFoundException;
 import org.zahid.apps.web.library.model.UserSummary;
 import org.zahid.apps.web.library.payload.request.ChangePasswordRequest;
+import org.zahid.apps.web.library.payload.response.ApiResponse;
 import org.zahid.apps.web.library.repo.RoleRepo;
 import org.zahid.apps.web.library.repo.UserRepo;
 import org.zahid.apps.web.library.security.CurrentUser;
@@ -35,7 +37,7 @@ public class UserController {
 
     @GetMapping("/user/me")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public UserSummary getCurrentUser(@CurrentUser UserPrincipal currentUser) {
+    public ResponseEntity<ApiResponse<UserSummary>> getCurrentUser(@CurrentUser UserPrincipal currentUser) {
 
         final Set<String> authorities = currentUser.getAuthorities().stream()
                 .map(r -> r.getAuthority()).collect(Collectors.toSet());
@@ -48,21 +50,42 @@ public class UserController {
                 .organizationName(currentUser.getOrganization().getOrganizationName())
                 .roles(authorities)
                 .build();
-        return userSummary;
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<UserSummary>builder()
+                        .success(true)
+                        .message("getCurrentUser response")
+                        .entity(userSummary)
+                        .build()
+        );
     }
 
     @GetMapping("/user/checkUsernameAvailability")
-    public Boolean checkUsernameAvailability(@RequestParam(value = "username") String username) {
-        return !userRepo.existsByUsername(username);
+    public ResponseEntity<ApiResponse<Boolean>> checkUsernameAvailability(@RequestParam(value = "username") String username) {
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<Boolean>builder()
+                        .success(true)
+                        .message("checkUsernameAvailability response")
+                        .entity(!userRepo.existsByUsername(username))
+                        .build()
+        );
     }
 
     @GetMapping("/user/checkEmailAvailability")
-    public Boolean checkEmailAvailability(@RequestParam(value = "email") String email) {
-        return !userRepo.existsByEmail(email);
+    public ResponseEntity<ApiResponse<Boolean>> checkEmailAvailability(@RequestParam(value = "email") String email) {
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<Boolean>builder()
+                        .success(true)
+                        .message("checkEmailAvailability response")
+                        .entity(!userRepo.existsByEmail(email))
+                        .build()
+        );
     }
 
     @GetMapping("/users/{username}")
-    public UserSummary getUserProfile(@PathVariable(value = "username") String username) {
+    public ResponseEntity<ApiResponse<UserSummary>> getUserProfile(@PathVariable(value = "username") String username) {
         final User user = userRepo.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
 
@@ -79,12 +102,19 @@ public class UserController {
                 .roles(roles)
                 .build();
 
-        return userSummary;
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<UserSummary>builder()
+                        .success(true)
+                        .message("getUserProfile response")
+                        .entity(userSummary)
+                        .build()
+        );
     }
 
     @PostMapping("/user/changePassword")
     @PreAuthorize("hasRole('USER')")
-    public Boolean changeUserPassword(@CurrentUser final UserPrincipal currentUserPrincipal, @RequestBody final ChangePasswordRequest request) {
+    public ResponseEntity<ApiResponse<Boolean>> changeUserPassword(@CurrentUser final UserPrincipal currentUserPrincipal, @RequestBody final ChangePasswordRequest request) {
         try {
             final User currentUser = userRepo.findById(currentUserPrincipal.getId())
                     .orElseThrow(() -> new ResourceNotFoundException("User", "id", currentUserPrincipal.getId()));
@@ -110,11 +140,25 @@ public class UserController {
             } else {
                 currentUser.setPassword(passwordEncoder.encode(newPassword));
                 userRepo.save(currentUser);
-                return true;
+                return ResponseEntity.ok(
+                        ApiResponse
+                                .<Boolean>builder()
+                                .success(true)
+                                .message("changeUserPassword response")
+                                .entity(true)
+                                .build()
+                );
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return false;
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<Boolean>builder()
+                        .success(false)
+                        .message("changeUserPassword response")
+                        .entity(false)
+                        .build()
+        );
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.zahid.apps.web.library.entity.BookTransLineEntity;
 import org.zahid.apps.web.library.mapper.BookTransLineMapper;
 import org.zahid.apps.web.library.model.BookTransLineModel;
+import org.zahid.apps.web.library.payload.response.ApiResponse;
 import org.zahid.apps.web.library.service.BookTransHeaderService;
 import org.zahid.apps.web.library.service.BookTransLineService;
 
@@ -33,58 +34,114 @@ public class BookTransLineController {
     private BookTransHeaderService bookTransHeaderService;
 
     @GetMapping
-    public ResponseEntity<List<BookTransLineModel>> findAll() {
-        return ResponseEntity.ok(mapper.toBookTransLineModels(bookTransLineService.findAll()));
+    public ResponseEntity<ApiResponse<List<BookTransLineModel>>> findAll() {
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<BookTransLineModel>>builder()
+                        .success(true)
+                        .message("findAll response")
+                        .entity(mapper.toBookTransLineModels(bookTransLineService.findAll()))
+                        .build()
+        );
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<BookTransLineModel> findById(@PathVariable("id") final Long id) {
-        return ResponseEntity.ok(mapper.toBookTransLineModel(bookTransLineService.findById(id)));
+    public ResponseEntity<ApiResponse<BookTransLineModel>> findById(@PathVariable("id") final Long id) {
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<BookTransLineModel>builder()
+                        .success(true)
+                        .message("Book Transaction details deleted successfully")
+                        .entity(mapper.toBookTransLineModel(bookTransLineService.findById(id)))
+                        .build()
+        );
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BookTransLineModel> save(@RequestBody final BookTransLineModel model) {
+    public ResponseEntity<ApiResponse<BookTransLineModel>> save(@RequestBody final BookTransLineModel model) {
         final BookTransLineEntity savedBookTransLine = bookTransLineService.save(mapper.toBookTransLineEntity(model));
-        return ResponseEntity.ok(mapper.toBookTransLineModel(savedBookTransLine));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<BookTransLineModel>builder()
+                        .success(true)
+                        .message("BookTransLine saved seccessfully")
+                        .entity(mapper.toBookTransLineModel(savedBookTransLine))
+                        .build()
+        );
     }
 
     @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<BookTransLineEntity>> saveAll(@RequestBody final Set<BookTransLineModel> bookTransLineModel) {
+    public ResponseEntity<ApiResponse<List<BookTransLineEntity>>> saveAll(@RequestBody final Set<BookTransLineModel> bookTransLineModel) {
         final Set<BookTransLineEntity> bookTransLines = new HashSet<>();
         bookTransLineModel.forEach(model -> {
             final BookTransLineEntity bookTransLine = mapper.toBookTransLineEntity(model);
             bookTransLines.add(bookTransLine);
         });
-        return ResponseEntity.ok(bookTransLineService.save(bookTransLines));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<BookTransLineEntity>>builder()
+                        .success(true)
+                        .message("All bookTransLines saved seccessfully")
+                        .entity(bookTransLineService.save(bookTransLines))
+                        .build()
+        );
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Boolean> deleteById(@PathVariable("id") final Long id) {
+    public ResponseEntity<ApiResponse<Boolean>> deleteById(@PathVariable("id") final Long id) {
         if (!bookTransLineService.exists(id)) {
             throw new IllegalArgumentException("Item bookTransLine with id: " + id + " does not exist");
         } else {
             try {
                 bookTransLineService.deleteById(id);
-                return ResponseEntity.ok(true);
+                return ResponseEntity.ok(
+                        ApiResponse
+                                .<Boolean>builder()
+                                .success(false)
+                                .message("BookTransLine deleted seccessfully")
+                                .entity(true)
+                                .build()
+                );
             } catch (Exception e) {
                 e.printStackTrace();
-                return ResponseEntity.ok(false);
+                return ResponseEntity.ok(
+                        ApiResponse
+                                .<Boolean>builder()
+                                .success(false)
+                                .message(e.getMessage())
+                                .entity(true)
+                                .build()
+                );
             }
         }
     }
 
     @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> delete(@RequestBody final BookTransLineModel model) {
+    public ResponseEntity<ApiResponse<Boolean>> delete(@RequestBody final BookTransLineModel model) {
         if (null == model || null == model.getLineId() || !bookTransLineService
                 .exists(model.getLineId())) {
             throw new IllegalArgumentException("Item bookTransLine does not exist");
         } else {
             try {
                 bookTransLineService.delete(mapper.toBookTransLineEntity(model));
-                return ResponseEntity.ok(true);
+                return ResponseEntity.ok(
+                        ApiResponse
+                                .<Boolean>builder()
+                                .success(false)
+                                .message("BookTransLine deleted seccessfully")
+                                .entity(true)
+                                .build()
+                );
             } catch (Exception e) {
                 e.printStackTrace();
-                return ResponseEntity.ok(false);
+                return ResponseEntity.ok(
+                        ApiResponse
+                                .<Boolean>builder()
+                                .success(false)
+                                .message(e.getMessage())
+                                .entity(true)
+                                .build()
+                );
             }
         }
     }

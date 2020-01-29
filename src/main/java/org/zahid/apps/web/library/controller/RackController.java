@@ -11,6 +11,7 @@ import org.zahid.apps.web.library.entity.RackEntity;
 import org.zahid.apps.web.library.mapper.RackMapper;
 import org.zahid.apps.web.library.model.RackDetail;
 import org.zahid.apps.web.library.model.RackModel;
+import org.zahid.apps.web.library.payload.response.ApiResponse;
 import org.zahid.apps.web.library.service.RackService;
 import org.zahid.apps.web.library.service.ShelfService;
 
@@ -43,71 +44,141 @@ public class RackController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RackModel>> findAll() {
-        return ResponseEntity.ok(mapper.toRackModels(rackService.findAll()));
+    public ResponseEntity<ApiResponse<List<RackModel>>> findAll() {
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<RackModel>>builder()
+                        .success(true)
+                        .message("findAll response")
+                        .entity(mapper.toRackModels(rackService.findAll()))
+                        .build()
+        );
     }
 
     @GetMapping("details")
-    public ResponseEntity<List<RackDetail>> findAllDetails() {
-        return ResponseEntity.ok(mapper.toRackDetails(rackService.findAll()));
+    public ResponseEntity<ApiResponse<List<RackDetail>>> findAllDetails() {
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<RackDetail>>builder()
+                        .success(true)
+                        .message("findAllDetails response")
+                        .entity(mapper.toRackDetails(rackService.findAll()))
+                        .build()
+        );
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<RackModel> findById(@PathVariable("id") final Long id) {
-        return ResponseEntity.ok(mapper.toRackModel(rackService.findById(id)));
+    public ResponseEntity<ApiResponse<RackModel>> findById(@PathVariable("id") final Long id) {
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<RackModel>builder()
+                        .success(true)
+                        .message("findById response")
+                        .entity(mapper.toRackModel(rackService.findById(id)))
+                        .build()
+        );
     }
 
     @GetMapping("shelf/{shelfId}")
-    public ResponseEntity<List<RackModel>> findByShelf(@PathVariable("shelfId") final Long shelfId) {
-        return ResponseEntity.ok(mapper.toRackModels(rackService.findAllByShelf(shelfService.findById(shelfId))));
+    public ResponseEntity<ApiResponse<List<RackModel>>> findByShelf(@PathVariable("shelfId") final Long shelfId) {
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<RackModel>>builder()
+                        .success(true)
+                        .message("findByShelf response")
+                        .entity(mapper.toRackModels(rackService.findAllByShelf(shelfService.findById(shelfId))))
+                        .build()
+        );
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RackModel> save(@RequestBody final RackModel model) {
+    public ResponseEntity<ApiResponse<RackModel>> save(@RequestBody final RackModel model) {
         final RackEntity rack = mapper.toRackEntity(model);
         final RackEntity savedRack = rackService.save(rack);
         setRackForVolumes(rack);
-        return ResponseEntity.ok(mapper.toRackModel(savedRack));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<RackModel>builder()
+                        .success(true)
+                        .message("Rack saved seccessfully")
+                        .entity(mapper.toRackModel(savedRack))
+                        .build()
+        );
     }
 
     @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<RackEntity>> saveAll(@RequestBody final Set<RackModel> rackModel) {
+    public ResponseEntity<ApiResponse<List<RackEntity>>> saveAll(@RequestBody final Set<RackModel> rackModel) {
         final Set<RackEntity> racks = new HashSet<>();
         rackModel.forEach(model -> {
             final RackEntity rack = mapper.toRackEntity(model);
             setRackForVolumes(rack);
             racks.add(rack);
         });
-        return ResponseEntity.ok(rackService.save(racks));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<RackEntity>>builder()
+                        .success(true)
+                        .message("All racks saved seccessfully")
+                        .entity(rackService.save(racks))
+                        .build()
+        );
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Boolean> deleteById(@PathVariable("id") final Long id) {
+    public ResponseEntity<ApiResponse<Boolean>> deleteById(@PathVariable("id") final Long id) {
         if (!rackService.exists(id)) {
             throw new IllegalArgumentException("Item rack with id: " + id + " does not exist");
         } else {
             try {
                 rackService.deleteById(id);
-                return ResponseEntity.ok(true);
+                return ResponseEntity.ok(
+                        ApiResponse
+                                .<Boolean>builder()
+                                .success(false)
+                                .message("Rack deleted seccessfully")
+                                .entity(true)
+                                .build()
+                );
             } catch (Exception e) {
                 e.printStackTrace();
-                return ResponseEntity.ok(false);
+                return ResponseEntity.ok(
+                        ApiResponse
+                                .<Boolean>builder()
+                                .success(false)
+                                .message(e.getMessage())
+                                .entity(true)
+                                .build()
+                );
             }
         }
     }
 
     @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> delete(@RequestBody final RackModel model) {
+    public ResponseEntity<ApiResponse<Boolean>> delete(@RequestBody final RackModel model) {
         if (null == model || null == model.getRackId() || !rackService
                 .exists(model.getRackId())) {
             throw new IllegalArgumentException("Item rack does not exist");
         } else {
             try {
                 rackService.delete(mapper.toRackEntity(model));
-                return ResponseEntity.ok(true);
+                return ResponseEntity.ok(
+                        ApiResponse
+                                .<Boolean>builder()
+                                .success(false)
+                                .message("Rack deleted seccessfully")
+                                .entity(true)
+                                .build()
+                );
             } catch (Exception e) {
                 e.printStackTrace();
-                return ResponseEntity.ok(false);
+                return ResponseEntity.ok(
+                        ApiResponse
+                                .<Boolean>builder()
+                                .success(false)
+                                .message(e.getMessage())
+                                .entity(true)
+                                .build()
+                );
             }
         }
     }
