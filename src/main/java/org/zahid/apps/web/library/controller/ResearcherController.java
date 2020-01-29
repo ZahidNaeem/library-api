@@ -9,10 +9,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.zahid.apps.web.library.dto.ResearcherDTO;
-import org.zahid.apps.web.library.entity.NavigationDtl;
 import org.zahid.apps.web.library.entity.ResearcherEntity;
+import org.zahid.apps.web.library.entity.NavigationDtl;
 import org.zahid.apps.web.library.mapper.ResearcherMapper;
 import org.zahid.apps.web.library.model.ResearcherModel;
+import org.zahid.apps.web.library.payload.response.ApiResponse;
 import org.zahid.apps.web.library.service.ResearcherService;
 
 import java.util.HashSet;
@@ -40,75 +41,138 @@ public class ResearcherController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ResearcherModel>> findAll() {
-        return ResponseEntity.ok(mapper.toResearcherModels(researcherService.findAll()));
+    public ResponseEntity<ApiResponse<List<ResearcherModel>>> findAll() {
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<ResearcherModel>>builder()
+                        .success(true)
+                        .message("findAll response")
+                        .entity(mapper.toResearcherModels(researcherService.findAll()))
+                        .build()
+        );
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ResearcherDTO> findById(@PathVariable("id") final Long id) {
+    public ResponseEntity<ApiResponse<ResearcherDTO>> findById(@PathVariable("id") final Long id) {
         final ResearcherModel model = mapper.toResearcherModel(researcherService.findById(id));
-        indx[0] = findAll().getBody().indexOf(model);
+        indx[0] = findAll().getBody().getEntity().indexOf(model);
         LOG.info("Index in findById(): {}", indx[0]);
-        return ResponseEntity.ok(getResearcherDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<ResearcherDTO>builder()
+                        .success(true)
+                        .message("findById response")
+                        .entity(getResearcherDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("{id}/name")
-    public ResponseEntity<String> getResearcherName(@PathVariable("id") final Long id) {
-        return ResponseEntity.ok(researcherService.findById(id).getResearcherName());
+    public ResponseEntity<ApiResponse<String>> getResearcherName(@PathVariable("id") final Long id) {
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<String>builder()
+                        .success(true)
+                        .message("getResearcherName response")
+                        .entity(researcherService.findById(id).getResearcherName())
+                        .build()
+        );
     }
 
     @GetMapping("first")
-    public ResponseEntity<ResearcherDTO> first() {
+    public ResponseEntity<ApiResponse<ResearcherDTO>> first() {
         indx[0] = 0;
         LOG.info("Index in first(): {}", indx[0]);
-        return ResponseEntity.ok(getResearcherDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<ResearcherDTO>builder()
+                        .success(true)
+                        .message("first record response")
+                        .entity(getResearcherDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("previous")
-    public ResponseEntity<ResearcherDTO> previous() {
+    public ResponseEntity<ApiResponse<ResearcherDTO>> previous() {
         indx[0]--;
         LOG.info("Index in previous(): {}", indx[0]);
-        return ResponseEntity.ok(getResearcherDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<ResearcherDTO>builder()
+                        .success(true)
+                        .message("previous record response")
+                        .entity(getResearcherDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("next")
-    public ResponseEntity<ResearcherDTO> next() {
+    public ResponseEntity<ApiResponse<ResearcherDTO>> next() {
         indx[0]++;
         LOG.info("Index in next(): {}", indx[0]);
-        return ResponseEntity.ok(getResearcherDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<ResearcherDTO>builder()
+                        .success(true)
+                        .message("next record response")
+                        .entity(getResearcherDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("last")
-    public ResponseEntity<ResearcherDTO> last() {
-        indx[0] = findAll().getBody().size() - 1;
+    public ResponseEntity<ApiResponse<ResearcherDTO>> last() {
+        indx[0] = findAll().getBody().getEntity().size() - 1;
         LOG.info("Index in last(): {}", indx[0]);
-        return ResponseEntity.ok(getResearcherDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<ResearcherDTO>builder()
+                        .success(true)
+                        .message("last record response")
+                        .entity(getResearcherDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResearcherDTO> save(@RequestBody final ResearcherModel model) {
+    public ResponseEntity<ApiResponse<ResearcherDTO>> save(@RequestBody final ResearcherModel model) {
         final ResearcherEntity researcher = mapper.toResearcherEntity(model);
 //    Below line added, because when converted from model to ResearcherEntity, there is no researcher set in book list.
         setResearcherForBooks(researcher);
         final ResearcherEntity researcherSaved = researcherService.save(researcher);
         final ResearcherModel savedModel = mapper.toResearcherModel(researcherSaved);
-        indx[0] = this.findAll().getBody().indexOf(savedModel);
+        indx[0] = this.findAll().getBody().getEntity().indexOf(savedModel);
         LOG.info("Index in saveResearcher(): {}", indx[0]);
-        return ResponseEntity.ok(getResearcherDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<ResearcherDTO>builder()
+                        .success(true)
+                        .message("Researcher saved seccessfully")
+                        .entity(getResearcherDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ResearcherEntity>> saveAll(@RequestBody final List<ResearcherModel> models) {
+    public ResponseEntity<ApiResponse<List<ResearcherEntity>>> saveAll(@RequestBody final List<ResearcherModel> models) {
         final List<ResearcherEntity> researchers = mapper.toResearcherEntities(models);
         //    Below line added, because when converted from model to ResearcherEntity, there is no researcher set in book list.
         researchers.forEach(researcher -> {
             setResearcherForBooks(researcher);
         });
-        return ResponseEntity.ok(researcherService.save(new HashSet<>(researchers)));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<ResearcherEntity>>builder()
+                        .success(true)
+                        .message("All researchers saved seccessfully")
+                        .entity(researcherService.save(new HashSet<>(researchers)))
+                        .build()
+        );
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<ResearcherDTO> deleteById(@PathVariable("id") final Long id) {
+    public ResponseEntity<ApiResponse<ResearcherDTO>> deleteById(@PathVariable("id") final Long id) {
         if (!researcherService.exists(id)) {
             throw new IllegalArgumentException("ResearcherEntity with id: " + id + " does not exist");
         } else {
@@ -116,28 +180,53 @@ public class ResearcherController {
                 researcherService.deleteById(id);
                 indx[0]--;
                 LOG.info("Index in deleteResearcherById(): {}", indx[0]);
-                return ResponseEntity.ok(getResearcherDTO(findAll().getBody(), indx[0]));
+                return ResponseEntity.ok(
+                        ApiResponse
+                                .<ResearcherDTO>builder()
+                                .success(true)
+                                .message("Researcher deleted seccessfully")
+                                .entity(getResearcherDTO(findAll().getBody().getEntity(), indx[0]))
+                                .build()
+                );
             } catch (Exception e) {
                 e.printStackTrace();
-                return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity(ApiResponse
+                        .<ResearcherDTO>builder()
+                        .success(false)
+                        .message(e.getMessage())
+                        .entity(null)
+                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
     }
 
     @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResearcherDTO> delete(@RequestBody final ResearcherModel model) {
+    public ResponseEntity<ApiResponse<ResearcherDTO>> delete(@RequestBody final ResearcherModel model) {
         LOG.info("Index: {}", indx);
-        if (null == model || null == model.getResearcherId() || !researcherService.exists(model.getResearcherId())) {
+        if (null == model || null == model.getResearcherId() || !researcherService
+                .exists(model.getResearcherId())) {
             throw new IllegalArgumentException("ResearcherEntity does not exist");
         } else {
             try {
                 researcherService.delete(mapper.toResearcherEntity(model));
                 indx[0]--;
                 LOG.info("Index in deleteResearcher(): {}", indx[0]);
-                return ResponseEntity.ok(getResearcherDTO(findAll().getBody(), indx[0]));
+                return ResponseEntity.ok(
+                        ApiResponse
+                                .<ResearcherDTO>builder()
+                                .success(true)
+                                .message("Researcher deleted seccessfully")
+                                .entity(getResearcherDTO(findAll().getBody().getEntity(), indx[0]))
+                                .build()
+                );
             } catch (Exception e) {
                 e.printStackTrace();
-                return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity(ApiResponse
+                        .<ResearcherDTO>builder()
+                        .success(false)
+                        .message(e.getMessage())
+                        .entity(null)
+                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
     }

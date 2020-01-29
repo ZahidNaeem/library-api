@@ -9,10 +9,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.zahid.apps.web.library.dto.ReaderDTO;
-import org.zahid.apps.web.library.entity.ReaderEntity;
 import org.zahid.apps.web.library.entity.NavigationDtl;
+import org.zahid.apps.web.library.entity.ReaderEntity;
 import org.zahid.apps.web.library.mapper.ReaderMapper;
 import org.zahid.apps.web.library.model.ReaderModel;
+import org.zahid.apps.web.library.payload.response.ApiResponse;
 import org.zahid.apps.web.library.service.ReaderService;
 
 import java.util.HashSet;
@@ -40,75 +41,138 @@ public class ReaderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ReaderModel>> findAll() {
-        return ResponseEntity.ok(mapper.toReaderModels(readerService.findAll()));
+    public ResponseEntity<ApiResponse<List<ReaderModel>>> findAll() {
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<ReaderModel>>builder()
+                        .success(true)
+                        .message("findAll response")
+                        .entity(mapper.toReaderModels(readerService.findAll()))
+                        .build()
+        );
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ReaderDTO> findById(@PathVariable("id") final Long id) {
+    public ResponseEntity<ApiResponse<ReaderDTO>> findById(@PathVariable("id") final Long id) {
         final ReaderModel model = mapper.toReaderModel(readerService.findById(id));
-        indx[0] = findAll().getBody().indexOf(model);
+        indx[0] = findAll().getBody().getEntity().indexOf(model);
         LOG.info("Index in findById(): {}", indx[0]);
-        return ResponseEntity.ok(getReaderDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<ReaderDTO>builder()
+                        .success(true)
+                        .message("findById response")
+                        .entity(getReaderDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("{id}/name")
-    public ResponseEntity<String> getReaderName(@PathVariable("id") final Long id) {
-        return ResponseEntity.ok(readerService.findById(id).getReaderName());
+    public ResponseEntity<ApiResponse<String>> getReaderName(@PathVariable("id") final Long id) {
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<String>builder()
+                        .success(true)
+                        .message("getReaderName response")
+                        .entity(readerService.findById(id).getReaderName())
+                        .build()
+        );
     }
 
     @GetMapping("first")
-    public ResponseEntity<ReaderDTO> first() {
+    public ResponseEntity<ApiResponse<ReaderDTO>> first() {
         indx[0] = 0;
         LOG.info("Index in first(): {}", indx[0]);
-        return ResponseEntity.ok(getReaderDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<ReaderDTO>builder()
+                        .success(true)
+                        .message("first record response")
+                        .entity(getReaderDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("previous")
-    public ResponseEntity<ReaderDTO> previous() {
+    public ResponseEntity<ApiResponse<ReaderDTO>> previous() {
         indx[0]--;
         LOG.info("Index in previous(): {}", indx[0]);
-        return ResponseEntity.ok(getReaderDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<ReaderDTO>builder()
+                        .success(true)
+                        .message("previous record response")
+                        .entity(getReaderDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("next")
-    public ResponseEntity<ReaderDTO> next() {
+    public ResponseEntity<ApiResponse<ReaderDTO>> next() {
         indx[0]++;
         LOG.info("Index in next(): {}", indx[0]);
-        return ResponseEntity.ok(getReaderDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<ReaderDTO>builder()
+                        .success(true)
+                        .message("next record response")
+                        .entity(getReaderDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("last")
-    public ResponseEntity<ReaderDTO> last() {
-        indx[0] = findAll().getBody().size() - 1;
+    public ResponseEntity<ApiResponse<ReaderDTO>> last() {
+        indx[0] = findAll().getBody().getEntity().size() - 1;
         LOG.info("Index in last(): {}", indx[0]);
-        return ResponseEntity.ok(getReaderDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<ReaderDTO>builder()
+                        .success(true)
+                        .message("last record response")
+                        .entity(getReaderDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ReaderDTO> save(@RequestBody final ReaderModel model) {
+    public ResponseEntity<ApiResponse<ReaderDTO>> save(@RequestBody final ReaderModel model) {
         final ReaderEntity reader = mapper.toReaderEntity(model);
 //    Below line added, because when converted from model to ReaderEntity, there is no reader set in bookTransHeader list.
         setReaderForBookTransHeaders(reader);
         final ReaderEntity readerSaved = readerService.save(reader);
         final ReaderModel savedModel = mapper.toReaderModel(readerSaved);
-        indx[0] = this.findAll().getBody().indexOf(savedModel);
+        indx[0] = this.findAll().getBody().getEntity().indexOf(savedModel);
         LOG.info("Index in saveReader(): {}", indx[0]);
-        return ResponseEntity.ok(getReaderDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<ReaderDTO>builder()
+                        .success(true)
+                        .message("first record response")
+                        .entity(getReaderDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ReaderEntity>> saveAll(@RequestBody final List<ReaderModel> models) {
+    public ResponseEntity<ApiResponse<List<ReaderEntity>>> saveAll(@RequestBody final List<ReaderModel> models) {
         final List<ReaderEntity> readers = mapper.toReaderEntities(models);
         //    Below line added, because when converted from model to ReaderEntity, there is no reader set in bookTransHeader list.
         readers.forEach(reader -> {
             setReaderForBookTransHeaders(reader);
         });
-        return ResponseEntity.ok(readerService.save(new HashSet<>(readers)));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<ReaderEntity>>builder()
+                        .success(true)
+                        .message("All readers saved seccessfully")
+                        .entity(readerService.save(new HashSet<>(readers)))
+                        .build()
+        );
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<ReaderDTO> deleteById(@PathVariable("id") final Long id) {
+    public ResponseEntity<ApiResponse<ReaderDTO>> deleteById(@PathVariable("id") final Long id) {
         if (!readerService.exists(id)) {
             throw new IllegalArgumentException("ReaderEntity with id: " + id + " does not exist");
         } else {
@@ -116,16 +180,28 @@ public class ReaderController {
                 readerService.deleteById(id);
                 indx[0]--;
                 LOG.info("Index in deleteReaderById(): {}", indx[0]);
-                return ResponseEntity.ok(getReaderDTO(findAll().getBody(), indx[0]));
+                return ResponseEntity.ok(
+                ApiResponse
+                        .<ReaderDTO>builder()
+                        .success(true)
+                        .message("first record response")
+                        .entity(getReaderDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
             } catch (Exception e) {
                 e.printStackTrace();
-                return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity(ApiResponse
+                        .<ReaderDTO>builder()
+                        .success(false)
+                        .message(e.getMessage())
+                        .entity(null)
+                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
     }
 
     @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ReaderDTO> delete(@RequestBody final ReaderModel model) {
+    public ResponseEntity<ApiResponse<ReaderDTO>> delete(@RequestBody final ReaderModel model) {
         LOG.info("Index: {}", indx);
         if (null == model || null == model.getReaderId() || !readerService
                 .exists(model.getReaderId())) {
@@ -135,10 +211,22 @@ public class ReaderController {
                 readerService.delete(mapper.toReaderEntity(model));
                 indx[0]--;
                 LOG.info("Index in deleteReader(): {}", indx[0]);
-                return ResponseEntity.ok(getReaderDTO(findAll().getBody(), indx[0]));
+                return ResponseEntity.ok(
+                ApiResponse
+                        .<ReaderDTO>builder()
+                        .success(true)
+                        .message("first record response")
+                        .entity(getReaderDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
             } catch (Exception e) {
                 e.printStackTrace();
-                return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity(ApiResponse
+                        .<ReaderDTO>builder()
+                        .success(false)
+                        .message(e.getMessage())
+                        .entity(null)
+                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
     }

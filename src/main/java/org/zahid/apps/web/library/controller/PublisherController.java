@@ -9,10 +9,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.zahid.apps.web.library.dto.PublisherDTO;
-import org.zahid.apps.web.library.entity.NavigationDtl;
 import org.zahid.apps.web.library.entity.PublisherEntity;
+import org.zahid.apps.web.library.entity.NavigationDtl;
 import org.zahid.apps.web.library.mapper.PublisherMapper;
 import org.zahid.apps.web.library.model.PublisherModel;
+import org.zahid.apps.web.library.payload.response.ApiResponse;
 import org.zahid.apps.web.library.service.PublisherService;
 
 import java.util.HashSet;
@@ -40,75 +41,138 @@ public class PublisherController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PublisherModel>> findAll() {
-        return ResponseEntity.ok(mapper.toPublisherModels(publisherService.findAll()));
+    public ResponseEntity<ApiResponse<List<PublisherModel>>> findAll() {
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<PublisherModel>>builder()
+                        .success(true)
+                        .message("findAll response")
+                        .entity(mapper.toPublisherModels(publisherService.findAll()))
+                        .build()
+        );
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<PublisherDTO> findById(@PathVariable("id") final Long id) {
+    public ResponseEntity<ApiResponse<PublisherDTO>> findById(@PathVariable("id") final Long id) {
         final PublisherModel model = mapper.toPublisherModel(publisherService.findById(id));
-        indx[0] = findAll().getBody().indexOf(model);
+        indx[0] = findAll().getBody().getEntity().indexOf(model);
         LOG.info("Index in findById(): {}", indx[0]);
-        return ResponseEntity.ok(getPublisherDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<PublisherDTO>builder()
+                        .success(true)
+                        .message("findById response")
+                        .entity(getPublisherDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("{id}/name")
-    public ResponseEntity<String> getPublisherName(@PathVariable("id") final Long id) {
-        return ResponseEntity.ok(publisherService.findById(id).getPublisherName());
+    public ResponseEntity<ApiResponse<String>> getPublisherName(@PathVariable("id") final Long id) {
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<String>builder()
+                        .success(true)
+                        .message("getPublisherName response")
+                        .entity(publisherService.findById(id).getPublisherName())
+                        .build()
+        );
     }
 
     @GetMapping("first")
-    public ResponseEntity<PublisherDTO> first() {
+    public ResponseEntity<ApiResponse<PublisherDTO>> first() {
         indx[0] = 0;
         LOG.info("Index in first(): {}", indx[0]);
-        return ResponseEntity.ok(getPublisherDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<PublisherDTO>builder()
+                        .success(true)
+                        .message("first record response")
+                        .entity(getPublisherDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("previous")
-    public ResponseEntity<PublisherDTO> previous() {
+    public ResponseEntity<ApiResponse<PublisherDTO>> previous() {
         indx[0]--;
         LOG.info("Index in previous(): {}", indx[0]);
-        return ResponseEntity.ok(getPublisherDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<PublisherDTO>builder()
+                        .success(true)
+                        .message("previous record response")
+                        .entity(getPublisherDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("next")
-    public ResponseEntity<PublisherDTO> next() {
+    public ResponseEntity<ApiResponse<PublisherDTO>> next() {
         indx[0]++;
         LOG.info("Index in next(): {}", indx[0]);
-        return ResponseEntity.ok(getPublisherDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<PublisherDTO>builder()
+                        .success(true)
+                        .message("next record response")
+                        .entity(getPublisherDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @GetMapping("last")
-    public ResponseEntity<PublisherDTO> last() {
-        indx[0] = findAll().getBody().size() - 1;
+    public ResponseEntity<ApiResponse<PublisherDTO>> last() {
+        indx[0] = findAll().getBody().getEntity().size() - 1;
         LOG.info("Index in last(): {}", indx[0]);
-        return ResponseEntity.ok(getPublisherDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<PublisherDTO>builder()
+                        .success(true)
+                        .message("last record response")
+                        .entity(getPublisherDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PublisherDTO> save(@RequestBody final PublisherModel model) {
+    public ResponseEntity<ApiResponse<PublisherDTO>> save(@RequestBody final PublisherModel model) {
         final PublisherEntity publisher = mapper.toPublisherEntity(model);
 //    Below line added, because when converted from model to PublisherEntity, there is no publisher set in book list.
         setPublisherForBooks(publisher);
         final PublisherEntity publisherSaved = publisherService.save(publisher);
         final PublisherModel savedModel = mapper.toPublisherModel(publisherSaved);
-        indx[0] = this.findAll().getBody().indexOf(savedModel);
+        indx[0] = this.findAll().getBody().getEntity().indexOf(savedModel);
         LOG.info("Index in savePublisher(): {}", indx[0]);
-        return ResponseEntity.ok(getPublisherDTO(findAll().getBody(), indx[0]));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<PublisherDTO>builder()
+                        .success(true)
+                        .message("Publisher saved seccessfully")
+                        .entity(getPublisherDTO(findAll().getBody().getEntity(), indx[0]))
+                        .build()
+        );
     }
 
     @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PublisherEntity>> saveAll(@RequestBody final List<PublisherModel> models) {
+    public ResponseEntity<ApiResponse<List<PublisherEntity>>> saveAll(@RequestBody final List<PublisherModel> models) {
         final List<PublisherEntity> publishers = mapper.toPublisherEntities(models);
         //    Below line added, because when converted from model to PublisherEntity, there is no publisher set in book list.
         publishers.forEach(publisher -> {
             setPublisherForBooks(publisher);
         });
-        return ResponseEntity.ok(publisherService.save(new HashSet<>(publishers)));
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<PublisherEntity>>builder()
+                        .success(true)
+                        .message("All publishers saved seccessfully")
+                        .entity(publisherService.save(new HashSet<>(publishers)))
+                        .build()
+        );
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<PublisherDTO> deleteById(@PathVariable("id") final Long id) {
+    public ResponseEntity<ApiResponse<PublisherDTO>> deleteById(@PathVariable("id") final Long id) {
         if (!publisherService.exists(id)) {
             throw new IllegalArgumentException("PublisherEntity with id: " + id + " does not exist");
         } else {
@@ -116,28 +180,53 @@ public class PublisherController {
                 publisherService.deleteById(id);
                 indx[0]--;
                 LOG.info("Index in deletePublisherById(): {}", indx[0]);
-                return ResponseEntity.ok(getPublisherDTO(findAll().getBody(), indx[0]));
+                return ResponseEntity.ok(
+                        ApiResponse
+                                .<PublisherDTO>builder()
+                                .success(true)
+                                .message("Publisher deleted seccessfully")
+                                .entity(getPublisherDTO(findAll().getBody().getEntity(), indx[0]))
+                                .build()
+                );
             } catch (Exception e) {
                 e.printStackTrace();
-                return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity(ApiResponse
+                        .<PublisherDTO>builder()
+                        .success(false)
+                        .message(e.getMessage())
+                        .entity(null)
+                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
     }
 
     @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PublisherDTO> delete(@RequestBody final PublisherModel model) {
+    public ResponseEntity<ApiResponse<PublisherDTO>> delete(@RequestBody final PublisherModel model) {
         LOG.info("Index: {}", indx);
-        if (null == model || null == model.getPublisherId() || !publisherService.exists(model.getPublisherId())) {
+        if (null == model || null == model.getPublisherId() || !publisherService
+                .exists(model.getPublisherId())) {
             throw new IllegalArgumentException("PublisherEntity does not exist");
         } else {
             try {
                 publisherService.delete(mapper.toPublisherEntity(model));
                 indx[0]--;
                 LOG.info("Index in deletePublisher(): {}", indx[0]);
-                return ResponseEntity.ok(getPublisherDTO(findAll().getBody(), indx[0]));
+                return ResponseEntity.ok(
+                        ApiResponse
+                                .<PublisherDTO>builder()
+                                .success(true)
+                                .message("Publisher deleted seccessfully")
+                                .entity(getPublisherDTO(findAll().getBody().getEntity(), indx[0]))
+                                .build()
+                );
             } catch (Exception e) {
                 e.printStackTrace();
-                return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity(ApiResponse
+                        .<PublisherDTO>builder()
+                        .success(false)
+                        .message(e.getMessage())
+                        .entity(null)
+                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
     }
