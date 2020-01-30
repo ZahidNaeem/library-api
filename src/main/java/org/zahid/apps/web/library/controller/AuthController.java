@@ -60,24 +60,33 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity<ApiResponse<JwtAuthenticationResponse>> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
-        final Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsernameOrEmail(),
-                        loginRequest.getPassword()
-                )
-        );
+        try {
+            final Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getUsernameOrEmail(),
+                            loginRequest.getPassword()
+                    )
+            );
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        final String jwt = tokenProvider.generateJwtToken(authentication);
-        return ResponseEntity.ok(
-                ApiResponse
-                        .<JwtAuthenticationResponse>builder()
-                        .success(true)
-                        .message("Login successfull")
-                        .entity(new JwtAuthenticationResponse(jwt))
-                        .build()
-        );
+            final String jwt = tokenProvider.generateJwtToken(authentication);
+            return ResponseEntity.ok(
+                    ApiResponse
+                            .<JwtAuthenticationResponse>builder()
+                            .success(true)
+                            .message("Login successfull")
+                            .entity(new JwtAuthenticationResponse(jwt))
+                            .build()
+            );
+        } catch (Exception e){
+            return new ResponseEntity(ApiResponse
+                    .<Boolean>builder()
+                    .success(false)
+                    .message(e.getMessage())
+                    .entity(null)
+                    .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping("/signup")
@@ -156,7 +165,7 @@ public class AuthController {
                         ApiResponse
                                 .<Boolean>builder()
                                 .success(true)
-                                .message("User registered successfully")
+                                .message("Thank you! You're successfully registered. Please Login to continue!")
                                 .entity(true)
                                 .build()
                 );
