@@ -14,6 +14,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.zahid.apps.web.library.entity.Role;
 import org.zahid.apps.web.library.entity.User;
 import org.zahid.apps.web.library.enumeration.RoleName;
+import org.zahid.apps.web.library.exception.AppException;
+import org.zahid.apps.web.library.exception.BadRequestException;
+import org.zahid.apps.web.library.exception.InternalServerErrorException;
 import org.zahid.apps.web.library.mapper.UserMapper;
 import org.zahid.apps.web.library.model.UserModel;
 import org.zahid.apps.web.library.payload.request.LoginRequest;
@@ -80,33 +83,19 @@ public class AuthController {
                             .build()
             );
         } catch (Exception e){
-            return new ResponseEntity(ApiResponse
-                    .<Boolean>builder()
-                    .success(false)
-                    .message(e.getMessage())
-                    .entity(null)
-                    .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new InternalServerErrorException(e.getMessage());
         }
+//                    throw new AppException("BAD CREDENTIALS");
     }
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<Boolean>> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
         if (userRepo.existsByUsername(signUpRequest.getUsername())) {
-            return new ResponseEntity(ApiResponse
-                    .<Boolean>builder()
-                    .success(false)
-                    .message("Username is already taken!")
-                    .entity(null)
-                    .build(), HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("Username is already taken!");
         }
 
         if (userRepo.existsByEmail(signUpRequest.getEmail())) {
-            return new ResponseEntity(ApiResponse
-                    .<Boolean>builder()
-                    .success(false)
-                    .message("Email Address already in use!")
-                    .entity(null)
-                    .build(), HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("Email Address already in use!");
         }
 
         // Creating userModel's account
@@ -200,37 +189,17 @@ public class AuthController {
                                     .build()
                     );
                 } else {
-                    return new ResponseEntity(ApiResponse
-                            .<Boolean>builder()
-                            .success(false)
-                            .message("Unknown error occurred")
-                            .entity(null)
-                            .build(), HttpStatus.BAD_REQUEST);
+                    throw new BadRequestException("Unknown error occurred");
                 }
             } catch (MessagingException | IOException e) {
                 e.printStackTrace();
-                return new ResponseEntity(ApiResponse
-                        .<Boolean>builder()
-                        .success(false)
-                        .message(e.getMessage())
-                        .entity(null)
-                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new InternalServerErrorException(e.getMessage());
             } catch (Exception e) {
                 e.printStackTrace();
-                return new ResponseEntity(ApiResponse
-                        .<Boolean>builder()
-                        .success(false)
-                        .message(e.getMessage())
-                        .entity(null)
-                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new InternalServerErrorException(e.getMessage());
             }
         } else {
-            return new ResponseEntity(ApiResponse
-                    .<Boolean>builder()
-                    .success(false)
-                    .message("Email not registered")
-                    .entity(null)
-                    .build(), HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("Email not registered");
         }
     }
 }

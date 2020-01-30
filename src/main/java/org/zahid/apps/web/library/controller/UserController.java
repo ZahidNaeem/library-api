@@ -11,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.zahid.apps.web.library.dto.BookTransHeaderDTO;
 import org.zahid.apps.web.library.entity.User;
+import org.zahid.apps.web.library.exception.BadRequestException;
+import org.zahid.apps.web.library.exception.InternalServerErrorException;
 import org.zahid.apps.web.library.exception.ResourceNotFoundException;
 import org.zahid.apps.web.library.model.UserSummary;
 import org.zahid.apps.web.library.payload.request.ChangePasswordRequest;
@@ -120,50 +122,17 @@ public class UserController {
         try {
             final User currentUser = userRepo.findById(currentUserPrincipal.getId())
                     .orElseThrow(() -> new ResourceNotFoundException("User", "id", currentUserPrincipal.getId()));
-//            String currentPassword = null;
-//            String newPassword = null;
-//            Boolean isPasswordSame = false;
-            if (null != request && StringUtils.isNotEmpty(request.getCurrentPassword())) {
-//                currentPassword = request.getCurrentPassword();
-//                newPassword = request.getNewPassword();
-//                isPasswordSame = passwordEncoder.matches(currentPassword, currentUser.getPassword());
-//                LOG.debug("Is password same: {}", isPasswordSame);
-            }
+
             if (StringUtils.isEmpty(request.getCurrentPassword())) {
-                return new ResponseEntity(ApiResponse
-                        .<BookTransHeaderDTO>builder()
-                        .success(false)
-                        .message("Current password is empty")
-                        .entity(null)
-                        .build(), HttpStatus.BAD_REQUEST);
+                throw new BadRequestException("Current password is empty");
             } else if (StringUtils.isEmpty(request.getNewPassword())) {
-                return new ResponseEntity(ApiResponse
-                        .<BookTransHeaderDTO>builder()
-                        .success(false)
-                        .message("New password is empty")
-                        .entity(null)
-                        .build(), HttpStatus.BAD_REQUEST);
+                throw new BadRequestException("New password is empty");
             } else if (!passwordEncoder.matches(request.getCurrentPassword(), currentUser.getPassword())) {
-                return new ResponseEntity(ApiResponse
-                        .<BookTransHeaderDTO>builder()
-                        .success(false)
-                        .message("Current password is not same as actual password")
-                        .entity(null)
-                        .build(), HttpStatus.BAD_REQUEST);
+                throw new BadRequestException("Current password is not same as actual password");
             } else if (request.getCurrentPassword().equals(request.getNewPassword())) {
-                return new ResponseEntity(ApiResponse
-                        .<BookTransHeaderDTO>builder()
-                        .success(false)
-                        .message("New password is same as current password")
-                        .entity(null)
-                        .build(), HttpStatus.BAD_REQUEST);
+                throw new BadRequestException("New password is same as current password");
             } else if (request.getNewPassword().length() < 6) {
-                return new ResponseEntity(ApiResponse
-                        .<BookTransHeaderDTO>builder()
-                        .success(false)
-                        .message("New password does not meet complexity requirements")
-                        .entity(null)
-                        .build(), HttpStatus.BAD_REQUEST);
+                throw new BadRequestException("New password does not meet complexity requirements");
             } else {
                 currentUser.setPassword(passwordEncoder.encode(request.getNewPassword()));
                 userRepo.save(currentUser);
@@ -178,12 +147,7 @@ public class UserController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity(ApiResponse
-                    .<BookTransHeaderDTO>builder()
-                    .success(false)
-                    .message(e.getMessage())
-                    .entity(null)
-                    .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new InternalServerErrorException(e.getMessage());
         }
     }
 }

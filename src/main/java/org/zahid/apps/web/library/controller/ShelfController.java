@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.zahid.apps.web.library.dto.ShelfDTO;
 import org.zahid.apps.web.library.entity.NavigationDtl;
 import org.zahid.apps.web.library.entity.ShelfEntity;
+import org.zahid.apps.web.library.exception.InternalServerErrorException;
 import org.zahid.apps.web.library.mapper.ShelfMapper;
 import org.zahid.apps.web.library.model.ShelfModel;
 import org.zahid.apps.web.library.payload.response.ApiResponse;
@@ -200,12 +201,7 @@ public class ShelfController {
         );
             } catch (Exception e) {
                 e.printStackTrace();
-                return new ResponseEntity(ApiResponse
-                        .<ShelfDTO>builder()
-                        .success(false)
-                        .message(e.getMessage())
-                        .entity(null)
-                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new InternalServerErrorException(e.getMessage());
             }
         }
     }
@@ -230,12 +226,7 @@ public class ShelfController {
         );
             } catch (Exception e) {
                 e.printStackTrace();
-                return new ResponseEntity(ApiResponse
-                        .<ShelfDTO>builder()
-                        .success(false)
-                        .message(e.getMessage())
-                        .entity(null)
-                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new InternalServerErrorException(e.getMessage());
             }
         }
     }

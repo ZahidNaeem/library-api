@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import org.zahid.apps.web.library.dto.SubjectDTO;
 import org.zahid.apps.web.library.entity.NavigationDtl;
 import org.zahid.apps.web.library.entity.SubjectEntity;
+import org.zahid.apps.web.library.exception.BadRequestException;
+import org.zahid.apps.web.library.exception.InternalServerErrorException;
 import org.zahid.apps.web.library.mapper.SubjectMapper;
 import org.zahid.apps.web.library.model.SubjectModel;
 import org.zahid.apps.web.library.payload.response.ApiResponse;
@@ -170,21 +172,10 @@ public class SubjectController {
             );
         } catch (DataIntegrityViolationException e) {
             LOG.error("Duplicate entry found");
-//      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ABC");
-            return new ResponseEntity(ApiResponse
-                    .<SubjectDTO>builder()
-                    .success(false)
-                    .message("Duplicate entry found")
-                    .entity(null)
-                    .build(), HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("Duplicate entry found");
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity(ApiResponse
-                        .<SubjectDTO>builder()
-                        .success(false)
-                        .message(e.getMessage())
-                        .entity(null)
-                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new InternalServerErrorException(e.getMessage());
         }
     }
 
@@ -224,12 +215,7 @@ public class SubjectController {
                 );
             } catch (Exception e) {
                 e.printStackTrace();
-                return new ResponseEntity(ApiResponse
-                        .<SubjectDTO>builder()
-                        .success(false)
-                        .message(e.getMessage())
-                        .entity(null)
-                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new InternalServerErrorException(e.getMessage());
             }
         }
     }
@@ -255,12 +241,7 @@ public class SubjectController {
                 );
             } catch (Exception e) {
                 e.printStackTrace();
-                return new ResponseEntity(ApiResponse
-                        .<SubjectDTO>builder()
-                        .success(false)
-                        .message(e.getMessage())
-                        .entity(null)
-                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new InternalServerErrorException(e.getMessage());
             }
         }
     }

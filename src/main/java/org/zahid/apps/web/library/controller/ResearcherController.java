@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.zahid.apps.web.library.dto.ResearcherDTO;
 import org.zahid.apps.web.library.entity.ResearcherEntity;
 import org.zahid.apps.web.library.entity.NavigationDtl;
+import org.zahid.apps.web.library.exception.InternalServerErrorException;
 import org.zahid.apps.web.library.mapper.ResearcherMapper;
 import org.zahid.apps.web.library.model.ResearcherModel;
 import org.zahid.apps.web.library.payload.response.ApiResponse;
@@ -190,12 +191,7 @@ public class ResearcherController {
                 );
             } catch (Exception e) {
                 e.printStackTrace();
-                return new ResponseEntity(ApiResponse
-                        .<ResearcherDTO>builder()
-                        .success(false)
-                        .message(e.getMessage())
-                        .entity(null)
-                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new InternalServerErrorException(e.getMessage());
             }
         }
     }
@@ -221,12 +217,7 @@ public class ResearcherController {
                 );
             } catch (Exception e) {
                 e.printStackTrace();
-                return new ResponseEntity(ApiResponse
-                        .<ResearcherDTO>builder()
-                        .success(false)
-                        .message(e.getMessage())
-                        .entity(null)
-                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new InternalServerErrorException(e.getMessage());
             }
         }
     }

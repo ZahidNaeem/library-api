@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.zahid.apps.web.library.dto.BookDTO;
 import org.zahid.apps.web.library.entity.BookEntity;
 import org.zahid.apps.web.library.entity.NavigationDtl;
+import org.zahid.apps.web.library.exception.InternalServerErrorException;
 import org.zahid.apps.web.library.mapper.BookMapper;
 import org.zahid.apps.web.library.model.BookModel;
 import org.zahid.apps.web.library.payload.request.SearchBookRequest;
@@ -190,12 +191,7 @@ public class BookController {
                 );
             } catch (Exception e) {
                 e.printStackTrace();
-                return new ResponseEntity(ApiResponse
-                        .<BookDTO>builder()
-                        .success(false)
-                        .message(e.getMessage())
-                        .entity(null)
-                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new InternalServerErrorException(e.getMessage());
             }
         }
     }
@@ -220,12 +216,7 @@ public class BookController {
                 );
             } catch (Exception e) {
                 e.printStackTrace();
-                return new ResponseEntity(ApiResponse
-                        .<BookDTO>builder()
-                        .success(false)
-                        .message(e.getMessage())
-                        .entity(null)
-                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new InternalServerErrorException(e.getMessage());
             }
         }
     }
