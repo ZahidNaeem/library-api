@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.zahid.apps.web.library.entity.RackEntity;
+import org.zahid.apps.web.library.exception.InternalServerErrorException;
 import org.zahid.apps.web.library.mapper.RackMapper;
 import org.zahid.apps.web.library.model.RackDetail;
 import org.zahid.apps.web.library.model.RackModel;
@@ -134,21 +135,14 @@ public class RackController {
                 return ResponseEntity.ok(
                         ApiResponse
                                 .<Boolean>builder()
-                                .success(false)
+                                .success(true)
                                 .message("Rack deleted seccessfully")
                                 .entity(true)
                                 .build()
                 );
             } catch (Exception e) {
                 e.printStackTrace();
-                return ResponseEntity.ok(
-                        ApiResponse
-                                .<Boolean>builder()
-                                .success(false)
-                                .message(e.getMessage())
-                                .entity(true)
-                                .build()
-                );
+                throw new InternalServerErrorException(e.getMessage());
             }
         }
     }
@@ -164,21 +158,14 @@ public class RackController {
                 return ResponseEntity.ok(
                         ApiResponse
                                 .<Boolean>builder()
-                                .success(false)
+                                .success(true)
                                 .message("Rack deleted seccessfully")
                                 .entity(true)
                                 .build()
                 );
             } catch (Exception e) {
                 e.printStackTrace();
-                return ResponseEntity.ok(
-                        ApiResponse
-                                .<Boolean>builder()
-                                .success(false)
-                                .message(e.getMessage())
-                                .entity(true)
-                                .build()
-                );
+                throw new InternalServerErrorException(e.getMessage());
             }
         }
     }

@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.zahid.apps.web.library.entity.VolumeEntity;
+import org.zahid.apps.web.library.exception.InternalServerErrorException;
 import org.zahid.apps.web.library.mapper.VolumeMapper;
 import org.zahid.apps.web.library.model.VolumeModel;
 import org.zahid.apps.web.library.payload.response.ApiResponse;
@@ -122,21 +123,14 @@ public class VolumeController {
                 return ResponseEntity.ok(
                         ApiResponse
                                 .<Boolean>builder()
-                                .success(false)
+                                .success(true)
                                 .message("Volume deleted seccessfully")
                                 .entity(true)
                                 .build()
                 );
             } catch (Exception e) {
                 e.printStackTrace();
-                return ResponseEntity.ok(
-                        ApiResponse
-                                .<Boolean>builder()
-                                .success(false)
-                                .message(e.getMessage())
-                                .entity(true)
-                                .build()
-                );
+                throw new InternalServerErrorException(e.getMessage());
             }
         }
     }
@@ -152,21 +146,14 @@ public class VolumeController {
                 return ResponseEntity.ok(
                         ApiResponse
                                 .<Boolean>builder()
-                                .success(false)
+                                .success(true)
                                 .message("Volume deleted seccessfully")
                                 .entity(true)
                                 .build()
                 );
             } catch (Exception e) {
                 e.printStackTrace();
-                return ResponseEntity.ok(
-                        ApiResponse
-                                .<Boolean>builder()
-                                .success(false)
-                                .message(e.getMessage())
-                                .entity(true)
-                                .build()
-                );
+                throw new InternalServerErrorException(e.getMessage());
             }
         }
     }
