@@ -18,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @JsonIdentityInfo(scope = BookTransHeaderEntity.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "headerId")
 @Entity
-@Table(name = "book_trans_header", schema = "library", catalog = "")
+@Table(name = "book_trans_header", schema = "library"/*, catalog = ""*/)
 public class BookTransHeaderEntity extends Auditable<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

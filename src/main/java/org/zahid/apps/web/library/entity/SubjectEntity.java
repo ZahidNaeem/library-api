@@ -11,13 +11,16 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
+import static javax.persistence.CascadeType.*;
+import static javax.persistence.CascadeType.DETACH;
+
 @Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIdentityInfo(scope = SubjectEntity.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "subjectId")
 @Entity
-@Table(name = "subject", schema = "library", catalog = "", uniqueConstraints = {
+@Table(name = "subject", schema = "library"/*, catalog = ""*/, uniqueConstraints = {
         @UniqueConstraint(name = "subject_code_uk", columnNames = {"subject_code"}),
         @UniqueConstraint(name = "subject_name_uk", columnNames = {"subject_name"})
 })
@@ -42,9 +45,9 @@ public class SubjectEntity extends Auditable<Long> {
     @Column(name = "remarks")
     private String remarks;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "subject")
+    @OneToMany(cascade = {PERSIST, MERGE, /*REMOVE,*/ REFRESH, DETACH}, fetch = FetchType.LAZY, mappedBy = "subject")
     private List<BookEntity> books;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "parentSubjectId")
+    @OneToMany(cascade = {PERSIST, MERGE, /*REMOVE,*/ REFRESH, DETACH}, fetch = FetchType.LAZY, mappedBy = "parentSubjectId")
     private List<SubjectEntity> subjects;
 }

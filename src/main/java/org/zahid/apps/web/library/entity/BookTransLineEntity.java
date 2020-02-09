@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @JsonIdentityInfo(scope = BookTransLineEntity.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "lineId")
 @Entity
-@Table(name = "book_trans_line", schema = "library", catalog = "")
+@Table(name = "book_trans_line", schema = "library"/*, catalog = ""*/)
 public class BookTransLineEntity extends Auditable<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

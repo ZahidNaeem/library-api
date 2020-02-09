@@ -11,13 +11,16 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
+import static javax.persistence.CascadeType.*;
+import static javax.persistence.CascadeType.DETACH;
+
 @Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIdentityInfo(scope = ShelfEntity.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "shelfId")
 @Entity
-@Table(name = "shelf", schema = "library", catalog = "", uniqueConstraints = {
+@Table(name = "shelf", schema = "library"/*, catalog = ""*/, uniqueConstraints = {
         @UniqueConstraint(name = "shelf_name_uk", columnNames = {"shelf_name"})
 })
 public class ShelfEntity extends Auditable<Long> {
@@ -33,7 +36,7 @@ public class ShelfEntity extends Auditable<Long> {
     @Column(name = "remarks")
     private String remarks;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "shelf")
+    @OneToMany(cascade = {PERSIST, MERGE, /*REMOVE,*/ REFRESH, DETACH}, fetch = FetchType.LAZY, mappedBy = "shelf")
     private List<BookEntity> books;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "shelf")
