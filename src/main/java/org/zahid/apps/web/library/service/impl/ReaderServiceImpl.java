@@ -33,7 +33,7 @@ public class ReaderServiceImpl implements ReaderService {
 
     @Override
     public ReaderEntity save(ReaderEntity reader) {
-        return readerRepo.save(reader);
+        return readerRepo.saveAndFlush(reader);
     }
 
     @Override

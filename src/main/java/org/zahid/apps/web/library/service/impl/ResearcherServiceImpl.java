@@ -33,7 +33,7 @@ public class ResearcherServiceImpl implements ResearcherService {
 
     @Override
     public ResearcherEntity save(ResearcherEntity researcher) {
-        return researcherRepo.save(researcher);
+        return researcherRepo.saveAndFlush(researcher);
     }
 
     @Override

@@ -33,7 +33,7 @@ public class PublisherServiceImpl implements PublisherService {
 
     @Override
     public PublisherEntity save(PublisherEntity publisher) {
-        return publisherRepo.save(publisher);
+        return publisherRepo.saveAndFlush(publisher);
     }
 
     @Override

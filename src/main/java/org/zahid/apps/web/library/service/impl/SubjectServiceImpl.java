@@ -33,7 +33,7 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public SubjectEntity save(SubjectEntity subject) {
-        return subjectRepo.save(subject);
+        return subjectRepo.saveAndFlush(subject);
     }
 
     @Override

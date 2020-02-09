@@ -40,7 +40,7 @@ public class BookTransLineServiceImpl implements BookTransLineService {
 
     @Override
     public BookTransLineEntity save(BookTransLineEntity bookTransLine) {
-        return bookTransLineRepo.save(bookTransLine);
+        return bookTransLineRepo.saveAndFlush(bookTransLine);
     }
 
     @Override

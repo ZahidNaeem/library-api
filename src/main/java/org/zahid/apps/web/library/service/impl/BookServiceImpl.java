@@ -44,7 +44,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookEntity save(BookEntity book) {
-        return bookRepo.save(book);
+        return bookRepo.saveAndFlush(book);
     }
 
     @Override

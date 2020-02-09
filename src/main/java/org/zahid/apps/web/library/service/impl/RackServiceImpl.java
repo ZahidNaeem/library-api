@@ -39,7 +39,7 @@ public class RackServiceImpl implements RackService {
 
     @Override
     public RackEntity save(RackEntity rack) {
-        return rackRepo.save(rack);
+        return rackRepo.saveAndFlush(rack);
     }
 
     @Override

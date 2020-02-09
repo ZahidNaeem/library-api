@@ -39,7 +39,7 @@ public class BookTransHeaderServiceImpl implements BookTransHeaderService {
 
     @Override
     public BookTransHeaderEntity save(BookTransHeaderEntity bookTransHeader) {
-        return bookTransHeaderRepo.save(bookTransHeader);
+        return bookTransHeaderRepo.saveAndFlush(bookTransHeader);
     }
 
     @Override

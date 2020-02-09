@@ -135,7 +135,7 @@ public class UserController {
                 throw new BadRequestException("New password does not meet complexity requirements");
             } else {
                 currentUser.setPassword(passwordEncoder.encode(request.getNewPassword()));
-                userRepo.save(currentUser);
+                userRepo.saveAndFlush(currentUser);
                 return ResponseEntity.ok(
                         ApiResponse
                                 .<Boolean>builder()

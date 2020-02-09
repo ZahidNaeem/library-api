@@ -33,7 +33,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public AuthorEntity save(AuthorEntity author) {
-        return authorRepo.save(author);
+        return authorRepo.saveAndFlush(author);
     }
 
     @Override

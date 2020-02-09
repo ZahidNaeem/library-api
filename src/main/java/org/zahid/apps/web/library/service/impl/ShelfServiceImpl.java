@@ -33,7 +33,7 @@ public class ShelfServiceImpl implements ShelfService {
 
     @Override
     public ShelfEntity save(ShelfEntity shelf) {
-        return shelfRepo.save(shelf);
+        return shelfRepo.saveAndFlush(shelf);
     }
 
     @Override

@@ -52,7 +52,7 @@ public class VolumeServiceImpl implements VolumeService {
 
     @Override
     public VolumeEntity save(VolumeEntity volume) {
-        return volumeRepo.save(volume);
+        return volumeRepo.saveAndFlush(volume);
     }
 
     @Override
