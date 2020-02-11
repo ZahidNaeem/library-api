@@ -4,7 +4,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +16,8 @@ import org.zahid.apps.web.library.model.AuthorModel;
 import org.zahid.apps.web.library.payload.response.ApiResponse;
 import org.zahid.apps.web.library.service.AuthorService;
 
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -25,11 +26,18 @@ import java.util.List;
 public class AuthorController {
 
     private static final Logger LOG = LogManager.getLogger(AuthorController.class);
+    private List<AuthorModel> authorModels = new ArrayList<>();
+
     @Autowired
     private AuthorService authorService;
 
     @Autowired
     private AuthorMapper mapper;
+
+    @PostConstruct
+    public void init() {
+        authorModels = mapper.toAuthorModels(authorService.findAll());
+    }
 
     private final int[] indx = {-1};
 
@@ -48,7 +56,7 @@ public class AuthorController {
                         .<List<AuthorModel>>builder()
                         .success(true)
                         .message("findAll response")
-                        .entity(mapper.toAuthorModels(authorService.findAll()))
+                        .entity(authorModels)
                         .build()
         );
     }
@@ -56,14 +64,14 @@ public class AuthorController {
     @GetMapping("{id}")
     public ResponseEntity<ApiResponse<AuthorDTO>> findById(@PathVariable("id") final Long id) {
         final AuthorModel model = mapper.toAuthorModel(authorService.findById(id));
-        indx[0] = findAll().getBody().getEntity().indexOf(model);
+        indx[0] = authorModels.indexOf(model);
         LOG.info("Index in findById(): {}", indx[0]);
         return ResponseEntity.ok(
                 ApiResponse
                         .<AuthorDTO>builder()
                         .success(true)
                         .message("findById response")
-                        .entity(getAuthorDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getAuthorDTO(authorModels, indx[0]))
                         .build()
         );
     }
@@ -89,7 +97,7 @@ public class AuthorController {
                         .<AuthorDTO>builder()
                         .success(true)
                         .message("first record response")
-                        .entity(getAuthorDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getAuthorDTO(authorModels, indx[0]))
                         .build()
         );
     }
@@ -103,7 +111,7 @@ public class AuthorController {
                         .<AuthorDTO>builder()
                         .success(true)
                         .message("previous record response")
-                        .entity(getAuthorDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getAuthorDTO(authorModels, indx[0]))
                         .build()
         );
     }
@@ -117,21 +125,21 @@ public class AuthorController {
                         .<AuthorDTO>builder()
                         .success(true)
                         .message("next record response")
-                        .entity(getAuthorDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getAuthorDTO(authorModels, indx[0]))
                         .build()
         );
     }
 
     @GetMapping("last")
     public ResponseEntity<ApiResponse<AuthorDTO>> last() {
-        indx[0] = findAll().getBody().getEntity().size() - 1;
+        indx[0] = authorModels.size() - 1;
         LOG.info("Index in last(): {}", indx[0]);
         return ResponseEntity.ok(
                 ApiResponse
                         .<AuthorDTO>builder()
                         .success(true)
                         .message("last record response")
-                        .entity(getAuthorDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getAuthorDTO(authorModels, indx[0]))
                         .build()
         );
     }
@@ -143,14 +151,15 @@ public class AuthorController {
         setAuthorForBooks(author);
         final AuthorEntity authorSaved = authorService.save(author);
         final AuthorModel savedModel = mapper.toAuthorModel(authorSaved);
-        indx[0] = this.findAll().getBody().getEntity().indexOf(savedModel);
+        init();
+        indx[0] = this.authorModels.indexOf(savedModel);
         LOG.info("Index in saveAuthor(): {}", indx[0]);
         return ResponseEntity.ok(
                 ApiResponse
                         .<AuthorDTO>builder()
                         .success(true)
                         .message("Author saved seccessfully")
-                        .entity(getAuthorDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getAuthorDTO(authorModels, indx[0]))
                         .build()
         );
     }
@@ -179,6 +188,7 @@ public class AuthorController {
         } else {
             try {
                 authorService.deleteById(id);
+                init();
                 indx[0]--;
                 LOG.info("Index in deleteAuthorById(): {}", indx[0]);
                 return ResponseEntity.ok(
@@ -186,7 +196,7 @@ public class AuthorController {
                                 .<AuthorDTO>builder()
                                 .success(true)
                                 .message("Author deleted seccessfully")
-                                .entity(getAuthorDTO(findAll().getBody().getEntity(), indx[0]))
+                                .entity(getAuthorDTO(authorModels, indx[0]))
                                 .build()
                 );
             } catch (Exception e) {
@@ -205,6 +215,7 @@ public class AuthorController {
         } else {
             try {
                 authorService.delete(mapper.toAuthorEntity(model));
+                init();
                 indx[0]--;
                 LOG.info("Index in deleteAuthor(): {}", indx[0]);
                 return ResponseEntity.ok(
@@ -212,7 +223,7 @@ public class AuthorController {
                                 .<AuthorDTO>builder()
                                 .success(true)
                                 .message("Author deleted seccessfully")
-                                .entity(getAuthorDTO(findAll().getBody().getEntity(), indx[0]))
+                                .entity(getAuthorDTO(authorModels, indx[0]))
                                 .build()
                 );
             } catch (Exception e) {
