@@ -1,5 +1,7 @@
 package org.zahid.apps.web.library.controller;
 
+import java.util.ArrayList;
+import javax.annotation.PostConstruct;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,6 +27,13 @@ import java.util.List;
 public class ShelfController {
 
     private static final Logger LOG = LogManager.getLogger(ShelfController.class);
+    private List<ShelfModel> shelfModels = new ArrayList<>();
+
+    @PostConstruct
+    public void init() {
+        shelfModels = mapper.toShelfModels(shelfService.findAll());
+    }
+
     @Autowired
     private ShelfService shelfService;
 
@@ -56,7 +65,7 @@ public class ShelfController {
                         .<List<ShelfModel>>builder()
                         .success(true)
                         .message("findAll response")
-                        .entity(mapper.toShelfModels(shelfService.findAll()))
+                        .entity(shelfModels)
                         .build()
         );
     }
@@ -64,14 +73,14 @@ public class ShelfController {
     @GetMapping("{id}")
     public ResponseEntity<ApiResponse<ShelfDTO>> findById(@PathVariable("id") final Long id) {
         final ShelfModel model = mapper.toShelfModel(shelfService.findById(id));
-        indx[0] = findAll().getBody().getEntity().indexOf(model);
+        indx[0] = shelfModels.indexOf(model);
         LOG.info("Index in findById(): {}", indx[0]);
         return ResponseEntity.ok(
                 ApiResponse
                         .<ShelfDTO>builder()
                         .success(true)
                         .message("findById response")
-                        .entity(getShelfDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getShelfDTO(shelfModels, indx[0]))
                         .build()
         );
     }
@@ -97,7 +106,7 @@ public class ShelfController {
                         .<ShelfDTO>builder()
                         .success(true)
                         .message("first response")
-                        .entity(getShelfDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getShelfDTO(shelfModels, indx[0]))
                         .build()
         );
     }
@@ -111,7 +120,7 @@ public class ShelfController {
                         .<ShelfDTO>builder()
                         .success(true)
                         .message("previous response")
-                        .entity(getShelfDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getShelfDTO(shelfModels, indx[0]))
                         .build()
         );
     }
@@ -125,21 +134,21 @@ public class ShelfController {
                         .<ShelfDTO>builder()
                         .success(true)
                         .message("next response")
-                        .entity(getShelfDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getShelfDTO(shelfModels, indx[0]))
                         .build()
         );
     }
 
     @GetMapping("last")
     public ResponseEntity<ApiResponse<ShelfDTO>> last() {
-        indx[0] = findAll().getBody().getEntity().size() - 1;
+        indx[0] = shelfModels.size() - 1;
         LOG.info("Index in last(): {}", indx[0]);
         return ResponseEntity.ok(
                 ApiResponse
                         .<ShelfDTO>builder()
                         .success(true)
                         .message("last response")
-                        .entity(getShelfDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getShelfDTO(shelfModels, indx[0]))
                         .build()
         );
     }
@@ -152,14 +161,15 @@ public class ShelfController {
         setShelfForRacks(shelf);
         final ShelfEntity shelfSaved = shelfService.save(shelf);
         final ShelfModel savedModel = mapper.toShelfModel(shelfSaved);
-        indx[0] = this.findAll().getBody().getEntity().indexOf(savedModel);
+        init();
+        indx[0] = this.shelfModels.indexOf(savedModel);
         LOG.info("Index in saveShelf(): {}", indx[0]);
         return ResponseEntity.ok(
                 ApiResponse
                         .<ShelfDTO>builder()
                         .success(true)
                         .message("Shelf saved successfully")
-                        .entity(getShelfDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getShelfDTO(shelfModels, indx[0]))
                         .build()
         );
     }
@@ -189,6 +199,7 @@ public class ShelfController {
         } else {
             try {
                 shelfService.deleteById(id);
+                init();
                 indx[0]--;
                 LOG.info("Index in deleteShelfById(): {}", indx[0]);
                 return ResponseEntity.ok(
@@ -196,7 +207,7 @@ public class ShelfController {
                         .<ShelfDTO>builder()
                         .success(true)
                         .message("Shelf deleted successfully")
-                        .entity(getShelfDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getShelfDTO(shelfModels, indx[0]))
                         .build()
         );
             } catch (Exception e) {
@@ -214,6 +225,7 @@ public class ShelfController {
         } else {
             try {
                 shelfService.delete(mapper.toShelfEntity(model));
+                init();
                 indx[0]--;
                 LOG.info("Index in deleteShelf(): {}", indx[0]);
                 return ResponseEntity.ok(
@@ -221,7 +233,7 @@ public class ShelfController {
                         .<ShelfDTO>builder()
                         .success(true)
                         .message("Shelf deleted successfully")
-                        .entity(getShelfDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getShelfDTO(shelfModels, indx[0]))
                         .build()
         );
             } catch (Exception e) {

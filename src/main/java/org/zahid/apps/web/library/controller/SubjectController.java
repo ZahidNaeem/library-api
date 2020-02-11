@@ -1,5 +1,7 @@
 package org.zahid.apps.web.library.controller;
 
+import java.util.ArrayList;
+import javax.annotation.PostConstruct;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,6 +30,13 @@ import java.util.List;
 public class SubjectController {
 
     private static final Logger LOG = LogManager.getLogger(SubjectController.class);
+    private List<SubjectModel> subjectModels = new ArrayList<>();
+
+    @PostConstruct
+    public void init() {
+        subjectModels = mapper.toSubjectModels(subjectService.findAll());
+    }
+
     @Autowired
     private SubjectService subjectService;
 
@@ -51,7 +60,7 @@ public class SubjectController {
                         .<List<SubjectModel>>builder()
                         .success(true)
                         .message("findAll response")
-                        .entity(mapper.toSubjectModels(subjectService.findAll()))
+                        .entity(subjectModels)
                         .build()
         );
     }
@@ -59,14 +68,14 @@ public class SubjectController {
     @GetMapping("{id}")
     public ResponseEntity<ApiResponse<SubjectDTO>> findById(@PathVariable("id") final Long id) {
         final SubjectModel model = mapper.toSubjectModel(subjectService.findById(id));
-        indx[0] = findAll().getBody().getEntity().indexOf(model);
+        indx[0] = subjectModels.indexOf(model);
         LOG.info("Index in findById(): {}", indx[0]);
         return ResponseEntity.ok(
                 ApiResponse
                         .<SubjectDTO>builder()
                         .success(true)
                         .message("findById response")
-                        .entity(getSubjectDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getSubjectDTO(subjectModels, indx[0]))
                         .build()
         );
     }
@@ -104,7 +113,7 @@ public class SubjectController {
                         .<SubjectDTO>builder()
                         .success(true)
                         .message("first response")
-                        .entity(getSubjectDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getSubjectDTO(subjectModels, indx[0]))
                         .build()
         );
     }
@@ -118,7 +127,7 @@ public class SubjectController {
                         .<SubjectDTO>builder()
                         .success(true)
                         .message("previous response")
-                        .entity(getSubjectDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getSubjectDTO(subjectModels, indx[0]))
                         .build()
         );
     }
@@ -132,21 +141,21 @@ public class SubjectController {
                         .<SubjectDTO>builder()
                         .success(true)
                         .message("next response")
-                        .entity(getSubjectDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getSubjectDTO(subjectModels, indx[0]))
                         .build()
         );
     }
 
     @GetMapping("last")
     public ResponseEntity<ApiResponse<SubjectDTO>> last() {
-        indx[0] = findAll().getBody().getEntity().size() - 1;
+        indx[0] = subjectModels.size() - 1;
         LOG.info("Index in last(): {}", indx[0]);
         return ResponseEntity.ok(
                 ApiResponse
                         .<SubjectDTO>builder()
                         .success(true)
                         .message("last response")
-                        .entity(getSubjectDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getSubjectDTO(subjectModels, indx[0]))
                         .build()
         );
     }
@@ -160,14 +169,15 @@ public class SubjectController {
         try {
             subjectSaved[0] = subjectService.save(subject);
             final SubjectModel savedModel = mapper.toSubjectModel(subjectSaved[0]);
-            indx[0] = this.findAll().getBody().getEntity().indexOf(savedModel);
+            init();
+            indx[0] = this.subjectModels.indexOf(savedModel);
             LOG.info("Index in saveSubject(): {}", indx[0]);
             return ResponseEntity.ok(
                     ApiResponse
                             .<SubjectDTO>builder()
                             .success(true)
                             .message("Subject saved successfully")
-                            .entity(getSubjectDTO(findAll().getBody().getEntity(), indx[0]))
+                            .entity(getSubjectDTO(subjectModels, indx[0]))
                             .build()
             );
         } catch (DataIntegrityViolationException e) {
@@ -203,6 +213,7 @@ public class SubjectController {
         } else {
             try {
                 subjectService.deleteById(id);
+                init();
                 indx[0]--;
                 LOG.info("Index in deleteSubjectById(): {}", indx[0]);
                 return ResponseEntity.ok(
@@ -210,7 +221,7 @@ public class SubjectController {
                                 .<SubjectDTO>builder()
                                 .success(true)
                                 .message("Subject deleted successfully")
-                                .entity(getSubjectDTO(findAll().getBody().getEntity(), indx[0]))
+                                .entity(getSubjectDTO(subjectModels, indx[0]))
                                 .build()
                 );
             } catch (Exception e) {
@@ -229,6 +240,7 @@ public class SubjectController {
         } else {
             try {
                 subjectService.delete(mapper.toSubjectEntity(model));
+                init();
                 indx[0]--;
                 LOG.info("Index in deleteSubject(): {}", indx[0]);
                 return ResponseEntity.ok(
@@ -236,7 +248,7 @@ public class SubjectController {
                                 .<SubjectDTO>builder()
                                 .success(true)
                                 .message("Subject deleted successfully")
-                                .entity(getSubjectDTO(findAll().getBody().getEntity(), indx[0]))
+                                .entity(getSubjectDTO(subjectModels, indx[0]))
                                 .build()
                 );
             } catch (Exception e) {

@@ -1,5 +1,7 @@
 package org.zahid.apps.web.library.controller;
 
+import java.util.ArrayList;
+import javax.annotation.PostConstruct;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,6 +27,13 @@ import java.util.List;
 public class ResearcherController {
 
     private static final Logger LOG = LogManager.getLogger(ResearcherController.class);
+    private List<ResearcherModel> researcherModels = new ArrayList<>();
+
+    @PostConstruct
+    public void init() {
+        researcherModels = mapper.toResearcherModels(researcherService.findAll());
+    }
+
     @Autowired
     private ResearcherService researcherService;
 
@@ -48,7 +57,7 @@ public class ResearcherController {
                         .<List<ResearcherModel>>builder()
                         .success(true)
                         .message("findAll response")
-                        .entity(mapper.toResearcherModels(researcherService.findAll()))
+                        .entity(researcherModels)
                         .build()
         );
     }
@@ -56,14 +65,14 @@ public class ResearcherController {
     @GetMapping("{id}")
     public ResponseEntity<ApiResponse<ResearcherDTO>> findById(@PathVariable("id") final Long id) {
         final ResearcherModel model = mapper.toResearcherModel(researcherService.findById(id));
-        indx[0] = findAll().getBody().getEntity().indexOf(model);
+        indx[0] = researcherModels.indexOf(model);
         LOG.info("Index in findById(): {}", indx[0]);
         return ResponseEntity.ok(
                 ApiResponse
                         .<ResearcherDTO>builder()
                         .success(true)
                         .message("findById response")
-                        .entity(getResearcherDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getResearcherDTO(researcherModels, indx[0]))
                         .build()
         );
     }
@@ -89,7 +98,7 @@ public class ResearcherController {
                         .<ResearcherDTO>builder()
                         .success(true)
                         .message("first record response")
-                        .entity(getResearcherDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getResearcherDTO(researcherModels, indx[0]))
                         .build()
         );
     }
@@ -103,7 +112,7 @@ public class ResearcherController {
                         .<ResearcherDTO>builder()
                         .success(true)
                         .message("previous record response")
-                        .entity(getResearcherDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getResearcherDTO(researcherModels, indx[0]))
                         .build()
         );
     }
@@ -117,21 +126,21 @@ public class ResearcherController {
                         .<ResearcherDTO>builder()
                         .success(true)
                         .message("next record response")
-                        .entity(getResearcherDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getResearcherDTO(researcherModels, indx[0]))
                         .build()
         );
     }
 
     @GetMapping("last")
     public ResponseEntity<ApiResponse<ResearcherDTO>> last() {
-        indx[0] = findAll().getBody().getEntity().size() - 1;
+        indx[0] = researcherModels.size() - 1;
         LOG.info("Index in last(): {}", indx[0]);
         return ResponseEntity.ok(
                 ApiResponse
                         .<ResearcherDTO>builder()
                         .success(true)
                         .message("last record response")
-                        .entity(getResearcherDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getResearcherDTO(researcherModels, indx[0]))
                         .build()
         );
     }
@@ -143,14 +152,15 @@ public class ResearcherController {
         setResearcherForBooks(researcher);
         final ResearcherEntity researcherSaved = researcherService.save(researcher);
         final ResearcherModel savedModel = mapper.toResearcherModel(researcherSaved);
-        indx[0] = this.findAll().getBody().getEntity().indexOf(savedModel);
+        init();
+indx[0] = this.researcherModels.indexOf(savedModel);
         LOG.info("Index in saveResearcher(): {}", indx[0]);
         return ResponseEntity.ok(
                 ApiResponse
                         .<ResearcherDTO>builder()
                         .success(true)
                         .message("Researcher saved seccessfully")
-                        .entity(getResearcherDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getResearcherDTO(researcherModels, indx[0]))
                         .build()
         );
     }
@@ -179,6 +189,7 @@ public class ResearcherController {
         } else {
             try {
                 researcherService.deleteById(id);
+init();
                 indx[0]--;
                 LOG.info("Index in deleteResearcherById(): {}", indx[0]);
                 return ResponseEntity.ok(
@@ -186,7 +197,7 @@ public class ResearcherController {
                                 .<ResearcherDTO>builder()
                                 .success(true)
                                 .message("Researcher deleted seccessfully")
-                                .entity(getResearcherDTO(findAll().getBody().getEntity(), indx[0]))
+                                .entity(getResearcherDTO(researcherModels, indx[0]))
                                 .build()
                 );
             } catch (Exception e) {
@@ -205,6 +216,7 @@ public class ResearcherController {
         } else {
             try {
                 researcherService.delete(mapper.toResearcherEntity(model));
+init();
                 indx[0]--;
                 LOG.info("Index in deleteResearcher(): {}", indx[0]);
                 return ResponseEntity.ok(
@@ -212,7 +224,7 @@ public class ResearcherController {
                                 .<ResearcherDTO>builder()
                                 .success(true)
                                 .message("Researcher deleted seccessfully")
-                                .entity(getResearcherDTO(findAll().getBody().getEntity(), indx[0]))
+                                .entity(getResearcherDTO(researcherModels, indx[0]))
                                 .build()
                 );
             } catch (Exception e) {

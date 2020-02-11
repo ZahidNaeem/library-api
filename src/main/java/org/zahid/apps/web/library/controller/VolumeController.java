@@ -1,5 +1,7 @@
 package org.zahid.apps.web.library.controller;
 
+import java.util.ArrayList;
+import javax.annotation.PostConstruct;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +34,15 @@ public class VolumeController {
     @Autowired
     private VolumeMapper mapper;
 
-    @Autowired
-    private BookService bookService;
+//    @Autowired
+//    private BookService bookService;
+
+    private List<VolumeModel> volumeModels = new ArrayList<>();
+
+    @PostConstruct
+    public void init() {
+        volumeModels = mapper.toVolumeModels(volumeService.findAll());
+    }
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<VolumeModel>>> findAll() {
@@ -42,7 +51,7 @@ public class VolumeController {
                         .<List<VolumeModel>>builder()
                         .success(true)
                         .message("findAll response")
-                        .entity(mapper.toVolumeModels(volumeService.findAll()))
+                        .entity(volumeModels)
                         .build()
         );
     }

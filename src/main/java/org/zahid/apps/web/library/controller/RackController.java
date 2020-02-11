@@ -1,5 +1,7 @@
 package org.zahid.apps.web.library.controller;
 
+import java.util.ArrayList;
+import javax.annotation.PostConstruct;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,6 +46,13 @@ public class RackController {
         }
     }
 
+    private List<RackModel> rackModels = new ArrayList<>();
+
+    @PostConstruct
+    public void init() {
+        rackModels = mapper.toRackModels(rackService.findAll());
+    }
+
     @GetMapping
     public ResponseEntity<ApiResponse<List<RackModel>>> findAll() {
         return ResponseEntity.ok(
@@ -51,7 +60,7 @@ public class RackController {
                         .<List<RackModel>>builder()
                         .success(true)
                         .message("findAll response")
-                        .entity(mapper.toRackModels(rackService.findAll()))
+                        .entity(rackModels)
                         .build()
         );
     }

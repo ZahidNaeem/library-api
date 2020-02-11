@@ -1,5 +1,7 @@
 package org.zahid.apps.web.library.controller;
 
+import java.util.ArrayList;
+import javax.annotation.PostConstruct;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,6 +29,12 @@ import java.util.List;
 public class BookController {
 
     private static final Logger LOG = LogManager.getLogger(BookController.class);
+    private List<BookModel> bookModels = new ArrayList<>();
+
+    @PostConstruct
+    public void init() {
+        bookModels = mapper.toBookModels(bookService.findAll());
+    }
     @Autowired
     private BookService bookService;
 
@@ -50,7 +58,7 @@ public class BookController {
                         .<List<BookModel>>builder()
                         .success(true)
                         .message("findAll response")
-                        .entity(mapper.toBookModels(bookService.findAll()))
+                        .entity(bookModels)
                         .build()
         );
     }
@@ -58,14 +66,14 @@ public class BookController {
     @GetMapping("{id}")
     public ResponseEntity<ApiResponse<BookDTO>> findById(@PathVariable("id") final Long id) {
         final BookModel model = mapper.toBookModel(bookService.findById(id));
-        indx[0] = findAll().getBody().getEntity().indexOf(model);
+        indx[0] = bookModels.indexOf(model);
         LOG.info("Index in findById(): {}", indx[0]);
         return ResponseEntity.ok(
                 ApiResponse
                         .<BookDTO>builder()
                         .success(true)
                         .message("findById response")
-                        .entity(getBookDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getBookDTO(bookModels, indx[0]))
                         .build()
         );
     }
@@ -91,7 +99,7 @@ public class BookController {
                         .<BookDTO>builder()
                         .success(true)
                         .message("first record response")
-                        .entity(getBookDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getBookDTO(bookModels, indx[0]))
                         .build()
         );
     }
@@ -105,7 +113,7 @@ public class BookController {
                         .<BookDTO>builder()
                         .success(true)
                         .message("first record response")
-                        .entity(getBookDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getBookDTO(bookModels, indx[0]))
                         .build()
         );
     }
@@ -119,21 +127,21 @@ public class BookController {
                         .<BookDTO>builder()
                         .success(true)
                         .message("first record response")
-                        .entity(getBookDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getBookDTO(bookModels, indx[0]))
                         .build()
         );
     }
 
     @GetMapping("last")
     public ResponseEntity<ApiResponse<BookDTO>> last() {
-        indx[0] = findAll().getBody().getEntity().size() - 1;
+        indx[0] = bookModels.size() - 1;
         LOG.info("Index in last(): {}", indx[0]);
         return ResponseEntity.ok(
                 ApiResponse
                         .<BookDTO>builder()
                         .success(true)
                         .message("first record response")
-                        .entity(getBookDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getBookDTO(bookModels, indx[0]))
                         .build()
         );
     }
@@ -144,14 +152,15 @@ public class BookController {
         setBookForVolumes(book);
         final BookEntity bookSaved = bookService.save(book);
         final BookModel savedModel = mapper.toBookModel(bookSaved);
-        indx[0] = this.findAll().getBody().getEntity().indexOf(savedModel);
+        init();
+        indx[0] = this.bookModels.indexOf(savedModel);
         LOG.info("Index in saveBook(): {}", indx[0]);
         return ResponseEntity.ok(
                 ApiResponse
                         .<BookDTO>builder()
                         .success(true)
                         .message("first record response")
-                        .entity(getBookDTO(findAll().getBody().getEntity(), indx[0]))
+                        .entity(getBookDTO(bookModels, indx[0]))
                         .build()
         );
     }
@@ -179,6 +188,7 @@ public class BookController {
         } else {
             try {
                 bookService.deleteById(id);
+                init();
                 indx[0]--;
                 LOG.info("Index in deleteBookById(): {}", indx[0]);
                 return ResponseEntity.ok(
@@ -186,7 +196,7 @@ public class BookController {
                                 .<BookDTO>builder()
                                 .success(true)
                                 .message("first record response")
-                                .entity(getBookDTO(findAll().getBody().getEntity(), indx[0]))
+                                .entity(getBookDTO(bookModels, indx[0]))
                                 .build()
                 );
             } catch (Exception e) {
@@ -204,6 +214,7 @@ public class BookController {
         } else {
             try {
                 bookService.delete(mapper.toBookEntity(model));
+                init();
                 indx[0]--;
                 LOG.info("Index in deleteBook(): {}", indx[0]);
                 return ResponseEntity.ok(
@@ -211,7 +222,7 @@ public class BookController {
                                 .<BookDTO>builder()
                                 .success(true)
                                 .message("first record response")
-                                .entity(getBookDTO(findAll().getBody().getEntity(), indx[0]))
+                                .entity(getBookDTO(bookModels, indx[0]))
                                 .build()
                 );
             } catch (Exception e) {

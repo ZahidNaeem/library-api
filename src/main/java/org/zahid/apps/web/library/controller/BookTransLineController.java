@@ -1,5 +1,7 @@
 package org.zahid.apps.web.library.controller;
 
+import java.util.ArrayList;
+import javax.annotation.PostConstruct;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +33,15 @@ public class BookTransLineController {
     @Autowired
     private BookTransLineMapper mapper;
 
-    @Autowired
-    private BookTransHeaderService bookTransHeaderService;
+//    @Autowired
+//    private BookTransHeaderService bookTransHeaderService;
+
+    private List<BookTransLineModel> bookTransLineModels = new ArrayList<>();
+
+    @PostConstruct
+    public void init() {
+        bookTransLineModels = mapper.toBookTransLineModels(bookTransLineService.findAll());
+    }
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<BookTransLineModel>>> findAll() {
@@ -41,7 +50,7 @@ public class BookTransLineController {
                         .<List<BookTransLineModel>>builder()
                         .success(true)
                         .message("findAll response")
-                        .entity(mapper.toBookTransLineModels(bookTransLineService.findAll()))
+                        .entity(bookTransLineModels)
                         .build()
         );
     }
