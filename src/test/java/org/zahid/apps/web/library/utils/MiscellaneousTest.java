@@ -17,4 +17,12 @@ public class MiscellaneousTest {
 //        final Integer expected = 1;
 //        Assert.assertEquals(expected, Miscellaneous.exists("SUBJECT", "SUBJECT_ID", 6L));
 //    }
+
+//    @DisplayName("Search Author")
+//    @Test
+//    void searchAuthor() {
+////        final Integer expected = 1;
+////        Assert.assertEquals(expected, Miscellaneous.exists("SUBJECT", "SUBJECT_ID", 6L));
+//        Miscellaneous.searchAuthor(null);
+//    }
 }

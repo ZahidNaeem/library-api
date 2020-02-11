@@ -5,9 +5,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zahid.apps.web.library.entity.BookTransLineEntity;
-import org.zahid.apps.web.library.entity.VolumeEntity;
 import org.zahid.apps.web.library.model.BookTransLineModel;
-import org.zahid.apps.web.library.model.VolumeModel;
 import org.zahid.apps.web.library.service.BookTransHeaderService;
 import org.zahid.apps.web.library.service.VolumeService;
 

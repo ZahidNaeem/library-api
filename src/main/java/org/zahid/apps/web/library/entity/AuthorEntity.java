@@ -12,7 +12,6 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 import static javax.persistence.CascadeType.*;
-import static javax.persistence.CascadeType.DETACH;
 
 @Builder
 @Data

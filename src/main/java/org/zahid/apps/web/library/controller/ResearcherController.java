@@ -1,24 +1,24 @@
 package org.zahid.apps.web.library.controller;
 
-import java.util.ArrayList;
-import javax.annotation.PostConstruct;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.zahid.apps.web.library.dto.ResearcherDTO;
-import org.zahid.apps.web.library.entity.ResearcherEntity;
 import org.zahid.apps.web.library.entity.NavigationDtl;
+import org.zahid.apps.web.library.entity.ResearcherEntity;
 import org.zahid.apps.web.library.exception.InternalServerErrorException;
 import org.zahid.apps.web.library.mapper.ResearcherMapper;
 import org.zahid.apps.web.library.model.ResearcherModel;
 import org.zahid.apps.web.library.payload.response.ApiResponse;
 import org.zahid.apps.web.library.service.ResearcherService;
+import org.zahid.apps.web.library.utils.Miscellaneous;
 
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -57,6 +57,19 @@ public class ResearcherController {
                         .<List<ResearcherModel>>builder()
                         .success(true)
                         .message("findAll response")
+                        .entity(researcherModels)
+                        .build()
+        );
+    }
+
+    @PostMapping(path = "search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse<List<ResearcherModel>>> searchResearcher(@RequestBody final ResearcherModel model) {
+        researcherModels = Miscellaneous.searchResearcher(model);
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<ResearcherModel>>builder()
+                        .success(true)
+                        .message("searchResearcher response")
                         .entity(researcherModels)
                         .build()
         );
@@ -153,7 +166,7 @@ public class ResearcherController {
         final ResearcherEntity researcherSaved = researcherService.save(researcher);
         final ResearcherModel savedModel = mapper.toResearcherModel(researcherSaved);
         init();
-indx[0] = this.researcherModels.indexOf(savedModel);
+        indx[0] = this.researcherModels.indexOf(savedModel);
         LOG.info("Index in saveResearcher(): {}", indx[0]);
         return ResponseEntity.ok(
                 ApiResponse
@@ -189,7 +202,7 @@ indx[0] = this.researcherModels.indexOf(savedModel);
         } else {
             try {
                 researcherService.deleteById(id);
-init();
+                init();
                 indx[0]--;
                 LOG.info("Index in deleteResearcherById(): {}", indx[0]);
                 return ResponseEntity.ok(
@@ -216,7 +229,7 @@ init();
         } else {
             try {
                 researcherService.delete(mapper.toResearcherEntity(model));
-init();
+                init();
                 indx[0]--;
                 LOG.info("Index in deleteResearcher(): {}", indx[0]);
                 return ResponseEntity.ok(

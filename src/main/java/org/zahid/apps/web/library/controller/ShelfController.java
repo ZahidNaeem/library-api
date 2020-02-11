@@ -1,12 +1,9 @@
 package org.zahid.apps.web.library.controller;
 
-import java.util.ArrayList;
-import javax.annotation.PostConstruct;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +15,10 @@ import org.zahid.apps.web.library.mapper.ShelfMapper;
 import org.zahid.apps.web.library.model.ShelfModel;
 import org.zahid.apps.web.library.payload.response.ApiResponse;
 import org.zahid.apps.web.library.service.ShelfService;
+import org.zahid.apps.web.library.utils.Miscellaneous;
 
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -65,6 +65,19 @@ public class ShelfController {
                         .<List<ShelfModel>>builder()
                         .success(true)
                         .message("findAll response")
+                        .entity(shelfModels)
+                        .build()
+        );
+    }
+
+    @PostMapping(path = "search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse<List<ShelfModel>>> searchShelf(@RequestBody final ShelfModel model) {
+        shelfModels = Miscellaneous.searchShelf(model);
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<ShelfModel>>builder()
+                        .success(true)
+                        .message("searchShelf response")
                         .entity(shelfModels)
                         .build()
         );

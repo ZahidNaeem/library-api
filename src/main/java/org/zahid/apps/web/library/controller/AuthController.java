@@ -2,7 +2,6 @@ package org.zahid.apps.web.library.controller;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,7 +13,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.zahid.apps.web.library.entity.Role;
 import org.zahid.apps.web.library.entity.User;
 import org.zahid.apps.web.library.enumeration.RoleName;
-import org.zahid.apps.web.library.exception.AppException;
 import org.zahid.apps.web.library.exception.BadRequestException;
 import org.zahid.apps.web.library.exception.InternalServerErrorException;
 import org.zahid.apps.web.library.mapper.UserMapper;

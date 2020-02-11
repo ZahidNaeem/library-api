@@ -1,12 +1,9 @@
 package org.zahid.apps.web.library.controller;
 
-import java.util.ArrayList;
-import javax.annotation.PostConstruct;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +18,8 @@ import org.zahid.apps.web.library.payload.response.ApiResponse;
 import org.zahid.apps.web.library.payload.response.SearchBookResponse;
 import org.zahid.apps.web.library.service.BookService;
 
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -53,6 +52,19 @@ public class BookController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<BookModel>>> findAll() {
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<BookModel>>builder()
+                        .success(true)
+                        .message("findAll response")
+                        .entity(bookModels)
+                        .build()
+        );
+    }
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<List<BookModel>>> searchBook(final BookModel bookModel) {
+
         return ResponseEntity.ok(
                 ApiResponse
                         .<List<BookModel>>builder()

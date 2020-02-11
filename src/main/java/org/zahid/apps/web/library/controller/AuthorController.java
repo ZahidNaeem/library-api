@@ -15,6 +15,7 @@ import org.zahid.apps.web.library.mapper.AuthorMapper;
 import org.zahid.apps.web.library.model.AuthorModel;
 import org.zahid.apps.web.library.payload.response.ApiResponse;
 import org.zahid.apps.web.library.service.AuthorService;
+import org.zahid.apps.web.library.utils.Miscellaneous;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -56,6 +57,19 @@ public class AuthorController {
                         .<List<AuthorModel>>builder()
                         .success(true)
                         .message("findAll response")
+                        .entity(authorModels)
+                        .build()
+        );
+    }
+
+    @PostMapping(path = "search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse<List<AuthorModel>>> searchAuthor(@RequestBody final AuthorModel model) {
+        authorModels = Miscellaneous.searchAuthor(model);
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<AuthorModel>>builder()
+                        .success(true)
+                        .message("searchAuthor response")
                         .entity(authorModels)
                         .build()
         );

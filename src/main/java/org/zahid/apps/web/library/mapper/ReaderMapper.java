@@ -4,10 +4,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.zahid.apps.web.library.entity.ReaderEntity;
 import org.zahid.apps.web.library.entity.BookTransHeaderEntity;
-import org.zahid.apps.web.library.model.ReaderModel;
+import org.zahid.apps.web.library.entity.ReaderEntity;
 import org.zahid.apps.web.library.model.BookTransHeaderModel;
+import org.zahid.apps.web.library.model.ReaderModel;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,13 +1,10 @@
 package org.zahid.apps.web.library.controller;
 
-import java.util.ArrayList;
-import javax.annotation.PostConstruct;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +19,8 @@ import org.zahid.apps.web.library.payload.response.ApiResponse;
 import org.zahid.apps.web.library.service.SubjectService;
 import org.zahid.apps.web.library.utils.Miscellaneous;
 
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -60,6 +59,19 @@ public class SubjectController {
                         .<List<SubjectModel>>builder()
                         .success(true)
                         .message("findAll response")
+                        .entity(subjectModels)
+                        .build()
+        );
+    }
+
+    @PostMapping(path = "search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse<List<SubjectModel>>> searchSubject(@RequestBody final SubjectModel model) {
+        subjectModels = Miscellaneous.searchSubject(model);
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<SubjectModel>>builder()
+                        .success(true)
+                        .message("searchSubject response")
                         .entity(subjectModels)
                         .build()
         );

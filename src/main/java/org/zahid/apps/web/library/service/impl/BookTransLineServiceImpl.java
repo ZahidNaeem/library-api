@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zahid.apps.web.library.entity.BookTransHeaderEntity;
 import org.zahid.apps.web.library.entity.BookTransLineEntity;
-import org.zahid.apps.web.library.entity.ShelfEntity;
 import org.zahid.apps.web.library.repo.BookTransLineRepo;
 import org.zahid.apps.web.library.service.BookTransLineService;
 

@@ -1,7 +1,5 @@
 package org.zahid.apps.web.library.controller;
 
-import java.util.ArrayList;
-import javax.annotation.PostConstruct;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,6 +16,8 @@ import org.zahid.apps.web.library.payload.response.ApiResponse;
 import org.zahid.apps.web.library.service.RackService;
 import org.zahid.apps.web.library.service.ShelfService;
 
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

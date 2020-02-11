@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.zahid.apps.web.library.config.ConfigProperties;
 import org.zahid.apps.web.library.entity.Organization;
 import org.zahid.apps.web.library.mapper.BookMapper;
+import org.zahid.apps.web.library.model.*;
 import org.zahid.apps.web.library.payload.response.SearchBookResponse;
 import org.zahid.apps.web.library.payload.response.SearchVolumeResponse;
 import org.zahid.apps.web.library.security.service.UserPrincipal;
@@ -263,22 +264,93 @@ public class Miscellaneous {
 
     public static List<SearchVolumeResponse> searchVolumeByBookId(final Long bookId) {
         final String sql = "SELECT V.VOLUME_ID\n" +
-            "      ,V.BOOK_ID\n" +
-            "      ,V.VOLUME_NAME\n" +
-            "      ,B.BOOK_NAME\n" +
-            "      ,'Shelf:' || S.SHELF_NAME || ' - Rack:' || R.RACK_NAME RACK_NAME\n" +
-            "      ,V.REMARKS\n" +
-            "  FROM VOLUME V\n" +
-            "      ,BOOK B\n" +
-            "      ,RACK R\n" +
-            "      ,SHELF S\n" +
-            " WHERE     V.BOOK_ID = B.BOOK_ID(+)\n" +
-            "       AND V.RACK_ID = R.RACK_ID(+)\n" +
-            "       AND R.SHELF_ID = S.SHELF_ID\n" +
-            "       AND V.BOOK_ID = :BOOK_ID";
+                "      ,V.BOOK_ID\n" +
+                "      ,V.VOLUME_NAME\n" +
+                "      ,B.BOOK_NAME\n" +
+                "      ,'Shelf:' || S.SHELF_NAME || ' - Rack:' || R.RACK_NAME RACK_NAME\n" +
+                "      ,V.REMARKS\n" +
+                "  FROM VOLUME V\n" +
+                "      ,BOOK B\n" +
+                "      ,RACK R\n" +
+                "      ,SHELF S\n" +
+                " WHERE     V.BOOK_ID = B.BOOK_ID(+)\n" +
+                "       AND V.RACK_ID = R.RACK_ID(+)\n" +
+                "       AND R.SHELF_ID = S.SHELF_ID\n" +
+                "       AND V.BOOK_ID = :BOOK_ID";
         SqlParameterSource namedParameters = new MapSqlParameterSource()
-            .addValue("BOOK_ID", bookId);
+                .addValue("BOOK_ID", bookId);
         final List<SearchVolumeResponse> result = namedParameterJdbcTemplate.query(sql, namedParameters, new BeanPropertyRowMapper<SearchVolumeResponse>(SearchVolumeResponse.class));
+        return result;
+    }
+
+    public static List<AuthorModel> searchAuthor(final AuthorModel authorModel) {
+        final AuthorModel criteria = authorModel != null ? authorModel : new AuthorModel();
+        final String sql = "SELECT *\n" +
+                "  FROM AUTHOR A\n" +
+                " WHERE A.AUTHOR_NAME LIKE '%' || :AUTHOR || '%'";
+        SqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("AUTHOR", criteria.getAuthorName());
+        final List<AuthorModel> result = namedParameterJdbcTemplate.query(sql, namedParameters, new BeanPropertyRowMapper<AuthorModel>(AuthorModel.class));
+        return result;
+    }
+
+    public static List<PublisherModel> searchPublisher(final PublisherModel publisherModel) {
+        final PublisherModel criteria = publisherModel != null ? publisherModel : new PublisherModel();
+        final String sql = "SELECT *\n" +
+                "  FROM PUBLISHER A\n" +
+                " WHERE A.PUBLISHER_NAME LIKE '%' || :PUBLISHER || '%'";
+        SqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("PUBLISHER", criteria.getPublisherName());
+        final List<PublisherModel> result = namedParameterJdbcTemplate.query(sql, namedParameters, new BeanPropertyRowMapper<PublisherModel>(PublisherModel.class));
+        return result;
+    }
+
+    public static List<ReaderModel> searchReader(final ReaderModel readerModel) {
+        final ReaderModel criteria = readerModel != null ? readerModel : new ReaderModel();
+        final String sql = "SELECT *\n" +
+                "  FROM READER A\n" +
+                " WHERE A.READER_NAME LIKE '%' || :READER || '%'";
+        SqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("READER", criteria.getReaderName());
+        final List<ReaderModel> result = namedParameterJdbcTemplate.query(sql, namedParameters, new BeanPropertyRowMapper<ReaderModel>(ReaderModel.class));
+        return result;
+    }
+
+    public static List<ResearcherModel> searchResearcher(final ResearcherModel researcherModel) {
+        final ResearcherModel criteria = researcherModel != null ? researcherModel : new ResearcherModel();
+        final String sql = "SELECT *\n" +
+                "  FROM RESEARCHER A\n" +
+                " WHERE A.RESEARCHER_NAME LIKE '%' || :RESEARCHER || '%'";
+        SqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("RESEARCHER", criteria.getResearcherName());
+        final List<ResearcherModel> result = namedParameterJdbcTemplate.query(sql, namedParameters, new BeanPropertyRowMapper<ResearcherModel>(ResearcherModel.class));
+        return result;
+    }
+
+    public static List<ShelfModel> searchShelf(final ShelfModel shelfModel) {
+        final ShelfModel criteria = shelfModel != null ? shelfModel : new ShelfModel();
+        final String sql = "SELECT *\n" +
+                "  FROM SHELF A\n" +
+                " WHERE A.SHELF_NAME LIKE '%' || :SHELF || '%'";
+        SqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("SHELF", criteria.getShelfName());
+        final List<ShelfModel> result = namedParameterJdbcTemplate.query(sql, namedParameters, new BeanPropertyRowMapper<ShelfModel>(ShelfModel.class));
+        return result;
+    }
+
+    public static List<SubjectModel> searchSubject(final SubjectModel subjectModel) {
+        final SubjectModel criteria = subjectModel != null ? subjectModel : new SubjectModel();
+        final String sql = "SELECT *\n" +
+                "  FROM SUBJECT A\n" +
+                " WHERE     A.SUBJECT_NAME LIKE '%' || :SUBJECT_NAME || '%'\n" +
+                "       AND ( :SUBJECT_CODE IS NULL OR A.SUBJECT_CODE = :SUBJECT_CODE)\n" +
+                "       AND (   :PARENT_SUBJECT_ID IS NULL\n" +
+                "            OR A.PARENT_SUBJECT_ID = :PARENT_SUBJECT_ID)";
+        SqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("SUBJECT_NAME", criteria.getSubjectName())
+                .addValue("SUBJECT_CODE", criteria.getSubjectCode())
+                .addValue("PARENT_SUBJECT_ID", criteria.getParentSubjectId());
+        final List<SubjectModel> result = namedParameterJdbcTemplate.query(sql, namedParameters, new BeanPropertyRowMapper<SubjectModel>(SubjectModel.class));
         return result;
     }
 
@@ -290,6 +362,7 @@ public class Miscellaneous {
                 "SELECT GET_SUBJECT_HIERARCHY (:P_SUBJECT_ID) FROM DUAL", namedParameters, String.class);
         return result;
     }
+
 
     public static final String callReport(String repName, JSONObject params) {
         String reportURL =
