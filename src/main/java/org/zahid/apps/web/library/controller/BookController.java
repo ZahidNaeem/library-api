@@ -22,6 +22,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import org.zahid.apps.web.library.utils.Miscellaneous;
 
 @RestController
 @RequestMapping("books")
@@ -62,16 +63,16 @@ public class BookController {
         );
     }
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<List<BookModel>>> searchBook(final BookModel bookModel) {
-
+    @PostMapping(path = "search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse<List<BookModel>>> searchBook(@RequestBody final BookModel model) {
+        bookModels = Miscellaneous.searchBook(model);
         return ResponseEntity.ok(
-                ApiResponse
-                        .<List<BookModel>>builder()
-                        .success(true)
-                        .message("findAll response")
-                        .entity(bookModels)
-                        .build()
+            ApiResponse
+                .<List<BookModel>>builder()
+                .success(true)
+                .message("searchBook response")
+                .entity(bookModels)
+                .build()
         );
     }
 
@@ -244,18 +245,18 @@ public class BookController {
         }
     }
 
-    @PostMapping(path = "search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse<List<SearchBookResponse>>> searchBookByCriteria(@RequestBody final SearchBookRequest request) {
-        LOG.info("Request: {}", request);
-        return ResponseEntity.ok(
-                ApiResponse
-                        .<List<SearchBookResponse>>builder()
-                        .success(true)
-                        .message("Book deleted seccessfully")
-                        .entity(bookService.searchByCriteria(request.getAuthor(), request.getSubject(), request.getPublisher(), request.getResearcher()))
-                        .build()
-        );
-    }
+//    @PostMapping(path = "search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<ApiResponse<List<SearchBookResponse>>> searchBookByCriteria(@RequestBody final SearchBookRequest request) {
+//        LOG.info("Request: {}", request);
+//        return ResponseEntity.ok(
+//                ApiResponse
+//                        .<List<SearchBookResponse>>builder()
+//                        .success(true)
+//                        .message("Book deleted seccessfully")
+//                        .entity(bookService.searchByCriteria(request.getAuthor(), request.getSubject(), request.getPublisher(), request.getResearcher()))
+//                        .build()
+//        );
+//    }
 
     private static final NavigationDtl resetNavigation() {
         NavigationDtl dtl = new NavigationDtl();
