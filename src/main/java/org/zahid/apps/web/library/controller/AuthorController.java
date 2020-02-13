@@ -64,7 +64,7 @@ public class AuthorController {
 
     @PostMapping(path = "search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<List<AuthorModel>>> searchAuthor(@RequestBody final AuthorModel model) {
-        authorModels = Miscellaneous.searchAuthor(model);
+        authorModels = mapper.toAuthorModels(authorService.searchAuthor(mapper.toAuthorEntity(model)));
         return ResponseEntity.ok(
                 ApiResponse
                         .<List<AuthorModel>>builder()

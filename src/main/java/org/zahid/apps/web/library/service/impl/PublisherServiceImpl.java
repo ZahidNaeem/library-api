@@ -21,6 +21,11 @@ public class PublisherServiceImpl implements PublisherService {
     }
 
     @Override
+    public List<PublisherEntity> searchPublisher(PublisherEntity publisherEntity) {
+        return publisherRepo.searchPublisher(publisherEntity);
+    }
+
+    @Override
     public PublisherEntity findById(Long id) {
         return publisherRepo.findById(id)
                 .orElse(new PublisherEntity());

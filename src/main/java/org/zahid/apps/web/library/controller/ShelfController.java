@@ -72,7 +72,7 @@ public class ShelfController {
 
     @PostMapping(path = "search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<List<ShelfModel>>> searchShelf(@RequestBody final ShelfModel model) {
-        shelfModels = Miscellaneous.searchShelf(model);
+        shelfModels = mapper.toShelfModels(shelfService.searchShelf(mapper.toShelfEntity(model)));
         return ResponseEntity.ok(
                 ApiResponse
                         .<List<ShelfModel>>builder()

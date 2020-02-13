@@ -21,6 +21,11 @@ public class ResearcherServiceImpl implements ResearcherService {
     }
 
     @Override
+    public List<ResearcherEntity> searchResearcher(ResearcherEntity researcherEntity) {
+        return researcherRepo.searchResearcher(researcherEntity);
+    }
+
+    @Override
     public ResearcherEntity findById(Long id) {
         return researcherRepo.findById(id)
                 .orElse(new ResearcherEntity());

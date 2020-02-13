@@ -64,7 +64,7 @@ public class ResearcherController {
 
     @PostMapping(path = "search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<List<ResearcherModel>>> searchResearcher(@RequestBody final ResearcherModel model) {
-        researcherModels = Miscellaneous.searchResearcher(model);
+        researcherModels = mapper.toResearcherModels(researcherService.searchResearcher(mapper.toResearcherEntity(model)));
         return ResponseEntity.ok(
                 ApiResponse
                         .<List<ResearcherModel>>builder()

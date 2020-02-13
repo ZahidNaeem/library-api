@@ -9,6 +9,8 @@ public interface ShelfService {
 
     List<ShelfEntity> findAll();
 
+    List<ShelfEntity> searchShelf(final ShelfEntity shelfEntity);
+
     ShelfEntity findById(final Long id);
 
     boolean exists(Long id);

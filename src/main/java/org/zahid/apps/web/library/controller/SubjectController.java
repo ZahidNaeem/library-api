@@ -66,7 +66,7 @@ public class SubjectController {
 
     @PostMapping(path = "search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<List<SubjectModel>>> searchSubject(@RequestBody final SubjectModel model) {
-        subjectModels = Miscellaneous.searchSubject(model);
+        subjectModels = mapper.toSubjectModels(subjectService.searchSubject(mapper.toSubjectEntity(model)));
         return ResponseEntity.ok(
                 ApiResponse
                         .<List<SubjectModel>>builder()

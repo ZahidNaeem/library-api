@@ -21,6 +21,11 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
+    public List<SubjectEntity> searchSubject(SubjectEntity subjectEntity) {
+        return subjectRepo.searchSubject(subjectEntity);
+    }
+
+    @Override
     public SubjectEntity findById(Long id) {
         return subjectRepo.findById(id)
                 .orElse(new SubjectEntity());

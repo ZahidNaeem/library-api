@@ -27,6 +27,11 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public List<BookEntity> searchBook(BookEntity bookEntity) {
+        return bookRepo.searchBook(bookEntity);
+    }
+
+    @Override
     public List<SearchBookResponse> searchByCriteria(final Integer author, final Integer subject, final Integer publisher, final Integer researcher) {
         return Miscellaneous.searchBookByCriteria(author, subject, publisher, researcher);
     }

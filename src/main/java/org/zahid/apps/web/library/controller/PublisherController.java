@@ -64,7 +64,7 @@ public class PublisherController {
 
     @PostMapping(path = "search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<List<PublisherModel>>> searchPublisher(@RequestBody final PublisherModel model) {
-        publisherModels = Miscellaneous.searchPublisher(model);
+        publisherModels = mapper.toPublisherModels(publisherService.searchPublisher(mapper.toPublisherEntity(model)));
         return ResponseEntity.ok(
                 ApiResponse
                         .<List<PublisherModel>>builder()

@@ -21,6 +21,11 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    public List<AuthorEntity> searchAuthor(AuthorEntity authorEntity) {
+        return authorRepo.searchAuthor(authorEntity);
+    }
+
+    @Override
     public AuthorEntity findById(Long id) {
         return authorRepo.findById(id)
                 .orElse(new AuthorEntity());

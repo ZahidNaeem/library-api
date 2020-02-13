@@ -9,6 +9,8 @@ public interface ReaderService {
 
     List<ReaderEntity> findAll();
 
+    List<ReaderEntity> searchReader(final ReaderEntity readerEntity);
+
     ReaderEntity findById(final Long id);
 
     boolean exists(Long id);

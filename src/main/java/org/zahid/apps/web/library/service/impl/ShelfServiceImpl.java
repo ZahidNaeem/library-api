@@ -21,6 +21,11 @@ public class ShelfServiceImpl implements ShelfService {
     }
 
     @Override
+    public List<ShelfEntity> searchShelf(ShelfEntity shelfEntity) {
+        return shelfRepo.searchShelf(shelfEntity);
+    }
+
+    @Override
     public ShelfEntity findById(Long id) {
         return shelfRepo.findById(id)
                 .orElse(new ShelfEntity());

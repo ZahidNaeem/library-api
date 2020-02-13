@@ -9,6 +9,8 @@ public interface PublisherService {
 
     List<PublisherEntity> findAll();
 
+    List<PublisherEntity> searchPublisher(final PublisherEntity publisherEntity);
+
     PublisherEntity findById(final Long id);
 
     boolean exists(Long id);

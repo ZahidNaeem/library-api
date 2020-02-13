@@ -21,6 +21,11 @@ public class ReaderServiceImpl implements ReaderService {
     }
 
     @Override
+    public List<ReaderEntity> searchReader(ReaderEntity readerEntity) {
+        return readerRepo.searchReader(readerEntity);
+    }
+
+    @Override
     public ReaderEntity findById(Long id) {
         return readerRepo.findById(id)
                 .orElse(new ReaderEntity());

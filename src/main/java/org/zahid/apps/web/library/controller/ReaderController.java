@@ -64,7 +64,7 @@ public class ReaderController {
 
   @PostMapping(path = "search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<ApiResponse<List<ReaderModel>>> searchReader(@RequestBody final ReaderModel model) {
-    readerModels = Miscellaneous.searchReader(model);
+    readerModels = mapper.toReaderModels(readerService.searchReader(mapper.toReaderEntity(model)));
     return ResponseEntity.ok(
             ApiResponse
                     .<List<ReaderModel>>builder()

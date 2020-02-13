@@ -9,6 +9,8 @@ public interface AuthorService {
 
     List<AuthorEntity> findAll();
 
+    List<AuthorEntity> searchAuthor(final AuthorEntity authorEntity);
+
     AuthorEntity findById(final Long id);
 
     boolean exists(Long id);

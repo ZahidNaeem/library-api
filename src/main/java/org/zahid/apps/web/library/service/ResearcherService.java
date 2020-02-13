@@ -9,6 +9,8 @@ public interface ResearcherService {
 
     List<ResearcherEntity> findAll();
 
+    List<ResearcherEntity> searchResearcher(final ResearcherEntity researcherEntity);
+
     ResearcherEntity findById(final Long id);
 
     boolean exists(Long id);

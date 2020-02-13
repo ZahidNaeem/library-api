@@ -10,6 +10,8 @@ public interface BookService {
 
     List<BookEntity> findAll();
 
+    List<BookEntity> searchBook(final BookEntity bookEntity);
+
     List<SearchBookResponse> searchByCriteria(final Integer author, final Integer subject, final Integer publisher, final Integer researcher);
 
     BookEntity findById(final Long id);

@@ -65,7 +65,7 @@ public class BookController {
 
     @PostMapping(path = "search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<List<BookModel>>> searchBook(@RequestBody final BookModel model) {
-        bookModels = Miscellaneous.searchBook(model);
+        bookModels = mapper.toBookModels(bookService.searchBook(mapper.toBookEntity(model)));
         return ResponseEntity.ok(
             ApiResponse
                 .<List<BookModel>>builder()

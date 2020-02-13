@@ -9,6 +9,8 @@ public interface SubjectService {
 
     List<SubjectEntity> findAll();
 
+    List<SubjectEntity> searchSubject(final SubjectEntity subjectEntity);
+
     SubjectEntity findById(final Long id);
 
     boolean exists(Long id);
