@@ -35,6 +35,7 @@ public class BookController {
     public void init() {
         bookModels = mapper.toBookModels(bookService.findAll());
     }
+
     @Autowired
     private BookService bookService;
 
@@ -125,7 +126,7 @@ public class BookController {
                 ApiResponse
                         .<BookDTO>builder()
                         .success(true)
-                        .message("first record response")
+                        .message("previous record response")
                         .entity(getBookDTO(bookModels, indx[0]))
                         .build()
         );
@@ -139,7 +140,7 @@ public class BookController {
                 ApiResponse
                         .<BookDTO>builder()
                         .success(true)
-                        .message("first record response")
+                        .message("next record response")
                         .entity(getBookDTO(bookModels, indx[0]))
                         .build()
         );
@@ -153,7 +154,7 @@ public class BookController {
                 ApiResponse
                         .<BookDTO>builder()
                         .success(true)
-                        .message("first record response")
+                        .message("last record response")
                         .entity(getBookDTO(bookModels, indx[0]))
                         .build()
         );
@@ -172,7 +173,7 @@ public class BookController {
                 ApiResponse
                         .<BookDTO>builder()
                         .success(true)
-                        .message("first record response")
+                        .message("Book saved successfully")
                         .entity(getBookDTO(bookModels, indx[0]))
                         .build()
         );
