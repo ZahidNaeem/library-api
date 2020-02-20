@@ -79,7 +79,7 @@ public class BookController {
         );
     }
 
-    @GetMapping(path = "excel", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "excel/data", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<List<BookExportToExcel>>> toExcel() {
         return ResponseEntity.ok(
                 ApiResponse
