@@ -12,6 +12,7 @@ import org.zahid.apps.web.library.entity.BookEntity;
 import org.zahid.apps.web.library.entity.NavigationDtl;
 import org.zahid.apps.web.library.exception.InternalServerErrorException;
 import org.zahid.apps.web.library.mapper.BookMapper;
+import org.zahid.apps.web.library.model.BookExportToExcel;
 import org.zahid.apps.web.library.model.BookModel;
 import org.zahid.apps.web.library.payload.request.SearchBookRequest;
 import org.zahid.apps.web.library.payload.response.ApiResponse;
@@ -22,6 +23,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+
 import org.zahid.apps.web.library.utils.Miscellaneous;
 
 @RestController
@@ -68,12 +70,24 @@ public class BookController {
     public ResponseEntity<ApiResponse<List<BookModel>>> searchBook(@RequestBody final BookModel model) {
         bookModels = mapper.toBookModels(bookService.searchBook(mapper.toBookEntity(model)));
         return ResponseEntity.ok(
-            ApiResponse
-                .<List<BookModel>>builder()
-                .success(true)
-                .message("searchBook response")
-                .entity(bookModels)
-                .build()
+                ApiResponse
+                        .<List<BookModel>>builder()
+                        .success(true)
+                        .message("searchBook response")
+                        .entity(bookModels)
+                        .build()
+        );
+    }
+
+    @GetMapping(path = "excel", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse<List<BookExportToExcel>>> toExcel() {
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<List<BookExportToExcel>>builder()
+                        .success(true)
+                        .message("toExcel response")
+                        .entity(mapper.toExcel(bookModels))
+                        .build()
         );
     }
 

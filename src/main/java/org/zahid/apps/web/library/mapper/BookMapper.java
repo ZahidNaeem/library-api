@@ -6,6 +6,7 @@ import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zahid.apps.web.library.entity.BookEntity;
 import org.zahid.apps.web.library.entity.VolumeEntity;
+import org.zahid.apps.web.library.model.BookExportToExcel;
 import org.zahid.apps.web.library.model.BookModel;
 import org.zahid.apps.web.library.model.VolumeModel;
 import org.zahid.apps.web.library.service.*;
@@ -50,6 +51,14 @@ public abstract class BookMapper {
     @Mapping(target = "volumes", expression = "java(model != null ? toVolumeEntities(model.getVolumes()) : null)")
     public abstract BookEntity toBookEntity(final BookModel model);
 
+    @Mapping(target = "author", expression = "java(model != null && model.getAuthor() != null ? authorService.findById(model.getAuthor()).getAuthorName() : null)")
+    @Mapping(target = "subject", expression = "java(model != null && model.getSubject() != null ? subjectService.findById(model.getSubject()).getSubjectName() : null)")
+    @Mapping(target = "publisher", expression = "java(model != null && model.getPublisher() != null ? publisherService.findById(model.getPublisher()).getPublisherName() : null)")
+    @Mapping(target = "researcher", expression = "java(model != null && model.getResearcher() != null ? researcherService.findById(model.getResearcher()).getResearcherName() : null)")
+    @Mapping(target = "purchased", expression = "java(model != null ? model.getPurchased() == 1 ? \"purchased\" : model.getPurchased() == 0 ? \"Gifted\" : \"Other\" : null)")
+    @Mapping(target = "volumes", expression = "java(model != null && model.getVolumes() != null ? model.getVolumes().size() : 0)")
+    public abstract BookExportToExcel toExcel(final BookModel model);
+
     /*@Mapping(target = "authorId", expression = "java(book != null && book.getAuthor() != null ? book.getAuthor().getAuthorId() : null)")
     @Mapping(target = "authorName", expression = "java(book != null && book.getAuthor() != null ? book.getAuthor().getAuthorName() : null)")
     @Mapping(target = "subjectId", expression = "java(book != null && book.getSubject() != null ? book.getSubject().getSubjectId() : null)")
@@ -80,6 +89,17 @@ public abstract class BookMapper {
         final List<BookEntity> books = new ArrayList<>();
         models.forEach(model -> {
             books.add(this.toBookEntity(model));
+        });
+        return books;
+    }
+
+    public List<BookExportToExcel> toExcel(final List<BookModel> models) {
+        if (CollectionUtils.isEmpty(models)) {
+            return new ArrayList<>();
+        }
+        final List<BookExportToExcel> books = new ArrayList<>();
+        models.forEach(model -> {
+            books.add(this.toExcel(model));
         });
         return books;
     }
