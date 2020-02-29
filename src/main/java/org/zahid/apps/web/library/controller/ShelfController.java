@@ -15,7 +15,6 @@ import org.zahid.apps.web.library.mapper.ShelfMapper;
 import org.zahid.apps.web.library.model.ShelfModel;
 import org.zahid.apps.web.library.payload.response.ApiResponse;
 import org.zahid.apps.web.library.service.ShelfService;
-import org.zahid.apps.web.library.utils.Miscellaneous;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -31,7 +30,7 @@ public class ShelfController {
 
     @PostConstruct
     public void init() {
-        shelfModels = mapper.toShelfModels(shelfService.findAll());
+        shelfModels = mapper.toModels(shelfService.findAll());
     }
 
     @Autowired
@@ -72,7 +71,7 @@ public class ShelfController {
 
     @PostMapping(path = "search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<List<ShelfModel>>> searchShelf(@RequestBody final ShelfModel model) {
-        shelfModels = mapper.toShelfModels(shelfService.searchShelf(mapper.toShelfEntity(model)));
+        shelfModels = mapper.toModels(shelfService.searchShelf(mapper.toEntity(model)));
         return ResponseEntity.ok(
                 ApiResponse
                         .<List<ShelfModel>>builder()
@@ -85,7 +84,7 @@ public class ShelfController {
 
     @GetMapping("{id}")
     public ResponseEntity<ApiResponse<ShelfDTO>> findById(@PathVariable("id") final Long id) {
-        final ShelfModel model = mapper.toShelfModel(shelfService.findById(id));
+        final ShelfModel model = mapper.toModel(shelfService.findById(id));
         indx[0] = shelfModels.indexOf(model);
         LOG.info("Index in findById(): {}", indx[0]);
         return ResponseEntity.ok(
@@ -168,12 +167,12 @@ public class ShelfController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<ShelfDTO>> save(@RequestBody final ShelfModel model) {
-        final ShelfEntity shelf = mapper.toShelfEntity(model);
+        final ShelfEntity shelf = mapper.toEntity(model);
 //    Below line added, because when converted from model to ShelfEntity, there is no shelf set in book list.
         setShelfForBooks(shelf);
         setShelfForRacks(shelf);
         final ShelfEntity shelfSaved = shelfService.save(shelf);
-        final ShelfModel savedModel = mapper.toShelfModel(shelfSaved);
+        final ShelfModel savedModel = mapper.toModel(shelfSaved);
         init();
         indx[0] = this.shelfModels.indexOf(savedModel);
         LOG.info("Index in saveShelf(): {}", indx[0]);
@@ -189,7 +188,7 @@ public class ShelfController {
 
     @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<List<ShelfEntity>>> saveAll(@RequestBody final List<ShelfModel> models) {
-        final List<ShelfEntity> shelves = mapper.toShelfEntities(models);
+        final List<ShelfEntity> shelves = mapper.toEntities(models);
         //    Below line added, because when converted from model to ShelfEntity, there is no shelf set in book list.
         shelves.forEach(shelf -> {
             setShelfForBooks(shelf);
@@ -237,7 +236,7 @@ public class ShelfController {
             throw new IllegalArgumentException("ShelfEntity does not exist");
         } else {
             try {
-                shelfService.delete(mapper.toShelfEntity(model));
+                shelfService.delete(mapper.toEntity(model));
                 init();
                 indx[0]--;
                 LOG.info("Index in deleteShelf(): {}", indx[0]);

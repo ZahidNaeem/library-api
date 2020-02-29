@@ -15,7 +15,6 @@ import org.zahid.apps.web.library.mapper.AuthorMapper;
 import org.zahid.apps.web.library.model.AuthorModel;
 import org.zahid.apps.web.library.payload.response.ApiResponse;
 import org.zahid.apps.web.library.service.AuthorService;
-import org.zahid.apps.web.library.utils.Miscellaneous;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -37,7 +36,7 @@ public class AuthorController {
 
     @PostConstruct
     public void init() {
-        authorModels = mapper.toAuthorModels(authorService.findAll());
+        authorModels = mapper.toModels(authorService.findAll());
     }
 
     private final int[] indx = {-1};
@@ -64,7 +63,7 @@ public class AuthorController {
 
     @PostMapping(path = "search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<List<AuthorModel>>> searchAuthor(@RequestBody final AuthorModel model) {
-        authorModels = mapper.toAuthorModels(authorService.searchAuthor(mapper.toAuthorEntity(model)));
+        authorModels = mapper.toModels(authorService.searchAuthor(mapper.toEntity(model)));
         return ResponseEntity.ok(
                 ApiResponse
                         .<List<AuthorModel>>builder()
@@ -77,7 +76,7 @@ public class AuthorController {
 
     @GetMapping("{id}")
     public ResponseEntity<ApiResponse<AuthorDTO>> findById(@PathVariable("id") final Long id) {
-        final AuthorModel model = mapper.toAuthorModel(authorService.findById(id));
+        final AuthorModel model = mapper.toModel(authorService.findById(id));
         indx[0] = authorModels.indexOf(model);
         LOG.info("Index in findById(): {}", indx[0]);
         return ResponseEntity.ok(
@@ -160,11 +159,11 @@ public class AuthorController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<AuthorDTO>> save(@RequestBody final AuthorModel model) {
-        final AuthorEntity author = mapper.toAuthorEntity(model);
+        final AuthorEntity author = mapper.toEntity(model);
 //    Below line added, because when converted from model to AuthorEntity, there is no author set in book list.
         setAuthorForBooks(author);
         final AuthorEntity authorSaved = authorService.save(author);
-        final AuthorModel savedModel = mapper.toAuthorModel(authorSaved);
+        final AuthorModel savedModel = mapper.toModel(authorSaved);
         init();
         indx[0] = this.authorModels.indexOf(savedModel);
         LOG.info("Index in saveAuthor(): {}", indx[0]);
@@ -180,7 +179,7 @@ public class AuthorController {
 
     @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<List<AuthorEntity>>> saveAll(@RequestBody final List<AuthorModel> models) {
-        final List<AuthorEntity> authors = mapper.toAuthorEntities(models);
+        final List<AuthorEntity> authors = mapper.toEntities(models);
         //    Below line added, because when converted from model to AuthorEntity, there is no author set in book list.
         authors.forEach(author -> {
             setAuthorForBooks(author);
@@ -228,7 +227,7 @@ public class AuthorController {
             throw new IllegalArgumentException("AuthorEntity does not exist");
         } else {
             try {
-                authorService.delete(mapper.toAuthorEntity(model));
+                authorService.delete(mapper.toEntity(model));
                 init();
                 indx[0]--;
                 LOG.info("Index in deleteAuthor(): {}", indx[0]);

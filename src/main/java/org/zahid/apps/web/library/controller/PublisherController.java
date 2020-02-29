@@ -15,7 +15,6 @@ import org.zahid.apps.web.library.mapper.PublisherMapper;
 import org.zahid.apps.web.library.model.PublisherModel;
 import org.zahid.apps.web.library.payload.response.ApiResponse;
 import org.zahid.apps.web.library.service.PublisherService;
-import org.zahid.apps.web.library.utils.Miscellaneous;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -31,7 +30,7 @@ public class PublisherController {
 
     @PostConstruct
     public void init() {
-        publisherModels = mapper.toPublisherModels(publisherService.findAll());
+        publisherModels = mapper.toModels(publisherService.findAll());
     }
 
     @Autowired
@@ -64,7 +63,7 @@ public class PublisherController {
 
     @PostMapping(path = "search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<List<PublisherModel>>> searchPublisher(@RequestBody final PublisherModel model) {
-        publisherModels = mapper.toPublisherModels(publisherService.searchPublisher(mapper.toPublisherEntity(model)));
+        publisherModels = mapper.toModels(publisherService.searchPublisher(mapper.toEntity(model)));
         return ResponseEntity.ok(
                 ApiResponse
                         .<List<PublisherModel>>builder()
@@ -77,7 +76,7 @@ public class PublisherController {
 
     @GetMapping("{id}")
     public ResponseEntity<ApiResponse<PublisherDTO>> findById(@PathVariable("id") final Long id) {
-        final PublisherModel model = mapper.toPublisherModel(publisherService.findById(id));
+        final PublisherModel model = mapper.toModel(publisherService.findById(id));
         indx[0] = publisherModels.indexOf(model);
         LOG.info("Index in findById(): {}", indx[0]);
         return ResponseEntity.ok(
@@ -160,11 +159,11 @@ public class PublisherController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<PublisherDTO>> save(@RequestBody final PublisherModel model) {
-        final PublisherEntity publisher = mapper.toPublisherEntity(model);
+        final PublisherEntity publisher = mapper.toEntity(model);
 //    Below line added, because when converted from model to PublisherEntity, there is no publisher set in book list.
         setPublisherForBooks(publisher);
         final PublisherEntity publisherSaved = publisherService.save(publisher);
-        final PublisherModel savedModel = mapper.toPublisherModel(publisherSaved);
+        final PublisherModel savedModel = mapper.toModel(publisherSaved);
         indx[0] = this.publisherModels.indexOf(savedModel);
         LOG.info("Index in savePublisher(): {}", indx[0]);
         return ResponseEntity.ok(
@@ -180,7 +179,7 @@ public class PublisherController {
     @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<List<PublisherEntity>>> saveAll(
             @RequestBody final List<PublisherModel> models) {
-        final List<PublisherEntity> publishers = mapper.toPublisherEntities(models);
+        final List<PublisherEntity> publishers = mapper.toEntities(models);
         //    Below line added, because when converted from model to PublisherEntity, there is no publisher set in book list.
         publishers.forEach(publisher -> {
             setPublisherForBooks(publisher);
@@ -228,7 +227,7 @@ public class PublisherController {
             throw new IllegalArgumentException("PublisherEntity does not exist");
         } else {
             try {
-                publisherService.delete(mapper.toPublisherEntity(model));
+                publisherService.delete(mapper.toEntity(model));
                 init();
                 indx[0]--;
                 LOG.info("Index in deletePublisher(): {}", indx[0]);

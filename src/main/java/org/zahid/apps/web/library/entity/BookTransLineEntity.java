@@ -29,6 +29,11 @@ public class BookTransLineEntity extends Auditable<Long> {
 
     @NotNull
     @ManyToOne
+    @JoinColumn(name = "book_id")
+    private BookEntity book;
+
+    @NotNull
+    @ManyToOne
     @JoinColumn(name = "volume_id")
     private VolumeEntity volume;
 

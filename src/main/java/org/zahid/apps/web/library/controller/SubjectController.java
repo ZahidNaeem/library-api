@@ -33,7 +33,7 @@ public class SubjectController {
 
     @PostConstruct
     public void init() {
-        subjectModels = mapper.toSubjectModels(subjectService.findAll());
+        subjectModels = mapper.toModels(subjectService.findAll());
     }
 
     @Autowired
@@ -66,7 +66,7 @@ public class SubjectController {
 
     @PostMapping(path = "search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<List<SubjectModel>>> searchSubject(@RequestBody final SubjectModel model) {
-        subjectModels = mapper.toSubjectModels(subjectService.searchSubject(mapper.toSubjectEntity(model)));
+        subjectModels = mapper.toModels(subjectService.searchSubject(mapper.toEntity(model)));
         return ResponseEntity.ok(
                 ApiResponse
                         .<List<SubjectModel>>builder()
@@ -79,7 +79,7 @@ public class SubjectController {
 
     @GetMapping("{id}")
     public ResponseEntity<ApiResponse<SubjectDTO>> findById(@PathVariable("id") final Long id) {
-        final SubjectModel model = mapper.toSubjectModel(subjectService.findById(id));
+        final SubjectModel model = mapper.toModel(subjectService.findById(id));
         indx[0] = subjectModels.indexOf(model);
         LOG.info("Index in findById(): {}", indx[0]);
         return ResponseEntity.ok(
@@ -174,13 +174,13 @@ public class SubjectController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<SubjectDTO>> save(@RequestBody final SubjectModel model) {
-        final SubjectEntity subject = mapper.toSubjectEntity(model);
+        final SubjectEntity subject = mapper.toEntity(model);
 //    Below line added, because when converted from model to SubjectEntity, there is no subject set in book list.
         setSubjectForBooks(subject);
         final SubjectEntity[] subjectSaved = new SubjectEntity[1];
         try {
             subjectSaved[0] = subjectService.save(subject);
-            final SubjectModel savedModel = mapper.toSubjectModel(subjectSaved[0]);
+            final SubjectModel savedModel = mapper.toModel(subjectSaved[0]);
             init();
             indx[0] = this.subjectModels.indexOf(savedModel);
             LOG.info("Index in saveSubject(): {}", indx[0]);
@@ -203,7 +203,7 @@ public class SubjectController {
 
     @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<List<SubjectEntity>>> saveAll(@RequestBody final List<SubjectModel> models) {
-        final List<SubjectEntity> subjects = mapper.toSubjectEntities(models);
+        final List<SubjectEntity> subjects = mapper.toEntities(models);
         //    Below line added, because when converted from model to SubjectEntity, there is no subject set in book list.
         subjects.forEach(subject -> {
             setSubjectForBooks(subject);
@@ -251,7 +251,7 @@ public class SubjectController {
             throw new IllegalArgumentException("SubjectEntity does not exist");
         } else {
             try {
-                subjectService.delete(mapper.toSubjectEntity(model));
+                subjectService.delete(mapper.toEntity(model));
                 init();
                 indx[0]--;
                 LOG.info("Index in deleteSubject(): {}", indx[0]);

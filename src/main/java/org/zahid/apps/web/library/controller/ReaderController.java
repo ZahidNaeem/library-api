@@ -15,7 +15,6 @@ import org.zahid.apps.web.library.mapper.ReaderMapper;
 import org.zahid.apps.web.library.model.ReaderModel;
 import org.zahid.apps.web.library.payload.response.ApiResponse;
 import org.zahid.apps.web.library.service.ReaderService;
-import org.zahid.apps.web.library.utils.Miscellaneous;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -31,7 +30,7 @@ public class ReaderController {
 
   @PostConstruct
   public void init() {
-    readerModels = mapper.toReaderModels(readerService.findAll());
+    readerModels = mapper.toModels(readerService.findAll());
   }
 
   @Autowired
@@ -64,7 +63,7 @@ public class ReaderController {
 
   @PostMapping(path = "search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<ApiResponse<List<ReaderModel>>> searchReader(@RequestBody final ReaderModel model) {
-    readerModels = mapper.toReaderModels(readerService.searchReader(mapper.toReaderEntity(model)));
+    readerModels = mapper.toModels(readerService.searchReader(mapper.toEntity(model)));
     return ResponseEntity.ok(
             ApiResponse
                     .<List<ReaderModel>>builder()
@@ -77,7 +76,7 @@ public class ReaderController {
 
   @GetMapping("{id}")
   public ResponseEntity<ApiResponse<ReaderDTO>> findById(@PathVariable("id") final Long id) {
-    final ReaderModel model = mapper.toReaderModel(readerService.findById(id));
+    final ReaderModel model = mapper.toModel(readerService.findById(id));
     indx[0] = readerModels.indexOf(model);
     LOG.info("Index in findById(): {}", indx[0]);
     return ResponseEntity.ok(
@@ -160,11 +159,11 @@ public class ReaderController {
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<ApiResponse<ReaderDTO>> save(@RequestBody final ReaderModel model) {
-    final ReaderEntity reader = mapper.toReaderEntity(model);
+    final ReaderEntity reader = mapper.toEntity(model);
 //    Below line added, because when converted from model to ReaderEntity, there is no reader set in bookTransHeader list.
     setReaderForBookTransHeaders(reader);
     final ReaderEntity readerSaved = readerService.save(reader);
-    final ReaderModel savedModel = mapper.toReaderModel(readerSaved);
+    final ReaderModel savedModel = mapper.toModel(readerSaved);
     init();
     indx[0] = this.readerModels.indexOf(savedModel);
     LOG.info("Index in saveReader(): {}", indx[0]);
@@ -181,7 +180,7 @@ public class ReaderController {
   @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<ApiResponse<List<ReaderEntity>>> saveAll(
       @RequestBody final List<ReaderModel> models) {
-    final List<ReaderEntity> readers = mapper.toReaderEntities(models);
+    final List<ReaderEntity> readers = mapper.toEntities(models);
     //    Below line added, because when converted from model to ReaderEntity, there is no reader set in bookTransHeader list.
     readers.forEach(reader -> {
       setReaderForBookTransHeaders(reader);
@@ -229,7 +228,7 @@ public class ReaderController {
       throw new IllegalArgumentException("ReaderEntity does not exist");
     } else {
       try {
-        readerService.delete(mapper.toReaderEntity(model));
+        readerService.delete(mapper.toEntity(model));
         init();
         indx[0]--;
         LOG.info("Index in deleteReader(): {}", indx[0]);

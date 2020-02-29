@@ -39,7 +39,7 @@ public class BookTransLineController {
 
     @PostConstruct
     public void init() {
-        bookTransLineModels = mapper.toBookTransLineModels(bookTransLineService.findAll());
+        bookTransLineModels = mapper.toModels(bookTransLineService.findAll());
     }
 
     @GetMapping
@@ -61,20 +61,20 @@ public class BookTransLineController {
                         .<BookTransLineModel>builder()
                         .success(true)
                         .message("Book Transaction details deleted successfully")
-                        .entity(mapper.toBookTransLineModel(bookTransLineService.findById(id)))
+                        .entity(mapper.toModel(bookTransLineService.findById(id)))
                         .build()
         );
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<BookTransLineModel>> save(@RequestBody final BookTransLineModel model) {
-        final BookTransLineEntity savedBookTransLine = bookTransLineService.save(mapper.toBookTransLineEntity(model));
+        final BookTransLineEntity savedBookTransLine = bookTransLineService.save(mapper.toEntity(model));
         return ResponseEntity.ok(
                 ApiResponse
                         .<BookTransLineModel>builder()
                         .success(true)
                         .message("BookTransLine saved seccessfully")
-                        .entity(mapper.toBookTransLineModel(savedBookTransLine))
+                        .entity(mapper.toModel(savedBookTransLine))
                         .build()
         );
     }
@@ -83,7 +83,7 @@ public class BookTransLineController {
     public ResponseEntity<ApiResponse<List<BookTransLineEntity>>> saveAll(@RequestBody final Set<BookTransLineModel> bookTransLineModel) {
         final Set<BookTransLineEntity> bookTransLines = new HashSet<>();
         bookTransLineModel.forEach(model -> {
-            final BookTransLineEntity bookTransLine = mapper.toBookTransLineEntity(model);
+            final BookTransLineEntity bookTransLine = mapper.toEntity(model);
             bookTransLines.add(bookTransLine);
         });
         return ResponseEntity.ok(
@@ -125,7 +125,7 @@ public class BookTransLineController {
             throw new IllegalArgumentException("Item bookTransLine does not exist");
         } else {
             try {
-                bookTransLineService.delete(mapper.toBookTransLineEntity(model));
+                bookTransLineService.delete(mapper.toEntity(model));
                 return ResponseEntity.ok(
                         ApiResponse
                                 .<Boolean>builder()

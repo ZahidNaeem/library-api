@@ -50,7 +50,7 @@ public class RackController {
 
     @PostConstruct
     public void init() {
-        rackModels = mapper.toRackModels(rackService.findAll());
+        rackModels = mapper.toModels(rackService.findAll());
     }
 
     @GetMapping
@@ -72,7 +72,7 @@ public class RackController {
                         .<List<RackDetail>>builder()
                         .success(true)
                         .message("findAllDetails response")
-                        .entity(mapper.toRackDetails(rackService.findAll()))
+                        .entity(mapper.toDetails(rackService.findAll()))
                         .build()
         );
     }
@@ -84,7 +84,7 @@ public class RackController {
                         .<RackModel>builder()
                         .success(true)
                         .message("findById response")
-                        .entity(mapper.toRackModel(rackService.findById(id)))
+                        .entity(mapper.toModel(rackService.findById(id)))
                         .build()
         );
     }
@@ -96,14 +96,14 @@ public class RackController {
                         .<List<RackModel>>builder()
                         .success(true)
                         .message("findByShelf response")
-                        .entity(mapper.toRackModels(rackService.findAllByShelf(shelfService.findById(shelfId))))
+                        .entity(mapper.toModels(rackService.findAllByShelf(shelfService.findById(shelfId))))
                         .build()
         );
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<RackModel>> save(@RequestBody final RackModel model) {
-        final RackEntity rack = mapper.toRackEntity(model);
+        final RackEntity rack = mapper.toEntity(model);
         final RackEntity savedRack = rackService.save(rack);
         setRackForVolumes(rack);
         return ResponseEntity.ok(
@@ -111,7 +111,7 @@ public class RackController {
                         .<RackModel>builder()
                         .success(true)
                         .message("Rack saved seccessfully")
-                        .entity(mapper.toRackModel(savedRack))
+                        .entity(mapper.toModel(savedRack))
                         .build()
         );
     }
@@ -120,7 +120,7 @@ public class RackController {
     public ResponseEntity<ApiResponse<List<RackEntity>>> saveAll(@RequestBody final Set<RackModel> rackModel) {
         final Set<RackEntity> racks = new HashSet<>();
         rackModel.forEach(model -> {
-            final RackEntity rack = mapper.toRackEntity(model);
+            final RackEntity rack = mapper.toEntity(model);
             setRackForVolumes(rack);
             racks.add(rack);
         });
@@ -163,7 +163,7 @@ public class RackController {
             throw new IllegalArgumentException("Item rack does not exist");
         } else {
             try {
-                rackService.delete(mapper.toRackEntity(model));
+                rackService.delete(mapper.toEntity(model));
                 return ResponseEntity.ok(
                         ApiResponse
                                 .<Boolean>builder()

@@ -15,7 +15,6 @@ import org.zahid.apps.web.library.mapper.ResearcherMapper;
 import org.zahid.apps.web.library.model.ResearcherModel;
 import org.zahid.apps.web.library.payload.response.ApiResponse;
 import org.zahid.apps.web.library.service.ResearcherService;
-import org.zahid.apps.web.library.utils.Miscellaneous;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -31,7 +30,7 @@ public class ResearcherController {
 
     @PostConstruct
     public void init() {
-        researcherModels = mapper.toResearcherModels(researcherService.findAll());
+        researcherModels = mapper.toModels(researcherService.findAll());
     }
 
     @Autowired
@@ -64,7 +63,7 @@ public class ResearcherController {
 
     @PostMapping(path = "search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<List<ResearcherModel>>> searchResearcher(@RequestBody final ResearcherModel model) {
-        researcherModels = mapper.toResearcherModels(researcherService.searchResearcher(mapper.toResearcherEntity(model)));
+        researcherModels = mapper.toModels(researcherService.searchResearcher(mapper.toEntity(model)));
         return ResponseEntity.ok(
                 ApiResponse
                         .<List<ResearcherModel>>builder()
@@ -77,7 +76,7 @@ public class ResearcherController {
 
     @GetMapping("{id}")
     public ResponseEntity<ApiResponse<ResearcherDTO>> findById(@PathVariable("id") final Long id) {
-        final ResearcherModel model = mapper.toResearcherModel(researcherService.findById(id));
+        final ResearcherModel model = mapper.toModel(researcherService.findById(id));
         indx[0] = researcherModels.indexOf(model);
         LOG.info("Index in findById(): {}", indx[0]);
         return ResponseEntity.ok(
@@ -160,11 +159,11 @@ public class ResearcherController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<ResearcherDTO>> save(@RequestBody final ResearcherModel model) {
-        final ResearcherEntity researcher = mapper.toResearcherEntity(model);
+        final ResearcherEntity researcher = mapper.toEntity(model);
 //    Below line added, because when converted from model to ResearcherEntity, there is no researcher set in book list.
         setResearcherForBooks(researcher);
         final ResearcherEntity researcherSaved = researcherService.save(researcher);
-        final ResearcherModel savedModel = mapper.toResearcherModel(researcherSaved);
+        final ResearcherModel savedModel = mapper.toModel(researcherSaved);
         init();
         indx[0] = this.researcherModels.indexOf(savedModel);
         LOG.info("Index in saveResearcher(): {}", indx[0]);
@@ -180,7 +179,7 @@ public class ResearcherController {
 
     @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<List<ResearcherEntity>>> saveAll(@RequestBody final List<ResearcherModel> models) {
-        final List<ResearcherEntity> researchers = mapper.toResearcherEntities(models);
+        final List<ResearcherEntity> researchers = mapper.toEntities(models);
         //    Below line added, because when converted from model to ResearcherEntity, there is no researcher set in book list.
         researchers.forEach(researcher -> {
             setResearcherForBooks(researcher);
@@ -228,7 +227,7 @@ public class ResearcherController {
             throw new IllegalArgumentException("ResearcherEntity does not exist");
         } else {
             try {
-                researcherService.delete(mapper.toResearcherEntity(model));
+                researcherService.delete(mapper.toEntity(model));
                 init();
                 indx[0]--;
                 LOG.info("Index in deleteResearcher(): {}", indx[0]);

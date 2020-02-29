@@ -29,6 +29,8 @@ public class BookModel extends Auditable<Long> {
 
     private List<VolumeModel> volumes;
 
+    private List<BookTransLineModel> bookTransLines;
+
     private Long author;
 
     private Long subject;

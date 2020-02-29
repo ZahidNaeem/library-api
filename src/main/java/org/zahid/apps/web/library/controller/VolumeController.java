@@ -40,7 +40,7 @@ public class VolumeController {
 
     @PostConstruct
     public void init() {
-        volumeModels = mapper.toVolumeModels(volumeService.findAll());
+        volumeModels = mapper.toModels(volumeService.findAll());
     }
 
     @GetMapping
@@ -62,7 +62,7 @@ public class VolumeController {
                         .<VolumeModel>builder()
                         .success(true)
                         .message("findById response")
-                        .entity(mapper.toVolumeModel(volumeService.findById(id)))
+                        .entity(mapper.toModel(volumeService.findById(id)))
                         .build()
         );
     }
@@ -93,13 +93,13 @@ public class VolumeController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<VolumeModel>> save(@RequestBody final VolumeModel model) {
-        final VolumeEntity savedVolume = volumeService.save(mapper.toVolumeEntity(model));
+        final VolumeEntity savedVolume = volumeService.save(mapper.toEntity(model));
         return ResponseEntity.ok(
                 ApiResponse
                         .<VolumeModel>builder()
                         .success(true)
                         .message("Volume saved seccessfully")
-                        .entity(mapper.toVolumeModel(savedVolume))
+                        .entity(mapper.toModel(savedVolume))
                         .build()
         );
     }
@@ -108,7 +108,7 @@ public class VolumeController {
     public ResponseEntity<ApiResponse<List<VolumeEntity>>> saveAll(@RequestBody final Set<VolumeModel> volumeModel) {
         final Set<VolumeEntity> volumes = new HashSet<>();
         volumeModel.forEach(model -> {
-            final VolumeEntity volume = mapper.toVolumeEntity(model);
+            final VolumeEntity volume = mapper.toEntity(model);
             volumes.add(volume);
         });
         return ResponseEntity.ok(
@@ -150,7 +150,7 @@ public class VolumeController {
             throw new IllegalArgumentException("Item volume does not exist");
         } else {
             try {
-                volumeService.delete(mapper.toVolumeEntity(model));
+                volumeService.delete(mapper.toEntity(model));
                 return ResponseEntity.ok(
                         ApiResponse
                                 .<Boolean>builder()

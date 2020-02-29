@@ -14,17 +14,13 @@ import org.zahid.apps.web.library.exception.InternalServerErrorException;
 import org.zahid.apps.web.library.mapper.BookMapper;
 import org.zahid.apps.web.library.model.BookExportToExcel;
 import org.zahid.apps.web.library.model.BookModel;
-import org.zahid.apps.web.library.payload.request.SearchBookRequest;
 import org.zahid.apps.web.library.payload.response.ApiResponse;
-import org.zahid.apps.web.library.payload.response.SearchBookResponse;
 import org.zahid.apps.web.library.service.BookService;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-
-import org.zahid.apps.web.library.utils.Miscellaneous;
 
 @RestController
 @RequestMapping("books")
@@ -35,7 +31,7 @@ public class BookController {
 
     @PostConstruct
     public void init() {
-        bookModels = mapper.toBookModels(bookService.findAll());
+        bookModels = mapper.toModels(bookService.findAll());
     }
 
     @Autowired
@@ -68,7 +64,7 @@ public class BookController {
 
     @PostMapping(path = "search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<List<BookModel>>> searchBook(@RequestBody final BookModel model) {
-        bookModels = mapper.toBookModels(bookService.searchBook(mapper.toBookEntity(model)));
+        bookModels = mapper.toModels(bookService.searchBook(mapper.toEntity(model)));
         return ResponseEntity.ok(
                 ApiResponse
                         .<List<BookModel>>builder()
@@ -93,7 +89,7 @@ public class BookController {
 
     @GetMapping("{id}")
     public ResponseEntity<ApiResponse<BookDTO>> findById(@PathVariable("id") final Long id) {
-        final BookModel model = mapper.toBookModel(bookService.findById(id));
+        final BookModel model = mapper.toModel(bookService.findById(id));
         indx[0] = bookModels.indexOf(model);
         LOG.info("Index in findById(): {}", indx[0]);
         return ResponseEntity.ok(
@@ -176,10 +172,10 @@ public class BookController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<BookDTO>> save(@RequestBody final BookModel model) {
-        final BookEntity book = mapper.toBookEntity(model);
+        final BookEntity book = mapper.toEntity(model);
         setBookForVolumes(book);
         final BookEntity bookSaved = bookService.save(book);
-        final BookModel savedModel = mapper.toBookModel(bookSaved);
+        final BookModel savedModel = mapper.toModel(bookSaved);
         init();
         indx[0] = this.bookModels.indexOf(savedModel);
         LOG.info("Index in saveBook(): {}", indx[0]);
@@ -195,7 +191,7 @@ public class BookController {
 
     @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<List<BookEntity>>> saveAll(@RequestBody final List<BookModel> models) {
-        final List<BookEntity> books = mapper.toBookEntities(models);
+        final List<BookEntity> books = mapper.toEntities(models);
         books.forEach(book -> {
             setBookForVolumes(book);
         });
@@ -241,7 +237,7 @@ public class BookController {
             throw new IllegalArgumentException("BookEntity does not exist");
         } else {
             try {
-                bookService.delete(mapper.toBookEntity(model));
+                bookService.delete(mapper.toEntity(model));
                 init();
                 indx[0]--;
                 LOG.info("Index in deleteBook(): {}", indx[0]);

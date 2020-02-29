@@ -30,7 +30,7 @@ public class BookTransHeaderController {
 
   @PostConstruct
   public void init() {
-    bookTransHeaderModels = mapper.toBookTransHeaderModels(bookTransHeaderService.findAll());
+    bookTransHeaderModels = mapper.toModels(bookTransHeaderService.findAll());
   }
 
   @Autowired
@@ -66,7 +66,7 @@ public class BookTransHeaderController {
   public ResponseEntity<ApiResponse<BookTransHeaderDTO>> findById(
       @PathVariable("id") final Long id) {
     final BookTransHeaderModel model = mapper
-        .toBookTransHeaderModel(bookTransHeaderService.findById(id));
+        .toModel(bookTransHeaderService.findById(id));
     indx[0] = bookTransHeaderModels.indexOf(model);
     LOG.info("Index in findById(): {}", indx[0]);
     return ResponseEntity.ok(
@@ -138,12 +138,12 @@ public class BookTransHeaderController {
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<ApiResponse<BookTransHeaderDTO>> save(
       @RequestBody final BookTransHeaderModel model) {
-    final BookTransHeaderEntity bookTransHeader = mapper.toBookTransHeaderEntity(model);
+    final BookTransHeaderEntity bookTransHeader = mapper.toEntity(model);
 //    Below line added, because when converted from model to BookTransHeaderEntity, there is no bookTransHeader set in book list.
     setBookTransHeaderForBookTransLines(bookTransHeader);
     setBookTransHeaderForBookTransLines(bookTransHeader);
     final BookTransHeaderEntity bookTransHeaderSaved = bookTransHeaderService.save(bookTransHeader);
-    final BookTransHeaderModel savedModel = mapper.toBookTransHeaderModel(bookTransHeaderSaved);
+    final BookTransHeaderModel savedModel = mapper.toModel(bookTransHeaderSaved);
     init();
     indx[0] = this.bookTransHeaderModels.indexOf(savedModel);
     LOG.info("Index in saveBookTransHeader(): {}", indx[0]);
@@ -160,7 +160,7 @@ public class BookTransHeaderController {
   @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<ApiResponse<List<BookTransHeaderEntity>>> saveAll(
       @RequestBody final List<BookTransHeaderModel> models) {
-    final List<BookTransHeaderEntity> bookTransHeaders = mapper.toBookTransHeaderEntities(models);
+    final List<BookTransHeaderEntity> bookTransHeaders = mapper.toEntities(models);
     //    Below line added, because when converted from model to BookTransHeaderEntity, there is no bookTransHeader set in book list.
     bookTransHeaders.forEach(bookTransHeader -> {
       setBookTransHeaderForBookTransLines(bookTransHeader);
@@ -212,7 +212,7 @@ public class BookTransHeaderController {
       throw new IllegalArgumentException("BookTransHeaderEntity does not exist");
     } else {
       try {
-        bookTransHeaderService.delete(mapper.toBookTransHeaderEntity(model));
+        bookTransHeaderService.delete(mapper.toEntity(model));
         init();
         indx[0]--;
         LOG.info("Index in deleteBookTransHeader(): {}", indx[0]);

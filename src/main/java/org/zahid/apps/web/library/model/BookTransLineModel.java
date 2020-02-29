@@ -14,6 +14,7 @@ public class BookTransLineModel extends Auditable<Long> {
 
     private Long lineId;
     private String rowKey;
+    private Long book;
     private Long volume;
     private Long bookTransHeader;
 }

@@ -12,6 +12,9 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 
+import static javax.persistence.CascadeType.*;
+import static javax.persistence.CascadeType.DETACH;
+
 @Builder
 @Data
 @NoArgsConstructor
@@ -45,6 +48,9 @@ public class BookEntity extends Auditable<Long> {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "book")
     private List<VolumeEntity> volumes;
+
+    @OneToMany(cascade = {PERSIST, MERGE, /*REMOVE,*/ REFRESH, DETACH}, fetch = FetchType.LAZY, mappedBy = "book")
+    private List<BookTransLineEntity> bookTransLines;
 
     @ManyToOne
     @JoinColumn(name = "author_id")
