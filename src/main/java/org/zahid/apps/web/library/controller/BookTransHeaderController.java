@@ -151,7 +151,7 @@ public class BookTransHeaderController {
         ApiResponse
             .<BookTransHeaderDTO>builder()
             .success(true)
-            .message("findById response")
+            .message("Record saved successfully")
             .entity(getBookTransHeaderDTO(bookTransHeaderModels, indx[0]))
             .build()
     );
