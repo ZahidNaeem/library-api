@@ -10,6 +10,8 @@ public interface BookTransHeaderService {
 
     List<BookTransHeaderEntity> findAll();
 
+    List<BookTransHeaderEntity> findAllByTransType(final String transType);
+
     List<BookTransHeaderEntity> findAllByReader(final ReaderEntity reader);
 
     BookTransHeaderEntity findById(final Long id);

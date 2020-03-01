@@ -22,6 +22,11 @@ public class BookTransHeaderServiceImpl implements BookTransHeaderService {
     }
 
     @Override
+    public List<BookTransHeaderEntity> findAllByTransType(String transType) {
+        return bookTransHeaderRepo.findAllByTransTypeOrderByHeaderIdAsc(transType);
+    }
+
+    @Override
     public List<BookTransHeaderEntity> findAllByReader(final ReaderEntity reader) {
         return bookTransHeaderRepo.findAllByReaderOrderByHeaderIdAsc(reader);
     }

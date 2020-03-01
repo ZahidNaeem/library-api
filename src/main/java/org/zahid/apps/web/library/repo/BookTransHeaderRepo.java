@@ -10,4 +10,6 @@ public interface BookTransHeaderRepo extends JpaRepository<BookTransHeaderEntity
     List<BookTransHeaderEntity> findAllByOrderByHeaderIdAsc();
 
     List<BookTransHeaderEntity> findAllByReaderOrderByHeaderIdAsc(final ReaderEntity reader);
+
+    List<BookTransHeaderEntity> findAllByTransTypeOrderByHeaderIdAsc(final String transType);
 }
