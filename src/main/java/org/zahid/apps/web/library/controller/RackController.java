@@ -1,5 +1,6 @@
 package org.zahid.apps.web.library.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,18 +26,16 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("racks")
+@RequiredArgsConstructor
 public class RackController {
 
     private static final Logger LOG = LogManager.getLogger(RackController.class);
 
-    @Autowired
-    private RackService rackService;
+    private final RackService rackService;
 
-    @Autowired
-    private RackMapper mapper;
+    private final RackMapper mapper;
 
-    @Autowired
-    private ShelfService shelfService;
+    private final ShelfService shelfService;
 
     private static void setRackForVolumes(final RackEntity rack) {
         if (CollectionUtils.isNotEmpty(rack.getVolumes())) {

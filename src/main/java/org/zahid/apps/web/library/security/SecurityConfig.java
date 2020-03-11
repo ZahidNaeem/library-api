@@ -18,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.zahid.apps.web.library.security.jwt.JwtAuthEntryPoint;
 import org.zahid.apps.web.library.security.jwt.JwtAuthTokenFilter;
+import org.zahid.apps.web.library.security.jwt.JwtProvider;
+import org.zahid.apps.web.library.security.service.UserDetailsServiceImpl;
 
 @Configuration
 @EnableWebSecurity
@@ -54,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Bean
   public JwtAuthTokenFilter authenticationJwtTokenFilter() {
-    return new JwtAuthTokenFilter();
+    return JwtAuthTokenFilter.builder().build();
   }
 
   @Override

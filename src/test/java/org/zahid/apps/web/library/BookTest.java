@@ -16,8 +16,6 @@ import org.zahid.apps.web.library.service.VolumeService;
 @SpringBootTest
 public class BookTest {
 
-        @Autowired
-    private BookService bookService;
 //    @Autowired
 //    private VolumeService volumeService;
 

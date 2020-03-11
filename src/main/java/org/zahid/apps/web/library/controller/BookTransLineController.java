@@ -1,5 +1,6 @@
 package org.zahid.apps.web.library.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +23,14 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("bookTransLines")
+@RequiredArgsConstructor
 public class BookTransLineController {
 
     private static final Logger LOG = LogManager.getLogger(BookTransLineController.class);
 
-    @Autowired
-    private BookTransLineService bookTransLineService;
+    private final BookTransLineService bookTransLineService;
 
-    @Autowired
-    private BookTransLineMapper mapper;
+    private final BookTransLineMapper mapper;
 
 //    @Autowired
 //    private BookTransHeaderService bookTransHeaderService;

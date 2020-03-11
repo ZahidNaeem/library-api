@@ -1,5 +1,6 @@
 package org.zahid.apps.web.library.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,18 +25,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
+@RequiredArgsConstructor
 public class UserController {
 
     private static final Logger LOG = LogManager.getLogger(UserController.class);
 
-    @Autowired
-    private UserRepo userRepo;
+    private final UserRepo userRepo;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private RoleRepo roleRepo;
+    private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/user/me")
     @PreAuthorize("hasRole('ROLE_USER')")

@@ -1,5 +1,6 @@
 package org.zahid.apps.web.library.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zahid.apps.web.library.entity.ShelfEntity;
@@ -10,10 +11,10 @@ import java.util.List;
 import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
 public class ShelfServiceImpl implements ShelfService {
 
-    @Autowired
-    private ShelfRepo shelfRepo;
+    private final ShelfRepo shelfRepo;
 
     @Override
     public List<ShelfEntity> findAll() {

@@ -1,5 +1,6 @@
 package org.zahid.apps.web.library.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +24,14 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("volumes")
+@RequiredArgsConstructor
 public class VolumeController {
 
     private static final Logger LOG = LogManager.getLogger(VolumeController.class);
 
-    @Autowired
-    private VolumeService volumeService;
+    private final VolumeService volumeService;
 
-    @Autowired
-    private VolumeMapper mapper;
+    private final VolumeMapper mapper;
 
 //    @Autowired
 //    private BookService bookService;

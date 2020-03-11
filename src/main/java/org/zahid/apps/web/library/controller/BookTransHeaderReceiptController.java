@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import javax.annotation.PostConstruct;
+
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,16 +35,15 @@ public class BookTransHeaderReceiptController extends BookTransHeaderController 
   private static final Logger LOG = LogManager.getLogger(BookTransHeaderReceiptController.class);
   private List<BookTransHeaderModel> bookTransHeaderModels = new ArrayList<>();
 
+  @Autowired
+  public BookTransHeaderReceiptController(final BookTransHeaderService bookTransHeaderService, final BookTransHeaderMapper mapper) {
+    super(bookTransHeaderService, mapper);
+  }
+
   @PostConstruct
   public void init() {
     bookTransHeaderModels = mapper.toModels(bookTransHeaderService.findAllByTransType("RECEIPT"));
   }
-
-  @Autowired
-  private BookTransHeaderService bookTransHeaderService;
-
-  @Autowired
-  private BookTransHeaderMapper mapper;
 
   private final int[] indx = {-1};
 

@@ -17,7 +17,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <mapstruct.version>1.3.0.Final</mapstruct.version>
+        <mapstruct.version>1.3.1.Final</mapstruct.version>
         <junit-jupiter.version>5.5.1</junit-jupiter.version>
         <mockito.version>2.24.0</mockito.version>
         <springfox.swagger.version>2.9.2</springfox.swagger.version>

@@ -1,5 +1,8 @@
 package org.zahid.apps.web.library.security.jwt;
 
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,48 +19,48 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Builder
+@RequiredArgsConstructor
 public class JwtAuthTokenFilter extends OncePerRequestFilter {
 
-  @Autowired
-  private JwtProvider tokenProvider;
+    private final JwtProvider tokenProvider;
 
-  @Autowired
-  private UserDetailsServiceImpl userDetailsService;
+    private final UserDetailsServiceImpl userDetailsService;
 
-  private static final Logger LOG = LogManager.getLogger(JwtAuthTokenFilter.class);
+    private static final Logger LOG = LogManager.getLogger(JwtAuthTokenFilter.class);
 
-  @Override
-  protected void doFilterInternal(final HttpServletRequest request,
-      HttpServletResponse response,
-      FilterChain filterChain)
-      throws ServletException, IOException {
-    try {
+    @Override
+    protected void doFilterInternal(final HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
+        try {
 
-      final String jwt = getJwt(request);
-      if (jwt!=null && tokenProvider.validateJwtToken(jwt)) {
-        final String username = tokenProvider.getUserNameFromJwtToken(jwt);
+            final String jwt = getJwt(request);
+            if (jwt != null && tokenProvider.validateJwtToken(jwt)) {
+                final String username = tokenProvider.getUserNameFromJwtToken(jwt);
 
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        final UsernamePasswordAuthenticationToken authentication
-            = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                final UsernamePasswordAuthenticationToken authentication
+                        = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-      }
-    } catch (Exception e) {
-      LOG.error("Can't set user authentication -> Message: {}", e);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+        } catch (Exception e) {
+            LOG.error("Can't set user authentication -> Message: {}", e);
+        }
+
+        filterChain.doFilter(request, response);
     }
 
-    filterChain.doFilter(request, response);
-  }
+    private String getJwt(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
 
-  private String getJwt(HttpServletRequest request) {
-    String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.replace("Bearer ", "");
+        }
 
-    if (authHeader != null && authHeader.startsWith("Bearer ")) {
-      return authHeader.replace("Bearer ","");
+        return null;
     }
-
-    return null;
-  }
 }

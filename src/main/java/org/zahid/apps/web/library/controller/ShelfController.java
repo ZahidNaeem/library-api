@@ -1,5 +1,6 @@
 package org.zahid.apps.web.library.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,6 +24,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("shelves")
+@RequiredArgsConstructor
 public class ShelfController {
 
     private static final Logger LOG = LogManager.getLogger(ShelfController.class);
@@ -33,11 +35,9 @@ public class ShelfController {
         shelfModels = mapper.toModels(shelfService.findAll());
     }
 
-    @Autowired
-    private ShelfService shelfService;
+    private final ShelfService shelfService;
 
-    @Autowired
-    private ShelfMapper mapper;
+    private final ShelfMapper mapper;
 
     private final int[] indx = {-1};
 

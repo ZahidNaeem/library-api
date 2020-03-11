@@ -1,5 +1,7 @@
 package org.zahid.apps.web.library.controller;
 
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,21 +25,20 @@ import java.util.List;
 
 @RestController
 @RequestMapping("bookTransHeaders")
+@RequiredArgsConstructor
 public class BookTransHeaderController {
 
   private static final Logger LOG = LogManager.getLogger(BookTransHeaderController.class);
   private List<BookTransHeaderModel> bookTransHeaderModels = new ArrayList<>();
 
+  protected final BookTransHeaderService bookTransHeaderService;
+
+  protected final BookTransHeaderMapper mapper;
+
   @PostConstruct
   public void init() {
     bookTransHeaderModels = mapper.toModels(bookTransHeaderService.findAll());
   }
-
-  @Autowired
-  private BookTransHeaderService bookTransHeaderService;
-
-  @Autowired
-  private BookTransHeaderMapper mapper;
 
   private final int[] indx = {-1};
 

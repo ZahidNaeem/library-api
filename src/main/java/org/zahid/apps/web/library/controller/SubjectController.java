@@ -1,5 +1,6 @@
 package org.zahid.apps.web.library.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,6 +27,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("subjects")
+@RequiredArgsConstructor
 public class SubjectController {
 
     private static final Logger LOG = LogManager.getLogger(SubjectController.class);
@@ -36,11 +38,9 @@ public class SubjectController {
         subjectModels = mapper.toModels(subjectService.findAll());
     }
 
-    @Autowired
-    private SubjectService subjectService;
+    private final SubjectService subjectService;
 
-    @Autowired
-    private SubjectMapper mapper;
+    private final SubjectMapper mapper;
 
     private final int[] indx = {-1};
 

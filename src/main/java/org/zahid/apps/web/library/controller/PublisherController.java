@@ -1,5 +1,6 @@
 package org.zahid.apps.web.library.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,6 +24,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("publishers")
+@RequiredArgsConstructor
 public class PublisherController {
 
     private static final Logger LOG = LogManager.getLogger(PublisherController.class);
@@ -33,11 +35,9 @@ public class PublisherController {
         publisherModels = mapper.toModels(publisherService.findAll());
     }
 
-    @Autowired
-    private PublisherService publisherService;
+    private final PublisherService publisherService;
 
-    @Autowired
-    private PublisherMapper mapper;
+    private final PublisherMapper mapper;
 
     private final int[] indx = {-1};
 

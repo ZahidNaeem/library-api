@@ -1,5 +1,6 @@
 package org.zahid.apps.web.library.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,6 +24,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("researchers")
+@RequiredArgsConstructor
 public class ResearcherController {
 
     private static final Logger LOG = LogManager.getLogger(ResearcherController.class);
@@ -33,11 +35,9 @@ public class ResearcherController {
         researcherModels = mapper.toModels(researcherService.findAll());
     }
 
-    @Autowired
-    private ResearcherService researcherService;
+    private final ResearcherService researcherService;
 
-    @Autowired
-    private ResearcherMapper mapper;
+    private final ResearcherMapper mapper;
 
     private final int[] indx = {-1};
 

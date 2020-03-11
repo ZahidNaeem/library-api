@@ -9,7 +9,7 @@ import org.zahid.apps.web.library.repo.AuthorRepo;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith((SpringExtension.class))
+//@ExtendWith((SpringExtension.class))
 class AuthorServiceImplTest {
 
     @Mock

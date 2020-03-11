@@ -1,5 +1,6 @@
 package org.zahid.apps.web.library.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,6 +25,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("books")
+@RequiredArgsConstructor
 public class BookController {
 
     private static final Logger LOG = LogManager.getLogger(BookController.class);
@@ -34,11 +36,9 @@ public class BookController {
         bookModels = mapper.toModels(bookService.findAll());
     }
 
-    @Autowired
-    private BookService bookService;
+    private final BookService bookService;
 
-    @Autowired
-    private BookMapper mapper;
+    private final BookMapper mapper;
 
     private final int[] indx = {-1};
 

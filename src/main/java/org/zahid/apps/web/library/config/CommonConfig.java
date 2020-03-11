@@ -2,6 +2,7 @@ package org.zahid.apps.web.library.config;
 
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,10 +20,10 @@ import java.security.GeneralSecurityException;
 
 @Configuration
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
+@RequiredArgsConstructor
 public class CommonConfig {
 
-    @Autowired
-    private ConfigProperties configProperties;
+    private final ConfigProperties configProperties;
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {

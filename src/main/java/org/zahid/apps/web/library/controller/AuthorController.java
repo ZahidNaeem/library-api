@@ -1,5 +1,6 @@
 package org.zahid.apps.web.library.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,16 +24,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping("authors")
+@RequiredArgsConstructor
 public class AuthorController {
 
     private static final Logger LOG = LogManager.getLogger(AuthorController.class);
     private List<AuthorModel> authorModels = new ArrayList<>();
 
-    @Autowired
-    private AuthorService authorService;
+    private final AuthorService authorService;
 
-    @Autowired
-    private AuthorMapper mapper;
+    private final AuthorMapper mapper;
 
     @PostConstruct
     public void init() {

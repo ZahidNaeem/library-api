@@ -1,5 +1,6 @@
 package org.zahid.apps.web.library.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zahid.apps.web.library.entity.BookTransHeaderEntity;
@@ -11,10 +12,10 @@ import java.util.List;
 import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
 public class BookTransHeaderServiceImpl implements BookTransHeaderService {
 
-    @Autowired
-    private BookTransHeaderRepo bookTransHeaderRepo;
+    private final BookTransHeaderRepo bookTransHeaderRepo;
 
     @Override
     public List<BookTransHeaderEntity> findAll() {

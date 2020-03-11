@@ -1,5 +1,6 @@
 package org.zahid.apps.web.library.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zahid.apps.web.library.entity.SubjectEntity;
@@ -10,10 +11,10 @@ import java.util.List;
 import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
 public class SubjectServiceImpl implements SubjectService {
 
-    @Autowired
-    private SubjectRepo subjectRepo;
+    private final SubjectRepo subjectRepo;
 
     @Override
     public List<SubjectEntity> findAll() {

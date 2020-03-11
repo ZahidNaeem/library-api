@@ -1,5 +1,6 @@
 package org.zahid.apps.web.library.servlet;
 
+import lombok.RequiredArgsConstructor;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
@@ -28,12 +29,13 @@ import java.util.Iterator;
 import java.util.Map;
 
 @WebServlet(name = "ReportServlet", urlPatterns = {"/reportservlet"})
+@RequiredArgsConstructor
 public class ReportServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final String CONTENT_TYPE = "text/html; charset=UTF-8";
     private static final Logger LOG = LogManager.getLogger(ReportServlet.class);
-    @Autowired
-    private DataSource dataSource;
+    
+    private final DataSource dataSource;
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) {

@@ -1,5 +1,6 @@
 package org.zahid.apps.web.library.utils;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.SimpleMailMessage;
@@ -12,10 +13,10 @@ import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 
 @Component
+@RequiredArgsConstructor
 public class MailService {
 
-    @Autowired
-    private JavaMailSender javaMailSender;
+    private final JavaMailSender javaMailSender;
 
     public void sendEmail(final String subject, final String text, final String... to) {
 

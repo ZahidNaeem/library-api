@@ -1,5 +1,6 @@
 package org.zahid.apps.web.library.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +15,12 @@ import java.util.List;
 import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
 
     private static final Logger LOG = LogManager.getLogger(BookServiceImpl.class);
 
-    @Autowired
-    private BookRepo bookRepo;
+    private final BookRepo bookRepo;
 
     @Override
     public List<BookEntity> findAll() {

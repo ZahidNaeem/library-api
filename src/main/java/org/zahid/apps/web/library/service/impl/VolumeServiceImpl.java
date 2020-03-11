@@ -1,5 +1,6 @@
 package org.zahid.apps.web.library.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zahid.apps.web.library.entity.BookEntity;
@@ -13,10 +14,10 @@ import java.util.List;
 import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
 public class VolumeServiceImpl implements VolumeService {
 
-    @Autowired
-    private VolumeRepo volumeRepo;
+    private final VolumeRepo volumeRepo;
 
     @Override
     public List<VolumeEntity> findAll() {
