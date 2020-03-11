@@ -1,5 +1,6 @@
 package org.zahid.apps.web.library.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +29,18 @@ import org.zahid.apps.web.library.security.service.UserDetailsServiceImpl;
     jsr250Enabled = true,
     prePostEnabled = true
 )
+@RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+//  @Autowired
+//  @Qualifier("userDetailsServiceImpl")
+//  private UserDetailsService userDetailsService;
+
+  private final JwtAuthEntryPoint unauthorizedHandler;
+
+  private final JwtProvider tokenProvider;
+
+  private final UserDetailsServiceImpl userDetailsService;
 
   private static final String[] AUTH_WHITELIST = {
       "/",
@@ -47,16 +59,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       "/error"
   };
 
-  @Autowired
-  @Qualifier("userDetailsServiceImpl")
-  private UserDetailsService userDetailsService;
-
-  @Autowired
-  private JwtAuthEntryPoint unauthorizedHandler;
-
   @Bean
   public JwtAuthTokenFilter authenticationJwtTokenFilter() {
-    return JwtAuthTokenFilter.builder().build();
+    return new JwtAuthTokenFilter(tokenProvider, userDetailsService);
   }
 
   @Override

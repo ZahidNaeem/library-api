@@ -21,6 +21,7 @@
         <junit-jupiter.version>5.5.1</junit-jupiter.version>
         <mockito.version>2.24.0</mockito.version>
         <springfox.swagger.version>2.9.2</springfox.swagger.version>
+        <lombok.version>1.18.12</lombok.version>
     </properties>
 
     <!--    <dependencyManagement>
