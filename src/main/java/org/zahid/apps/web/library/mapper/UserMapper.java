@@ -1,29 +1,29 @@
 package org.zahid.apps.web.library.mapper;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.zahid.apps.web.library.entity.User;
-import org.zahid.apps.web.library.model.UserModel;
-import org.zahid.apps.web.library.service.OrganizationService;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.collections.CollectionUtils;
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.zahid.apps.web.library.entity.User;
+import org.zahid.apps.web.library.mapper.qualifier.UserQualifier;
+import org.zahid.apps.web.library.model.UserModel;
 
-@Mapper(componentModel = "spring")
-public abstract class UserMapper {
-
-    @Autowired
-    protected OrganizationService organizationService;
+@Mapper(
+    componentModel = "spring",
+    uses = {UserQualifier.class},
+    injectionStrategy = InjectionStrategy.CONSTRUCTOR
+)
+public interface UserMapper {
 
     @Mapping(target = "organization", expression = "java(user != null && user.getOrganization() != null ? user.getOrganization().getOrganizationCode() : null)")
-    public abstract UserModel toModel(final User user);
+    UserModel toModel(final User user);
 
-    @Mapping(target = "organization", expression = "java(model != null && model.getOrganization() != null ? organizationService.findById(model.getOrganization()) : null)")
-    public abstract User toEntity(final UserModel model);
+    @Mapping(target = "organization", qualifiedByName = "organization")
+    User toEntity(final UserModel model);
 
-    protected List<UserModel> toModels(final List<User> Users) {
+    default List<UserModel> toModels(final List<User> Users) {
         if (CollectionUtils.isEmpty(Users)) {
             return new ArrayList<>();
         }
@@ -34,7 +34,7 @@ public abstract class UserMapper {
         return models;
     }
 
-    protected List<User> toEntities(final List<UserModel> models) {
+    default List<User> toEntities(final List<UserModel> models) {
         if (CollectionUtils.isEmpty(models)) {
             return new ArrayList<>();
         }

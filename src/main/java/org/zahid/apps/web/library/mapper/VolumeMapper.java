@@ -1,40 +1,33 @@
 package org.zahid.apps.web.library.mapper;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.zahid.apps.web.library.entity.VolumeEntity;
-import org.zahid.apps.web.library.model.VolumeModel;
-import org.zahid.apps.web.library.service.BookService;
-import org.zahid.apps.web.library.service.RackService;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.collections.CollectionUtils;
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.zahid.apps.web.library.entity.VolumeEntity;
+import org.zahid.apps.web.library.mapper.qualifier.VolumeQualifier;
+import org.zahid.apps.web.library.model.VolumeModel;
 
-@Mapper(componentModel = "spring")
-public abstract class VolumeMapper {
-
-    @Autowired
-    protected BookService bookService;
-
-    @Autowired
-    protected RackService rackService;
-
-    @Autowired
-    protected BookTransLineMapper bookTransLineMapper;
+@Mapper(
+    componentModel = "spring",
+    uses = {VolumeQualifier.class},
+    injectionStrategy = InjectionStrategy.CONSTRUCTOR
+)
+public interface VolumeMapper {
 
     @Mapping(target = "book", expression = "java(volume != null && volume.getBook() != null ? volume.getBook().getBookId() : null)")
     @Mapping(target = "rack", expression = "java(volume != null && volume.getRack() != null ? volume.getRack().getRackId() : null)")
-    @Mapping(target = "bookTransLines", expression = "java(volume != null ? bookTransLineMapper.toModels(volume.getBookTransLines()) : null)")
-    public abstract VolumeModel toModel(final VolumeEntity volume);
+    @Mapping(target = "bookTransLines", qualifiedByName = "bookTransLineModels")
+    VolumeModel toModel(final VolumeEntity volume);
 
-    @Mapping(target = "book", expression = "java(model != null && model.getBook() != null ? bookService.findById(model.getBook()) : null)")
-    @Mapping(target = "rack", expression = "java(model != null && model.getRack() != null ? rackService.findById(model.getRack()) : null)")
-    @Mapping(target = "bookTransLines", expression = "java(model != null ? bookTransLineMapper.toEntities(model.getBookTransLines()) : null)")
-    public abstract VolumeEntity toEntity(final VolumeModel model);
+    @Mapping(target = "book", qualifiedByName = "book")
+    @Mapping(target = "rack", qualifiedByName = "rack")
+    @Mapping(target = "bookTransLines", qualifiedByName = "bookTransLineEntities")
+    VolumeEntity toEntity(final VolumeModel model);
 
-    public List<VolumeModel> toModels(final List<VolumeEntity> volumes) {
+    default List<VolumeModel> toModels(final List<VolumeEntity> volumes) {
         if (CollectionUtils.isEmpty(volumes)) {
             return new ArrayList<>();
         }
@@ -45,7 +38,7 @@ public abstract class VolumeMapper {
         return models;
     }
 
-    public List<VolumeEntity> toEntities(final List<VolumeModel> models) {
+    default List<VolumeEntity> toEntities(final List<VolumeModel> models) {
         if (CollectionUtils.isEmpty(models)) {
             return new ArrayList<>();
         }
