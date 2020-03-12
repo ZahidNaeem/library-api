@@ -61,7 +61,7 @@ public class Miscellaneous {
 
   public static Exception getNestedException(Exception rootException) {
     if (rootException.getCause() == null) {
-      LOG.log(Level.INFO, "Last Exception: {}", rootException);
+      LOG.info("Last Exception: {}", rootException);
       return rootException;
     } else {
       Exception cause = (Exception) rootException.getCause();

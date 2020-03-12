@@ -35,4 +35,15 @@ public class GlobalExceptionHandler {
         .build(), HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
+  @ExceptionHandler(value = ChildRecordFoundException.class)
+  public ResponseEntity handleChildRecordFoundException(AppException ex) {
+    LOG.debug("handleChildRecordFoundException called");
+    return new ResponseEntity(ApiResponse
+        .<Boolean>builder()
+        .success(false)
+        .message(ex.getMessage())
+        .entity(null)
+        .build(), HttpStatus.BAD_REQUEST);
+  }
+
 }

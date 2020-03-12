@@ -1,18 +1,24 @@
 package org.zahid.apps.web.library.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zahid.apps.web.library.entity.ReaderEntity;
+import org.zahid.apps.web.library.exception.ChildRecordFoundException;
 import org.zahid.apps.web.library.repo.ReaderRepo;
 import org.zahid.apps.web.library.service.ReaderService;
 
 import java.util.List;
 import java.util.Set;
+import org.zahid.apps.web.library.utils.Miscellaneous;
 
 @Service
 @RequiredArgsConstructor
 public class ReaderServiceImpl implements ReaderService {
+
+    private static final Logger LOG = LogManager.getLogger(ReaderServiceImpl.class);
 
     private final ReaderRepo readerRepo;
 
@@ -59,7 +65,15 @@ public class ReaderServiceImpl implements ReaderService {
 
     @Override
     public void deleteById(Long id) {
-        readerRepo.deleteById(id);
+        try {
+            readerRepo.deleteById(id);
+        } catch (Exception e) {
+            final Exception ex = Miscellaneous.getNestedException(e);
+            LOG.error("Exception in delete: {}", ex.getMessage());
+            if(ex.getMessage().startsWith("ORA-02292")){
+                throw new ChildRecordFoundException("You can't delete this reader. Child record found");
+            }
+        }
     }
 
     @Override
