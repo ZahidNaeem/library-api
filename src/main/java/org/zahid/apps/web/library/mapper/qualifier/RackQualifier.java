@@ -19,7 +19,7 @@ public class RackQualifier {
 
   private ShelfService shelfService;
 
-  private VolumeMapper volumeMapper;
+  private final VolumeMapper volumeMapper;
 
   @Named("shelf")
   public ShelfEntity shelf(final Long shelf) {

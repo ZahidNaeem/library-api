@@ -21,11 +21,11 @@ import org.zahid.apps.web.library.service.RackService;
 @RequiredArgsConstructor
 public class VolumeQualifier {
 
-  private BookService bookService;
+  private final BookService bookService;
 
-  private RackService rackService;
+  private final RackService rackService;
 
-  private BookTransLineMapper bookTransLineMapper;
+  private final BookTransLineMapper bookTransLineMapper;
 
   @Named("book")
   public BookEntity book(final Long book) {

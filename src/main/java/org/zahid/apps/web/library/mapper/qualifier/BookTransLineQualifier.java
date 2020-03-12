@@ -22,9 +22,9 @@ public class BookTransLineQualifier {
 
     private BookTransHeaderService bookTransHeaderService;
 
-    private BookService bookService;
+    private final BookService bookService;
 
-    private VolumeService volumeService;
+    private final VolumeService volumeService;
 
     @Named("bookTransHeader")
     public BookTransHeaderEntity bookTransHeader (final Long header){
