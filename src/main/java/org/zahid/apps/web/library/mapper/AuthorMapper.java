@@ -1,30 +1,30 @@
 package org.zahid.apps.web.library.mapper;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.zahid.apps.web.library.entity.AuthorEntity;
-import org.zahid.apps.web.library.entity.BookEntity;
+import org.zahid.apps.web.library.mapper.qualifier.AuthorQualifier;
 import org.zahid.apps.web.library.model.AuthorModel;
-import org.zahid.apps.web.library.model.BookModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Mapper(componentModel = "spring")
-public abstract class AuthorMapper {
+@Mapper(
+        componentModel = "spring",
+        uses = {AuthorQualifier.class},
+        injectionStrategy = InjectionStrategy.CONSTRUCTOR
+)
+public interface AuthorMapper {
 
-    @Autowired
-    protected BookMapper bookMapper;
+    @Mapping(target = "books", qualifiedByName = "bookModels")
+    AuthorModel toModel(final AuthorEntity author);
 
-    @Mapping(target = "books", expression = "java(author != null ? bookMapper.toModels(author.getBooks()) : null)")
-    public abstract AuthorModel toModel(final AuthorEntity author);
+    @Mapping(target = "books", qualifiedByName = "bookEntities")
+    AuthorEntity toEntity(final AuthorModel model);
 
-    @Mapping(target = "books", expression = "java(model != null ? bookMapper.toEntities(model.getBooks()) : null)")
-    public abstract AuthorEntity toEntity(final AuthorModel model);
-
-    public List<AuthorModel> toModels(final List<AuthorEntity> authors) {
+    default List<AuthorModel> toModels(final List<AuthorEntity> authors) {
         if (CollectionUtils.isEmpty(authors)) {
             return new ArrayList<>();
         }
@@ -35,7 +35,7 @@ public abstract class AuthorMapper {
         return models;
     }
 
-    public List<AuthorEntity> toEntities(final List<AuthorModel> models) {
+    default List<AuthorEntity> toEntities(final List<AuthorModel> models) {
         if (CollectionUtils.isEmpty(models)) {
             return new ArrayList<>();
         }

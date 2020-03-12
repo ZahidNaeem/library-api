@@ -1,28 +1,30 @@
 package org.zahid.apps.web.library.mapper;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.zahid.apps.web.library.entity.ReaderEntity;
+import org.zahid.apps.web.library.mapper.qualifier.ReaderQualifier;
 import org.zahid.apps.web.library.model.ReaderModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Mapper(componentModel = "spring")
-public abstract class ReaderMapper {
+@Mapper(
+        componentModel = "spring",
+        uses = {ReaderQualifier.class},
+        injectionStrategy = InjectionStrategy.CONSTRUCTOR
+)
+public interface ReaderMapper {
 
-    @Autowired
-    protected BookTransHeaderMapper bookTransHeaderMapper;
+    @Mapping(target = "bookTransHeaders", qualifiedByName = "bookTransHeaderModels")
+    ReaderModel toModel(final ReaderEntity reader);
 
-    @Mapping(target = "bookTransHeaders", expression = "java(reader != null ? bookTransHeaderMapper.toModels(reader.getBookTransHeaders()) : null)")
-    public abstract ReaderModel toModel(final ReaderEntity reader);
+    @Mapping(target = "bookTransHeaders", qualifiedByName = "bookTransHeaderEntities")
+    ReaderEntity toEntity(final ReaderModel model);
 
-    @Mapping(target = "bookTransHeaders", expression = "java(model != null ? bookTransHeaderMapper.toEntities(model.getBookTransHeaders()) : null)")
-    public abstract ReaderEntity toEntity(final ReaderModel model);
-
-    public List<ReaderModel> toModels(final List<ReaderEntity> readers) {
+    default List<ReaderModel> toModels(final List<ReaderEntity> readers) {
         if (CollectionUtils.isEmpty(readers)) {
             return new ArrayList<>();
         }
@@ -33,7 +35,7 @@ public abstract class ReaderMapper {
         return models;
     }
 
-    public List<ReaderEntity> toEntities(final List<ReaderModel> models) {
+    default List<ReaderEntity> toEntities(final List<ReaderModel> models) {
         if (CollectionUtils.isEmpty(models)) {
             return new ArrayList<>();
         }
