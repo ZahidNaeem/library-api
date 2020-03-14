@@ -1,12 +1,16 @@
 package org.zahid.apps.web.library.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zahid.apps.web.library.entity.RackEntity;
 import org.zahid.apps.web.library.entity.ShelfEntity;
+import org.zahid.apps.web.library.exception.ChildRecordFoundException;
 import org.zahid.apps.web.library.repo.RackRepo;
 import org.zahid.apps.web.library.service.RackService;
+import org.zahid.apps.web.library.utils.Miscellaneous;
 
 import java.util.List;
 import java.util.Set;
@@ -14,6 +18,8 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class RackServiceImpl implements RackService {
+
+    public static final Logger LOG = LogManager.getLogger(RackServiceImpl.class);
 
     private final RackRepo rackRepo;
 
@@ -60,7 +66,15 @@ public class RackServiceImpl implements RackService {
 
     @Override
     public void deleteById(Long id) {
-        rackRepo.deleteById(id);
+        try {
+            rackRepo.deleteById(id);
+        } catch (Exception e) {
+            final Exception ex = Miscellaneous.getNestedException(e);
+            LOG.error("Exception in delete: {}", ex.getMessage());
+            if(ex.getMessage().startsWith("ORA-02292")){
+                throw new ChildRecordFoundException("You can't delete this record. Child record found");
+            }
+        }
     }
 
     @Override

@@ -1,10 +1,13 @@
 package org.zahid.apps.web.library.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zahid.apps.web.library.entity.BookEntity;
 import org.zahid.apps.web.library.entity.VolumeEntity;
+import org.zahid.apps.web.library.exception.ChildRecordFoundException;
 import org.zahid.apps.web.library.payload.response.SearchVolumeResponse;
 import org.zahid.apps.web.library.repo.VolumeRepo;
 import org.zahid.apps.web.library.service.VolumeService;
@@ -16,6 +19,8 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class VolumeServiceImpl implements VolumeService {
+
+    private static final Logger LOG = LogManager.getLogger(VolumeServiceImpl.class);
 
     private final VolumeRepo volumeRepo;
 
@@ -73,7 +78,15 @@ public class VolumeServiceImpl implements VolumeService {
 
     @Override
     public void deleteById(Long id) {
-        volumeRepo.deleteById(id);
+        try {
+            volumeRepo.deleteById(id);
+        } catch (Exception e) {
+            final Exception ex = Miscellaneous.getNestedException(e);
+            LOG.error("Exception in delete: {}", ex.getMessage());
+            if(ex.getMessage().startsWith("ORA-02292")){
+                throw new ChildRecordFoundException("You can't delete this record. Child record found");
+            }
+        }
     }
 
     @Override

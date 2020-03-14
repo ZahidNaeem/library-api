@@ -20,6 +20,7 @@ import org.zahid.apps.web.library.utils.Miscellaneous;
 public class SubjectServiceImpl implements SubjectService {
 
     private static final Logger LOG = LogManager.getLogger(SubjectServiceImpl.class);
+
     private final SubjectRepo subjectRepo;
 
     @Override

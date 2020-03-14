@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zahid.apps.web.library.entity.BookEntity;
+import org.zahid.apps.web.library.exception.ChildRecordFoundException;
 import org.zahid.apps.web.library.payload.response.SearchBookResponse;
 import org.zahid.apps.web.library.repo.BookRepo;
 import org.zahid.apps.web.library.service.BookService;
@@ -70,7 +71,15 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void deleteById(Long id) {
-        bookRepo.deleteById(id);
+        try {
+            bookRepo.deleteById(id);
+        } catch (Exception e) {
+            final Exception ex = Miscellaneous.getNestedException(e);
+            LOG.error("Exception in delete: {}", ex.getMessage());
+            if(ex.getMessage().startsWith("ORA-02292")){
+                throw new ChildRecordFoundException("You can't delete this record. Child record found");
+            }
+        }
     }
 
     @Override

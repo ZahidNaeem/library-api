@@ -1,11 +1,15 @@
 package org.zahid.apps.web.library.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zahid.apps.web.library.entity.ResearcherEntity;
+import org.zahid.apps.web.library.exception.ChildRecordFoundException;
 import org.zahid.apps.web.library.repo.ResearcherRepo;
 import org.zahid.apps.web.library.service.ResearcherService;
+import org.zahid.apps.web.library.utils.Miscellaneous;
 
 import java.util.List;
 import java.util.Set;
@@ -13,6 +17,8 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class ResearcherServiceImpl implements ResearcherService {
+
+    private static final Logger LOG = LogManager.getLogger(ResearcherServiceImpl.class);
 
     private final ResearcherRepo researcherRepo;
 
@@ -59,7 +65,15 @@ public class ResearcherServiceImpl implements ResearcherService {
 
     @Override
     public void deleteById(Long id) {
-        researcherRepo.deleteById(id);
+        try {
+            researcherRepo.deleteById(id);
+        } catch (Exception e) {
+            final Exception ex = Miscellaneous.getNestedException(e);
+            LOG.error("Exception in delete: {}", ex.getMessage());
+            if(ex.getMessage().startsWith("ORA-02292")){
+                throw new ChildRecordFoundException("You can't delete this record. Child record found");
+            }
+        }
     }
 
     @Override

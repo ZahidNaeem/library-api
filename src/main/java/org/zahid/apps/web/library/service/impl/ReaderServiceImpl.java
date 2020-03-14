@@ -71,7 +71,7 @@ public class ReaderServiceImpl implements ReaderService {
             final Exception ex = Miscellaneous.getNestedException(e);
             LOG.error("Exception in delete: {}", ex.getMessage());
             if(ex.getMessage().startsWith("ORA-02292")){
-                throw new ChildRecordFoundException("You can't delete this reader. Child record found");
+                throw new ChildRecordFoundException("You can't delete this record. Child record found");
             }
         }
     }
