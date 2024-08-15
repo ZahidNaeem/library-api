@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="warn" packages="org.zahid.apps.web.library.logging">
+<Configuration status="warn" packages="com.alabtaal.library.logging">
   <Appenders>
     <RollingFile name="RollingFile"
       fileName="logs/library.log"
