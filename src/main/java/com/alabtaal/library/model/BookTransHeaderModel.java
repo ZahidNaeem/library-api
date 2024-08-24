@@ -1,28 +1,31 @@
 package com.alabtaal.library.model;
 
+import com.alabtaal.library.entity.Auditable;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import com.alabtaal.library.entity.Auditable;
 
-import java.util.Date;
-import java.util.List;
-
+@EqualsAndHashCode(callSuper = true)
 @Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookTransHeaderModel extends Auditable<Long> {
-    private Long headerId;
+public class BookTransHeaderModel extends Auditable<String> {
 
-    private String transType;
+  private UUID id;
 
-    private Date transDate;
+  private String transType;
 
-    private Long reader;
+  private Date transDate;
 
-    private String remarks;
+  private UUID reader;
 
-    private List<BookTransLineModel> bookTransLines;
+  private String remarks;
+
+  private List<BookTransLineModel> bookTransLines;
 }

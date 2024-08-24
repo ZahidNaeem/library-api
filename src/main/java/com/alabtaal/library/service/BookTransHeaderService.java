@@ -2,35 +2,35 @@ package com.alabtaal.library.service;
 
 import com.alabtaal.library.entity.BookTransHeaderEntity;
 import com.alabtaal.library.entity.ReaderEntity;
-
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 public interface BookTransHeaderService {
 
-    List<BookTransHeaderEntity> findAll();
+  List<BookTransHeaderEntity> findAll();
 
-    List<BookTransHeaderEntity> findAllByTransType(final String transType);
+  List<BookTransHeaderEntity> findAllByTransType(final String transType);
 
-    List<BookTransHeaderEntity> findAllByReader(final ReaderEntity reader);
+  List<BookTransHeaderEntity> findAllByReader(final ReaderEntity reader);
 
-    BookTransHeaderEntity findById(final Long id);
+  BookTransHeaderEntity findById(final UUID id);
 
-    boolean exists(Long id);
+  boolean exists(UUID id);
 
-    BookTransHeaderEntity save(BookTransHeaderEntity bookTransHeader);
+  BookTransHeaderEntity save(BookTransHeaderEntity bookTransHeader);
 
-    List<BookTransHeaderEntity> save(Set<BookTransHeaderEntity> shelves);
+  List<BookTransHeaderEntity> save(Set<BookTransHeaderEntity> shelves);
 
-    void delete(BookTransHeaderEntity bookTransHeader);
+  void delete(BookTransHeaderEntity bookTransHeader);
 
-    void delete(Set<BookTransHeaderEntity> shelves);
+  void delete(Set<BookTransHeaderEntity> shelves);
 
-    void deleteById(Long id);
+  void deleteById(UUID id);
 
-    void deleteAll();
+  void deleteAll();
 
-    void deleteAllInBatch();
+  void deleteAllInBatch();
 
-    void deleteInBatch(Set<BookTransHeaderEntity> shelves);
+  void deleteInBatch(Set<BookTransHeaderEntity> shelves);
 }

@@ -1,12 +1,9 @@
 package com.alabtaal.library.entity;
 
-import com.alabtaal.library.util.Miscellaneous;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.PrePersist;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

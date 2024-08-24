@@ -1,6 +1,7 @@
 package com.alabtaal.library.exception;
 
 import com.alabtaal.library.payload.response.ApiResponse;
+import com.alabtaal.library.util.Miscellaneous;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-  private static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+  private static Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
   @ExceptionHandler(value = BadRequestException.class)
   public ResponseEntity<ApiResponse<Boolean>> handleBadRequestException(final AppException ex) {
@@ -53,10 +54,14 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ApiResponse<Boolean>> handleDataIntegrityViolationException(
       final DataIntegrityViolationException ex) {
     LOG.debug("handleDataIntegrityViolationException called");
+    String sqlExceptionMessage = Miscellaneous.getSqlExceptionMessage(ex);
+    if (ex.getMessage().startsWith("ORA-02292")) {
+      sqlExceptionMessage = "You can't delete this record. Child record found";
+    }
     return new ResponseEntity<>(ApiResponse
         .<Boolean>builder()
         .success(false)
-        .message(Miscellaneous.getSqlExceptionMessage(ex))
+        .message(sqlExceptionMessage)
         .entity(null)
         .build(), HttpStatus.BAD_REQUEST);
   }

@@ -1,24 +1,26 @@
 package com.alabtaal.library.model;
 
+import com.alabtaal.library.entity.Auditable;
+import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import com.alabtaal.library.entity.Auditable;
 
-import java.util.List;
-
+@EqualsAndHashCode(callSuper = true)
 @Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthorModel extends Auditable<Long> {
+public class AuthorModel extends Auditable<String> {
 
-    private Long authorId;
+  private UUID id;
 
-    private String authorName;
+  private String name;
 
-    private String remarks;
+  private String remarks;
 
-    private List<BookModel> books;
+  private List<BookModel> books;
 }

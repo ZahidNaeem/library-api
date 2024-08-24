@@ -1,32 +1,22 @@
 package com.alabtaal.library.controller;
 
 import com.alabtaal.library.entity.UserEntity;
-import com.alabtaal.library.enumeration.RoleName;
 import com.alabtaal.library.exception.BadRequestException;
-import com.alabtaal.library.exception.InternalServerErrorException;
-import com.alabtaal.library.exception.RoleNameNotFoundException;
 import com.alabtaal.library.mapper.UserMapper;
-import com.alabtaal.library.model.UserModel;
 import com.alabtaal.library.payload.request.LoginRequest;
-import com.alabtaal.library.payload.request.SignUpRequest;
+import com.alabtaal.library.payload.request.SignupRequest;
 import com.alabtaal.library.payload.response.ApiResponse;
 import com.alabtaal.library.payload.response.JwtAuthenticationResponse;
-import com.alabtaal.library.repo.RoleRepo;
 import com.alabtaal.library.repo.UserRepo;
 import com.alabtaal.library.security.jwt.JwtProvider;
 import jakarta.validation.Valid;
-import java.io.IOException;
 import java.net.URI;
-import java.util.HashSet;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,15 +34,11 @@ public class AuthController {
 
   private final UserRepo userRepo;
 
-  private final RoleRepo roleRepo;
-
   private final UserMapper userMapper;
-
-  private final PasswordEncoder passwordEncoder;
 
   private final JwtProvider tokenProvider;
 
-  @PostMapping("/signin")
+  @PostMapping("/login")
   public ResponseEntity<ApiResponse<JwtAuthenticationResponse>> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
     final Authentication authentication = authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(
@@ -75,7 +61,7 @@ public class AuthController {
   }
 
   @PostMapping("/signup")
-  public ResponseEntity<ApiResponse<Boolean>> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) throws BadRequestException {
+  public ResponseEntity<ApiResponse<Boolean>> registerUser(@Valid @RequestBody SignupRequest signUpRequest) throws BadRequestException {
     if (userRepo.existsByUsername(signUpRequest.getUsername())) {
       throw new BadRequestException("Username is already taken!");
     }
@@ -84,29 +70,10 @@ public class AuthController {
       throw new BadRequestException("Email Address already in use!");
     }
 
-    // Creating userModel's account
-    final UserModel userModel = UserModel.builder()
-        .name(signUpRequest.getName())
-        .username(signUpRequest.getUsername())
-        .password(passwordEncoder.encode(signUpRequest.getPassword()))
-        .email(signUpRequest.getEmail())
-        .organization(signUpRequest.getOrganization())
-        .build();
+    // Creating user's account
+    final UserEntity user = userMapper.toEntity(signUpRequest);
 
-    Set<String> strRoles = CollectionUtils.isNotEmpty(signUpRequest.getRole()) ? signUpRequest.getRole() : Set.of("user");
-    Set<RoleName> roles = new HashSet<>();
-
-    strRoles.forEach(role -> {
-      try {
-        roles.add(RoleName.fromValue(role));
-      } catch (RoleNameNotFoundException e) {
-        throw new RuntimeException(e);
-      }
-    });
-
-    userModel.setRoles(roles);
-
-    final UserEntity result = userRepo.saveAndFlush(userMapper.toEntity(userModel));
+    final UserEntity result = userRepo.saveAndFlush(user);
 
     final URI location = ServletUriComponentsBuilder
         .fromCurrentContextPath().path("/users/{username}")
@@ -137,33 +104,7 @@ public class AuthController {
 
   @GetMapping("/recoverPassword")
   public ResponseEntity<ApiResponse<Boolean>> recoverPassword(@RequestParam(value = "email") String email) {
-    final ResponseEntity<ApiResponse<Boolean>> responseEntity = checkEmailExists(email);
-
-    if (responseEntity.getBody().equals(true)) {
-      try {
-        final boolean mailSent = gmailService.sendMessage("Welcome to Library Application",
-            "To reset you account password, please click on below link:\nhttp://localhost:3000", email);
-        if (mailSent) {
-          return ResponseEntity.ok(
-              ApiResponse
-                  .<Boolean>builder()
-                  .success(true)
-                  .message("Recovery email sent")
-                  .entity(null)
-                  .build()
-          );
-        } else {
-          throw new BadRequestException("Unknown error occurred");
-        }
-      } catch (MessagingException | IOException e) {
-        e.printStackTrace();
-        throw new InternalServerErrorException(e.getMessage());
-      } catch (Exception e) {
-        e.printStackTrace();
-        throw new InternalServerErrorException(e.getMessage());
-      }
-    } else {
-      throw new BadRequestException("Email not registered");
-    }
+//    TODO: functionality will be implemented later
+    return null;
   }
 }

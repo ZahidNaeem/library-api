@@ -30,7 +30,7 @@ import org.springframework.util.CollectionUtils;
 //@RequiredArgsConstructor
 public class Miscellaneous {
 
-  private static final Logger LOG = LoggerFactory.getLogger(Miscellaneous.class);
+  private static Logger LOG = LoggerFactory.getLogger(Miscellaneous.class);
   private static Validator validator;
 
   public Miscellaneous(final Validator validator) {

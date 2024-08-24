@@ -1,33 +1,33 @@
 package com.alabtaal.library.service;
 
 import com.alabtaal.library.entity.ReaderEntity;
-
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 public interface ReaderService {
 
-    List<ReaderEntity> findAll();
+  List<ReaderEntity> findAll();
 
-    List<ReaderEntity> searchReader(final ReaderEntity readerEntity);
+  List<ReaderEntity> searchReader(final ReaderEntity readerEntity);
 
-    ReaderEntity findById(final Long id);
+  ReaderEntity findById(final UUID id);
 
-    boolean exists(Long id);
+  boolean exists(UUID id);
 
-    ReaderEntity save(ReaderEntity reader);
+  ReaderEntity save(ReaderEntity reader);
 
-    List<ReaderEntity> save(Set<ReaderEntity> readers);
+  List<ReaderEntity> save(Set<ReaderEntity> readers);
 
-    void delete(ReaderEntity reader);
+  void delete(ReaderEntity reader);
 
-    void delete(Set<ReaderEntity> readers);
+  void delete(Set<ReaderEntity> readers);
 
-    void deleteById(Long id);
+  void deleteById(UUID id);
 
-    void deleteAll();
+  void deleteAll();
 
-    void deleteAllInBatch();
+  void deleteAllInBatch();
 
-    void deleteInBatch(Set<ReaderEntity> readers);
+  void deleteInBatch(Set<ReaderEntity> readers);
 }

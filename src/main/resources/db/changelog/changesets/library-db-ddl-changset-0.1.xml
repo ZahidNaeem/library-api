@@ -1,0 +1,589 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="uuid_type" value="uuid" dbms="postgresql"/>
+  <property name="uuid_type" value="uniqueidentifier" dbms="mysql"/>
+  <property name="uuid_type" value="RAW(16)" dbms="oracle"/>
+
+  <property name="uuid_function" value="uid.uuid_generate_v4()" dbms="postgresql"/>
+  <property name="uuid_function" value="NEWID()" dbms="mysql"/>
+  <property name="uuid_function" value="sys_guid()" dbms="oracle"/>
+
+  <property name="now" value="now()" dbms="postgresql"/>
+  <property name="now" value="now()" dbms="mysql"/>
+  <property name="now" value="sysdate" dbms="oracle"/>
+
+  <property name="currentSchema" value="library"/>
+
+  <changeSet id="create-table-authors" author="Zahid Naeem">
+    <preConditions>
+      <not>
+        <tableExists tableName="authors" schemaName="${currentSchema}"/>
+      </not>
+    </preConditions>
+    <createTable tableName="authors" schemaName="${currentSchema}">
+      <column name="AUTHOR_ID" type="${uuid_type}" valueComputed="${uuid_function}">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="pk_authors"/>
+      </column>
+      <column name="AUTHOR_NAME" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="REMARKS" type="varchar(255)"/>
+      <column name="CREATED_BY" type="varchar(255)"/>
+      <column name="CREATION_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+      <column name="LAST_UPDATED_BY" type="varchar(255)"/>
+      <column name="LAST_UPDATE_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+    </createTable>
+    <addUniqueConstraint constraintName="author_name_uk" tableName="authors"
+      schemaName="${currentSchema}" columnNames="author_name"/>
+  </changeSet>
+
+  <changeSet id="create-table-publishers" author="Zahid Naeem">
+    <preConditions>
+      <not>
+        <tableExists tableName="publishers" schemaName="${currentSchema}"/>
+      </not>
+    </preConditions>
+    <createTable tableName="publishers" schemaName="${currentSchema}">
+      <column name="PUBLISHER_ID" type="${uuid_type}" valueComputed="${uuid_function}">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="pk_publishers"/>
+      </column>
+      <column name="PUBLISHER_NAME" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="REMARKS" type="varchar(255)"/>
+      <column name="CREATED_BY" type="varchar(255)"/>
+      <column name="CREATION_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+      <column name="LAST_UPDATED_BY" type="varchar(255)"/>
+      <column name="LAST_UPDATE_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+    </createTable>
+    <addUniqueConstraint constraintName="publisher_name_uk" tableName="publishers"
+      schemaName="${currentSchema}" columnNames="publisher_name"/>
+  </changeSet>
+
+  <changeSet id="create-table-readers" author="Zahid Naeem">
+    <preConditions>
+      <not>
+        <tableExists tableName="readers" schemaName="${currentSchema}"/>
+      </not>
+    </preConditions>
+    <createTable tableName="readers" schemaName="${currentSchema}">
+      <column name="READER_ID" type="${uuid_type}" valueComputed="${uuid_function}">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="pk_readers"/>
+      </column>
+      <column name="READER_NAME" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="REMARKS" type="varchar(255)"/>
+      <column name="CREATED_BY" type="varchar(255)"/>
+      <column name="CREATION_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+      <column name="LAST_UPDATED_BY" type="varchar(255)"/>
+      <column name="LAST_UPDATE_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+    </createTable>
+    <addUniqueConstraint constraintName="reader_name_uk" tableName="readers"
+      schemaName="${currentSchema}" columnNames="reader_name"/>
+  </changeSet>
+
+  <changeSet id="create-table-researchers" author="Zahid Naeem">
+    <preConditions>
+      <not>
+        <tableExists tableName="researchers" schemaName="${currentSchema}"/>
+      </not>
+    </preConditions>
+    <createTable tableName="researchers" schemaName="${currentSchema}">
+      <column name="RESEARCHER_ID" type="${uuid_type}" valueComputed="${uuid_function}">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="pk_researchers"/>
+      </column>
+      <column name="RESEARCHER_NAME" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="REMARKS" type="varchar(255)"/>
+      <column name="CREATED_BY" type="varchar(255)"/>
+      <column name="CREATION_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+      <column name="LAST_UPDATED_BY" type="varchar(255)"/>
+      <column name="LAST_UPDATE_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+    </createTable>
+    <addUniqueConstraint constraintName="researcher_name_uk" tableName="researchers"
+      schemaName="${currentSchema}" columnNames="researcher_name"/>
+  </changeSet>
+
+  <changeSet id="create-table-roles" author="Zahid Naeem">
+    <preConditions>
+      <not>
+        <tableExists tableName="roles" schemaName="${currentSchema}"/>
+      </not>
+    </preConditions>
+    <createTable tableName="roles" schemaName="${currentSchema}">
+      <column name="ROLE_ID" type="${uuid_type}" valueComputed="${uuid_function}">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="pk_roles"/>
+      </column>
+      <column name="ROLE_NAME" type="varchar(60)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="CREATED_BY" type="varchar(255)"/>
+      <column name="CREATION_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+      <column name="LAST_UPDATED_BY" type="varchar(255)"/>
+      <column name="LAST_UPDATE_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+    </createTable>
+    <addUniqueConstraint constraintName="role_name_uk" tableName="roles"
+      schemaName="${currentSchema}" columnNames="role_name"/>
+  </changeSet>
+
+  <changeSet id="create-table-subjects" author="Zahid Naeem">
+    <preConditions>
+      <not>
+        <tableExists tableName="subjects" schemaName="${currentSchema}"/>
+      </not>
+    </preConditions>
+    <createTable tableName="subjects" schemaName="${currentSchema}">
+      <column name="SUBJECT_ID" type="${uuid_type}" valueComputed="${uuid_function}">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="pk_subjects"/>
+      </column>
+      <column name="SUBJECT_CODE" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="SUBJECT_NAME" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="PARENT_SUBJECT_ID" type="${uuid_type}"/>
+      <column name="REMARKS" type="varchar(255)"/>
+      <column name="CREATED_BY" type="varchar(255)"/>
+      <column name="CREATION_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+      <column name="LAST_UPDATED_BY" type="varchar(255)"/>
+      <column name="LAST_UPDATE_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+    </createTable>
+    <addUniqueConstraint constraintName="subject_code_uk"
+      tableName="subjects"
+      schemaName="${currentSchema}"
+      columnNames="subject_code"/>
+
+    <addUniqueConstraint constraintName="subject_name_uk"
+      tableName="subjects"
+      schemaName="${currentSchema}"
+      columnNames="subject_name"/>
+
+    <addForeignKeyConstraint constraintName="FK_SUBJECTS_ON_PARENT_SUBJECT"
+      baseTableName="subjects"
+      baseTableSchemaName="${currentSchema}"
+      referencedTableName="subjects"
+      referencedTableSchemaName="${currentSchema}"
+      baseColumnNames="parent_subject_id"
+      referencedColumnNames="subject_id"/>
+  </changeSet>
+
+  <changeSet id="create-table-users" author="Zahid Naeem">
+    <preConditions>
+      <not>
+        <tableExists tableName="users" schemaName="${currentSchema}"/>
+      </not>
+    </preConditions>
+    <createTable tableName="users" schemaName="${currentSchema}">
+      <column name="USER_ID" type="${uuid_type}" valueComputed="${uuid_function}">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="pk_users"/>
+      </column>
+      <column name="NAME" type="varchar(50)"/>
+      <column name="USERNAME" type="varchar(50)"/>
+      <column name="EMAIL" type="varchar(255)"/>
+      <column name="PASSWORD" type="varchar(100)"/>
+      <column name="ACTIVATION_STATUS" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="CREATED_BY" type="varchar(255)"/>
+      <column name="CREATION_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+      <column name="LAST_UPDATED_BY" type="varchar(255)"/>
+      <column name="LAST_UPDATE_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+    </createTable>
+    <addUniqueConstraint constraintName="users_email_uk"
+      tableName="users"
+      schemaName="${currentSchema}"
+      columnNames="email"/>
+
+    <addUniqueConstraint constraintName="users_username_uk"
+      tableName="users"
+      schemaName="${currentSchema}"
+      columnNames="username"/>
+  </changeSet>
+
+  <changeSet id="create-table-user_roles" author="Zahid Naeem">
+    <preConditions>
+      <not>
+        <tableExists tableName="user_roles" schemaName="${currentSchema}"/>
+      </not>
+    </preConditions>
+    <createTable tableName="user_roles" schemaName="${currentSchema}">
+      <column name="ROLE_ID" type="${uuid_type}">
+        <constraints nullable="false"/>
+      </column>
+      <column name="USER_ID" type="${uuid_type}">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <addPrimaryKey tableName="user_roles" columnNames="role_id, user_id"/>
+    <addForeignKeyConstraint constraintName="fk_user_roles_on_roles"
+      baseTableName="user_roles"
+      baseTableSchemaName="${currentSchema}"
+      referencedTableName="roles"
+      referencedTableSchemaName="${currentSchema}"
+      baseColumnNames="role_id"
+      referencedColumnNames="role_id"/>
+
+    <addForeignKeyConstraint constraintName="fk_user_roles_on_users"
+      baseTableName="user_roles"
+      baseTableSchemaName="${currentSchema}"
+      referencedTableName="users"
+      referencedTableSchemaName="${currentSchema}"
+      baseColumnNames="user_id"
+      referencedColumnNames="user_id"/>
+  </changeSet>
+
+  <changeSet id="create-table-shelves" author="Zahid Naeem">
+    <preConditions>
+      <not>
+        <tableExists tableName="shelves" schemaName="${currentSchema}"/>
+      </not>
+    </preConditions>
+    <createTable tableName="shelves" schemaName="${currentSchema}">
+      <column name="SHELF_ID" type="${uuid_type}" valueComputed="${uuid_function}">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="pk_shelves"/>
+      </column>
+      <column name="SHELF_NAME" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="REMARKS" type="varchar(255)"/>
+      <column name="CREATED_BY" type="varchar(255)"/>
+      <column name="CREATION_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+      <column name="LAST_UPDATED_BY" type="varchar(255)"/>
+      <column name="LAST_UPDATE_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+    </createTable>
+    <addUniqueConstraint constraintName="shelf_name_uk"
+      tableName="shelves"
+      schemaName="${currentSchema}"
+      columnNames="shelf_name"/>
+  </changeSet>
+
+  <changeSet id="create-table-racks" author="Zahid Naeem">
+    <preConditions>
+      <not>
+        <tableExists tableName="racks" schemaName="${currentSchema}"/>
+      </not>
+    </preConditions>
+    <createTable tableName="racks" schemaName="${currentSchema}">
+      <column name="RACK_ID" type="${uuid_type}" valueComputed="${uuid_function}">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="pk_racks"/>
+      </column>
+      <column name="ROW_KEY" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="RACK_NAME" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="SHELF_ID" type="${uuid_type}"/>
+      <column name="REMARKS" type="varchar(255)"/>
+      <column name="CREATED_BY" type="varchar(255)"/>
+      <column name="CREATION_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+      <column name="LAST_UPDATED_BY" type="varchar(255)"/>
+      <column name="LAST_UPDATE_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+    </createTable>
+    <addUniqueConstraint constraintName="shelf_id_rack_name_uk"
+      tableName="racks"
+      schemaName="${currentSchema}"
+      columnNames="shelf_id, rack_name"/>
+
+    <addForeignKeyConstraint constraintName="FK_RACKS_ON_SHELF"
+      baseTableName="racks"
+      baseTableSchemaName="${currentSchema}"
+      referencedTableName="shelves"
+      referencedTableSchemaName="${currentSchema}"
+      baseColumnNames="shelf_id"
+      referencedColumnNames="shelf_id"/>
+  </changeSet>
+
+  <changeSet id="create-table-books" author="Zahid Naeem">
+    <preConditions>
+      <not>
+        <tableExists tableName="books" schemaName="${currentSchema}"/>
+      </not>
+    </preConditions>
+    <createTable tableName="books" schemaName="${currentSchema}">
+      <column name="BOOK_ID" type="${uuid_type}" valueComputed="${uuid_function}">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="pk_books"/>
+      </column>
+      <column name="BOOK_NAME" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="PUBLICATION_DATE" type="timestamp"/>
+      <column name="BOOK_CONDITION" type="varchar(255)"/>
+      <column name="PURCHASED" type="integer"/>
+      <column name="AUTHOR_ID" type="${uuid_type}"/>
+      <column name="SUBJECT_ID" type="${uuid_type}"/>
+      <column name="PUBLISHER_ID" type="${uuid_type}"/>
+      <column name="RESEARCHER_ID" type="${uuid_type}"/>
+      <column name="SHELF_ID" type="${uuid_type}"/>
+      <column name="REMARKS" type="varchar(255)"/>
+      <column name="CREATED_BY" type="varchar(255)"/>
+      <column name="CREATION_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+      <column name="LAST_UPDATED_BY" type="varchar(255)"/>
+      <column name="LAST_UPDATE_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+    </createTable>
+    <addUniqueConstraint constraintName="book_name_uk"
+      tableName="books"
+      schemaName="${currentSchema}"
+      columnNames="book_name"/>
+
+    <addForeignKeyConstraint constraintName="FK_BOOKS_ON_AUTHOR"
+      baseTableName="books"
+      baseTableSchemaName="${currentSchema}"
+      referencedTableName="authors"
+      referencedTableSchemaName="${currentSchema}"
+      baseColumnNames="author_id"
+      referencedColumnNames="author_id"/>
+
+    <addForeignKeyConstraint constraintName="FK_BOOKS_ON_PUBLISHER"
+      baseTableName="books"
+      baseTableSchemaName="${currentSchema}"
+      referencedTableName="publishers"
+      referencedTableSchemaName="${currentSchema}"
+      baseColumnNames="publisher_id"
+      referencedColumnNames="publisher_id"/>
+
+    <addForeignKeyConstraint constraintName="FK_BOOKS_ON_RESEARCHER"
+      baseTableName="books"
+      baseTableSchemaName="${currentSchema}"
+      referencedTableName="researchers"
+      referencedTableSchemaName="${currentSchema}"
+      baseColumnNames="researcher_id"
+      referencedColumnNames="researcher_id"/>
+
+    <addForeignKeyConstraint constraintName="FK_BOOKS_ON_SHELF"
+      baseTableName="books"
+      baseTableSchemaName="${currentSchema}"
+      referencedTableName="shelves"
+      referencedTableSchemaName="${currentSchema}"
+      baseColumnNames="shelf_id"
+      referencedColumnNames="shelf_id"/>
+
+    <addForeignKeyConstraint constraintName="FK_BOOKS_ON_SUBJECT"
+      baseTableName="books"
+      baseTableSchemaName="${currentSchema}"
+      referencedTableName="subjects"
+      referencedTableSchemaName="${currentSchema}"
+      baseColumnNames="subject_id"
+      referencedColumnNames="subject_id"/>
+  </changeSet>
+
+  <changeSet id="create-table-volumes" author="Zahid Naeem">
+    <preConditions>
+      <not>
+        <tableExists tableName="volumes" schemaName="${currentSchema}"/>
+      </not>
+    </preConditions>
+    <createTable tableName="volumes" schemaName="${currentSchema}">
+      <column name="VOLUME_ID" type="${uuid_type}" valueComputed="${uuid_function}">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="pk_volumes"/>
+      </column>
+      <column name="VOLUME_NAME" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="ROW_KEY" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="BOOK_ID" type="${uuid_type}"/>
+      <column name="RACK_ID" type="${uuid_type}"/>
+      <column name="REMARKS" type="varchar(255)"/>
+      <column name="CREATED_BY" type="varchar(255)"/>
+      <column name="CREATION_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+      <column name="LAST_UPDATED_BY" type="varchar(255)"/>
+      <column name="LAST_UPDATE_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+    </createTable>
+    <addUniqueConstraint constraintName="book_id_volume_name_uk" tableName="volumes"
+      schemaName="${currentSchema}" columnNames="book_id, volume_id"/>
+    <addForeignKeyConstraint constraintName="FK_VOLUMES_ON_BOOK" baseTableName="volumes"
+      baseTableschemaName="${currentSchema}" baseColumnNames="book_id"
+      referencedTableName="books" referencedTableschemaName="${currentSchema}"
+      referencedColumnNames="book_id"/>
+    <addForeignKeyConstraint constraintName="FK_VOLUMES_ON_RACK" baseTableName="volumes"
+      baseTableschemaName="${currentSchema}" baseColumnNames="rack_id"
+      referencedTableName="racks" referencedTableschemaName="${currentSchema}"
+      referencedColumnNames="rack_id"/>
+  </changeSet>
+
+  <changeSet id="create-table-book_trans_headers" author="Zahid Naeem">
+    <preConditions>
+      <not>
+        <tableExists tableName="book_trans_headers" schemaName="${currentSchema}"/>
+      </not>
+    </preConditions>
+    <createTable tableName="book_trans_headers" schemaName="${currentSchema}">
+      <column name="HEADER_ID" type="${uuid_type}" valueComputed="${uuid_function}">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="pk_book_trans_headers"/>
+      </column>
+      <column name="TRANS_TYPE" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="TRANS_DATE" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="READER_ID" type="${uuid_type}">
+        <constraints nullable="false"/>
+      </column>
+      <column name="REMARKS" type="varchar(255)"/>
+      <column name="CREATED_BY" type="varchar(255)"/>
+      <column name="CREATION_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+      <column name="LAST_UPDATED_BY" type="varchar(255)"/>
+      <column name="LAST_UPDATE_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+    </createTable>
+    <addForeignKeyConstraint constraintName="FK_BOOK_TRANS_HDRS_ON_READER"
+      baseTableName="book_trans_headers" baseTableschemaName="${currentSchema}"
+      baseColumnNames="reader_id"
+      referencedTableName="readers" referencedTableschemaName="${currentSchema}"
+      referencedColumnNames="reader_id"/>
+  </changeSet>
+
+  <changeSet id="create-table-book_trans_lines" author="Zahid Naeem">
+    <preConditions>
+      <not>
+        <tableExists tableName="book_trans_lines" schemaName="${currentSchema}"/>
+      </not>
+    </preConditions>
+    <createTable tableName="book_trans_lines" schemaName="${currentSchema}">
+      <column name="LINE_ID" type="${uuid_type}" valueComputed="${uuid_function}">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="pk_book_trans_lines"/>
+      </column>
+      <column name="ROW_KEY" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="BOOK_ID" type="${uuid_type}">
+        <constraints nullable="false"/>
+      </column>
+      <column name="VOLUME_ID" type="${uuid_type}">
+        <constraints nullable="false"/>
+      </column>
+      <column name="HEADER_ID" type="${uuid_type}"/>
+      <column name="CREATED_BY" type="varchar(255)"/>
+      <column name="CREATION_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+      <column name="LAST_UPDATED_BY" type="varchar(255)"/>
+      <column name="LAST_UPDATE_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+    </createTable>
+    <addForeignKeyConstraint constraintName="FK_BOOK_TRANS_LINES_ON_BOOK"
+      baseTableName="book_trans_lines"
+      baseTableSchemaName="${currentSchema}"
+      referencedTableName="books"
+      referencedTableSchemaName="${currentSchema}"
+      baseColumnNames="book_id"
+      referencedColumnNames="book_id"/>
+
+    <addForeignKeyConstraint constraintName="FK_BOOK_TRANS_LINES_ON_HEADER"
+      baseTableName="book_trans_lines"
+      baseTableSchemaName="${currentSchema}"
+      referencedTableName="book_trans_headers"
+      referencedTableSchemaName="${currentSchema}"
+      baseColumnNames="header_id"
+      referencedColumnNames="header_id"/>
+
+    <addForeignKeyConstraint constraintName="FK_BOOK_TRANS_LINES_ON_VOLUME"
+      baseTableName="book_trans_lines"
+      baseTableSchemaName="${currentSchema}"
+      referencedTableName="volumes"
+      referencedTableSchemaName="${currentSchema}"
+      baseColumnNames="volume_id"
+      referencedColumnNames="volume_id"/>
+  </changeSet>
+
+  <changeSet id="create-view-book_trans_vu" author="Zahid Naeem">
+    <comment>Creating view book_trans_vu</comment>
+    <createView
+      schemaName="${currentSchema}"
+      viewName="book_trans_vu"
+      replaceIfExists="true">
+      SELECT 0 TNUM
+           ,'ADDED' TRANS_TYPE
+           ,V.CREATION_DATE TRANS_DATE
+           ,V.VOLUME_ID
+           ,V.VOLUME_NAME
+           ,B.BOOK_ID
+           ,B.BOOK_NAME
+      FROM VOLUMES V, BOOKS B
+      WHERE V.BOOK_ID = B.BOOK_ID
+      UNION ALL
+      SELECT -1 TNUM
+           ,H.TRANS_TYPE
+           ,H.TRANS_DATE
+           ,L.VOLUME_ID
+           ,V.VOLUME_NAME
+           ,B.BOOK_ID
+           ,B.BOOK_NAME
+      FROM BOOK_TRANS_LINES L
+         ,BOOK_TRANS_HEADERS H
+         ,VOLUMES V
+         ,BOOKS B
+      WHERE     L.HEADER_ID = H.HEADER_ID
+        AND L.VOLUME_ID = V.VOLUME_ID
+        AND V.BOOK_ID = B.BOOK_ID
+        AND H.TRANS_TYPE = 'ISSUE'
+      UNION ALL
+      SELECT 1 TNUM
+           ,H.TRANS_TYPE
+           ,H.TRANS_DATE
+           ,L.VOLUME_ID
+           ,V.VOLUME_NAME
+           ,B.BOOK_ID
+           ,B.BOOK_NAME
+      FROM BOOK_TRANS_LINES L
+         ,BOOK_TRANS_HEADERS H
+         ,VOLUMES V
+         ,BOOKS B
+      WHERE     L.HEADER_ID = H.HEADER_ID
+        AND L.VOLUME_ID = V.VOLUME_ID
+        AND V.BOOK_ID = B.BOOK_ID
+        AND H.TRANS_TYPE = 'RECEIPT'
+    </createView>
+  </changeSet>
+
+  <changeSet id="create-function-get_subject_hierarchy" author="Zahid Naeem">
+    <createProcedure
+      schemaName="${currentSchema}"
+      procedureName="get_subject_hierarchy">
+      CREATE OR REPLACE FUNCTION GET_SUBJECT_HIERARCHY(P_SUBJECT_ID ${uuid_type})
+      RETURN VARCHAR2
+      IS
+        V_VALUE   VARCHAR2(4000);
+      BEGIN
+        SELECT LISTAGG (S.SUBJECT_ID, ',') WITHIN GROUP (ORDER BY S.SUBJECT_ID)
+          INTO V_VALUE
+          FROM SUBJECT S
+          START WITH S.SUBJECT_ID = P_SUBJECT_ID
+          CONNECT BY PRIOR S.SUBJECT_ID = S.PARENT_SUBJECT_ID;
+  
+        RETURN V_VALUE;
+      END;
+    </createProcedure>
+  </changeSet>
+
+  <changeSet id="create-function-record_exists" author="Zahid Naeem">
+    <createProcedure
+      schemaName="${currentSchema}"
+      procedureName="record_exists">
+        CREATE OR REPLACE FUNCTION RECORD_EXISTS (P_TABLE          VARCHAR2,
+                                                  P_COLUMN         VARCHAR2,
+                                                  P_COLUMN_VALUE   VARCHAR2)
+        RETURN SMALLINT
+        IS
+          V_QUERY    VARCHAR2 (4000);
+          V_RESULT   SMALLINT;
+        BEGIN
+          V_QUERY :=
+          'SELECT COUNT(1) FROM '
+          || P_TABLE
+          || ' WHERE '
+          || P_COLUMN
+          || ' = '
+          || P_COLUMN_VALUE;
+
+          EXECUTE IMMEDIATE V_QUERY INTO V_RESULT;
+
+          RETURN V_RESULT;
+        END;
+    </createProcedure>
+  </changeSet>
+</databaseChangeLog>

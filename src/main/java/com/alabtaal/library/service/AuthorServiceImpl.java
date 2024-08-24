@@ -1,90 +1,81 @@
 package com.alabtaal.library.service;
 
-import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.stereotype.Service;
 import com.alabtaal.library.entity.AuthorEntity;
-import com.alabtaal.library.exception.ChildRecordFoundException;
 import com.alabtaal.library.repo.AuthorRepo;
-
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class AuthorServiceImpl implements AuthorService {
 
-    private static final Logger LOG = LogManager.getLogger(AuthorServiceImpl.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AuthorServiceImpl.class);
 
-    private final AuthorRepo authorRepo;
+  private final AuthorRepo authorRepo;
 
-    @Override
-    public List<AuthorEntity> findAll() {
-        return authorRepo.findAllByOrderByAuthorIdAsc();
-    }
+  @Override
+  public List<AuthorEntity> findAll() {
+    return authorRepo.findAll();
+  }
 
-    @Override
-    public List<AuthorEntity> searchAuthor(AuthorEntity authorEntity) {
-        return authorRepo.searchAuthor(authorEntity);
-    }
+  @Override
+  public List<AuthorEntity> searchAuthor(AuthorEntity authorEntity) {
+    return authorRepo.searchAuthor(authorEntity);
+  }
 
-    @Override
-    public AuthorEntity findById(Long id) {
-        return authorRepo.findById(id)
-                .orElse(new AuthorEntity());
-    }
+  @Override
+  public AuthorEntity findById(UUID id) {
+    return authorRepo.findById(id)
+        .orElse(new AuthorEntity());
+  }
 
-    @Override
-    public boolean exists(Long id) {
-        return authorRepo.existsById(id);
-    }
+  @Override
+  public boolean exists(UUID id) {
+    return authorRepo.existsById(id);
+  }
 
-    @Override
-    public AuthorEntity save(AuthorEntity author) {
-        return authorRepo.saveAndFlush(author);
-    }
+  @Override
+  public AuthorEntity save(AuthorEntity author) {
+    return authorRepo.saveAndFlush(author);
+  }
 
-    @Override
-    public List<AuthorEntity> save(Set<AuthorEntity> authors) {
-        return authorRepo.saveAll(authors);
-    }
+  @Override
+  public List<AuthorEntity> save(Set<AuthorEntity> authors) {
+    return authorRepo.saveAll(authors);
+  }
 
-    @Override
-    public void delete(AuthorEntity author) {
-        authorRepo.delete(author);
-    }
+  @Override
+  public void delete(AuthorEntity author) {
+    authorRepo.delete(author);
+  }
 
-    @Override
-    public void delete(Set<AuthorEntity> authors) {
-        authorRepo.deleteAll(authors);
-    }
+  @Override
+  public void delete(Set<AuthorEntity> authors) {
+    authorRepo.deleteAll(authors);
+  }
 
-    @Override
-    public void deleteById(Long id) {
-        try {
-            authorRepo.deleteById(id);
-        } catch (Exception e) {
-            final Exception ex = Miscellaneous.getNestedException(e);
-            LOG.error("Exception in delete: {}", ex.getMessage());
-            if(ex.getMessage().startsWith("ORA-02292")){
-                throw new ChildRecordFoundException("You can't delete this record. Child record found");
-            }
-        }
-    }
+  @Override
+  public void deleteById(UUID id) {
+    authorRepo.deleteById(id);
+  }
 
-    @Override
-    public void deleteAll() {
-        authorRepo.deleteAll();
-    }
+  @Override
+  public void deleteAll() {
+    authorRepo.deleteAll();
+  }
 
-    @Override
-    public void deleteAllInBatch() {
-        authorRepo.deleteAllInBatch();
-    }
+  @Override
+  public void deleteAllInBatch() {
+    authorRepo.deleteAllInBatch();
+  }
 
-    @Override
-    public void deleteInBatch(Set<AuthorEntity> authors) {
-        authorRepo.deleteInBatch(authors);
-    }
+  @Override
+  public void deleteInBatch(Set<AuthorEntity> authors) {
+    authorRepo.deleteInBatch(authors);
+  }
 }

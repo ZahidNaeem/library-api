@@ -1,33 +1,33 @@
 package com.alabtaal.library.service;
 
 import com.alabtaal.library.entity.ResearcherEntity;
-
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 public interface ResearcherService {
 
-    List<ResearcherEntity> findAll();
+  List<ResearcherEntity> findAll();
 
-    List<ResearcherEntity> searchResearcher(final ResearcherEntity researcherEntity);
+  List<ResearcherEntity> searchResearcher(final ResearcherEntity researcherEntity);
 
-    ResearcherEntity findById(final Long id);
+  ResearcherEntity findById(final UUID id);
 
-    boolean exists(Long id);
+  boolean exists(UUID id);
 
-    ResearcherEntity save(ResearcherEntity researcher);
+  ResearcherEntity save(ResearcherEntity researcher);
 
-    List<ResearcherEntity> save(Set<ResearcherEntity> researchers);
+  List<ResearcherEntity> save(Set<ResearcherEntity> researchers);
 
-    void delete(ResearcherEntity researcher);
+  void delete(ResearcherEntity researcher);
 
-    void delete(Set<ResearcherEntity> researchers);
+  void delete(Set<ResearcherEntity> researchers);
 
-    void deleteById(Long id);
+  void deleteById(UUID id);
 
-    void deleteAll();
+  void deleteAll();
 
-    void deleteAllInBatch();
+  void deleteAllInBatch();
 
-    void deleteInBatch(Set<ResearcherEntity> researchers);
+  void deleteInBatch(Set<ResearcherEntity> researchers);
 }

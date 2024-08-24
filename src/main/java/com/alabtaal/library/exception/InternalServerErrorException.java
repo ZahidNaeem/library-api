@@ -5,7 +5,7 @@ public class InternalServerErrorException extends AppException {
   /**
    *
    */
-  private static final long serialVersionUID = 1L;
+
 
   public InternalServerErrorException(final String message) {
     super(message);

@@ -1,33 +1,35 @@
 package com.alabtaal.library.service;
 
 import com.alabtaal.library.entity.SubjectEntity;
-
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 public interface SubjectService {
 
-    List<SubjectEntity> findAll();
+  List<SubjectEntity> findAll();
 
-    List<SubjectEntity> searchSubject(final SubjectEntity subjectEntity);
+  List<SubjectEntity> searchSubject(final SubjectEntity subjectEntity);
 
-    SubjectEntity findById(final Long id);
+  SubjectEntity findById(final UUID id);
 
-    boolean exists(Long id);
+  boolean exists(UUID id);
 
-    SubjectEntity save(SubjectEntity subject);
+  SubjectEntity save(SubjectEntity subject);
 
-    List<SubjectEntity> save(Set<SubjectEntity> subjects);
+  List<SubjectEntity> save(Set<SubjectEntity> subjects);
 
-    void delete(SubjectEntity subject);
+  void delete(SubjectEntity subject);
 
-    void delete(Set<SubjectEntity> subjects);
+  void delete(Set<SubjectEntity> subjects);
 
-    void deleteById(Long id);
+  void deleteById(UUID id);
 
-    void deleteAll();
+  void deleteAll();
 
-    void deleteAllInBatch();
+  void deleteAllInBatch();
 
-    void deleteInBatch(Set<SubjectEntity> subjects);
+  void deleteInBatch(Set<SubjectEntity> subjects);
+
+  String getSubjectHierarchy(final UUID id);
 }

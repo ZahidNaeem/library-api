@@ -2,39 +2,81 @@ package com.alabtaal.library.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
-
-import static jakarta.persistence.CascadeType.*;
+import java.util.Objects;
+import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.ToString.Exclude;
+import org.hibernate.proxy.HibernateProxy;
 
 @Builder
-@Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIdentityInfo(scope = PublisherEntity.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "publisherId")
 @Entity
-@Table(name = "publisher", schema = "library"/*, catalog = ""*/, uniqueConstraints = {
-        @UniqueConstraint(name = "publisher_name_uk", columnNames = {"publisher_name" })
+@Table(name = "publishers", schema = "library", uniqueConstraints = {
+    @UniqueConstraint(name = "publisher_name_uk", columnNames = {"publisher_name"})
 })
-public class PublisherEntity extends Auditable<Long> {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "publisher_id")
-    private Long publisherId;
+public class PublisherEntity extends Auditable<String> {
 
-    @NotNull
-    @Column(name = "publisher_name")
-    private String publisherName;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  @Column(name = "publisher_id", columnDefinition = "BINARY(16)")
+  private UUID id;
 
-    @Column(name = "remarks")
-    private String remarks;
+  @NotNull
+  @Column(name = "publisher_name")
+  private String name;
 
-    @OneToMany(cascade = {PERSIST, MERGE, /*REMOVE,*/ REFRESH, DETACH}, fetch = FetchType.LAZY, mappedBy = "publisher")
-    private List<BookEntity> books;
+  @Column(name = "remarks")
+  private String remarks;
+
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "publisher")
+  @Exclude
+  private List<BookEntity> books;
+
+  @Override
+  public final boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null) {
+      return false;
+    }
+    Class<?> oEffectiveClass =
+        o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass()
+            : o.getClass();
+    Class<?> thisEffectiveClass =
+        this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer()
+            .getPersistentClass() : this.getClass();
+    if (thisEffectiveClass != oEffectiveClass) {
+      return false;
+    }
+    PublisherEntity that = (PublisherEntity) o;
+    return getId() != null && Objects.equals(getId(), that.getId());
+  }
+
+  @Override
+  public final int hashCode() {
+    return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode()
+        : getClass().hashCode();
+  }
 }

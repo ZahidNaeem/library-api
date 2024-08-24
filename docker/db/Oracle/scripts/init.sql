@@ -1,0 +1,1 @@
+ grant dba to library identified by lib123;

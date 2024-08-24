@@ -1,16 +1,17 @@
 package com.alabtaal.library.repo;
 
+import com.alabtaal.library.entity.ResearcherEntity;
+import java.util.List;
+import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import com.alabtaal.library.entity.ResearcherEntity;
 
-import java.util.List;
+public interface ResearcherRepo extends JpaRepository<ResearcherEntity, UUID> {
 
-public interface ResearcherRepo extends JpaRepository<ResearcherEntity, Long> {
-    List<ResearcherEntity> findAllByOrderByResearcherIdAsc();
+  List<ResearcherEntity> findAllByOrderByIdAsc();
 
-    @Query(value = "select a from ResearcherEntity a\n"
-        + "where (:#{#researcherEntity.researcherName} is null or a.researcherName like concat('%',:#{#researcherEntity.researcherName},'%'))\n"
-        + "  and (:#{#researcherEntity.remarks} is null or a.remarks like concat('%',:#{#researcherEntity.remarks},'%'))")
-    List<ResearcherEntity> searchResearcher(final ResearcherEntity researcherEntity);
+  @Query(value = "select a from ResearcherEntity a\n"
+      + "where (:#{#researcherEntity.name} is null or a.name like concat('%',:#{#researcherEntity.name},'%'))\n"
+      + "  and (:#{#researcherEntity.remarks} is null or a.remarks like concat('%',:#{#researcherEntity.remarks},'%'))")
+  List<ResearcherEntity> searchResearcher(final ResearcherEntity researcherEntity);
 }

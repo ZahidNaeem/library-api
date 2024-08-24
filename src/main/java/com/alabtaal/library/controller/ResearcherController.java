@@ -1,7 +1,7 @@
 package com.alabtaal.library.controller;
 
+import com.alabtaal.library.dto.NavigationDtl;
 import com.alabtaal.library.dto.ResearcherDTO;
-import com.alabtaal.library.entity.NavigationDtl;
 import com.alabtaal.library.entity.ResearcherEntity;
 import com.alabtaal.library.mapper.ResearcherMapper;
 import com.alabtaal.library.model.ResearcherModel;
@@ -11,10 +11,11 @@ import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,24 +31,57 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ResearcherController {
 
-  private static final Logger LOG = LogManager.getLogger(ResearcherController.class);
-  private List<ResearcherModel> researcherModels = new ArrayList<>();
-
-  @PostConstruct
-  public void init() {
-    researcherModels = mapper.toModels(researcherService.findAll());
-  }
-
+  private static final Logger LOG = LoggerFactory.getLogger(ResearcherController.class);
   private final ResearcherService researcherService;
-
   private final ResearcherMapper mapper;
-
   private final int[] index = {-1};
+  private List<ResearcherModel> researcherModels = new ArrayList<>();
 
   private static void setResearcherForBooks(final ResearcherEntity researcher) {
     if (CollectionUtils.isNotEmpty(researcher.getBooks())) {
       researcher.getBooks().forEach(book -> book.setResearcher(researcher));
     }
+  }
+
+  private static NavigationDtl resetNavigation() {
+    NavigationDtl dtl = new NavigationDtl();
+    dtl.setFirst(true);
+    dtl.setLast(true);
+    return dtl;
+  }
+
+  private static ResearcherDTO getResearcherDTO(List<ResearcherModel> models, int index) {
+    final NavigationDtl dtl = resetNavigation();
+    if (models.isEmpty()) {
+      final ResearcherModel model = new ResearcherModel();
+      return ResearcherDTO.builder()
+          .researcher(model)
+          .navigationDtl(dtl)
+          .build();
+    }
+    if (index < 0 || index > models.size() - 1) {
+      LOG.info("models.size(): {}", models.size());
+      LOG.info("Index in getResearcherDTO(): {}", index);
+      throw new IndexOutOfBoundsException();
+    } else {
+      final ResearcherModel model = models.get(index);
+      if (index > 0) {
+        dtl.setFirst(false);
+      }
+      if (index < models.size() - 1) {
+        dtl.setLast(false);
+      }
+
+      return ResearcherDTO.builder()
+          .researcher(model)
+          .navigationDtl(dtl)
+          .build();
+    }
+  }
+
+  @PostConstruct
+  public void init() {
+    researcherModels = mapper.toModels(researcherService.findAll());
   }
 
   @GetMapping
@@ -76,7 +110,7 @@ public class ResearcherController {
   }
 
   @GetMapping("{id}")
-  public ResponseEntity<ApiResponse<ResearcherDTO>> findById(@PathVariable("id") final Long id) {
+  public ResponseEntity<ApiResponse<ResearcherDTO>> findById(@PathVariable("id") final UUID id) {
     final ResearcherModel model = mapper.toModel(researcherService.findById(id));
     index[0] = researcherModels.indexOf(model);
     LOG.info("Index in findById(): {}", index[0]);
@@ -91,13 +125,13 @@ public class ResearcherController {
   }
 
   @GetMapping("{id}/name")
-  public ResponseEntity<ApiResponse<String>> getResearcherName(@PathVariable("id") final Long id) {
+  public ResponseEntity<ApiResponse<String>> getResearcherName(@PathVariable("id") final UUID id) {
     return ResponseEntity.ok(
         ApiResponse
             .<String>builder()
             .success(true)
             .message("getResearcherName response")
-            .entity(researcherService.findById(id).getResearcherName())
+            .entity(researcherService.findById(id).getName())
             .build()
     );
   }
@@ -194,7 +228,7 @@ public class ResearcherController {
   }
 
   @DeleteMapping("{id}")
-  public ResponseEntity<ApiResponse<ResearcherDTO>> deleteById(@PathVariable("id") final Long id) {
+  public ResponseEntity<ApiResponse<ResearcherDTO>> deleteById(@PathVariable("id") final UUID id) {
     if (!researcherService.exists(id)) {
       throw new IllegalArgumentException("ResearcherEntity with id: " + id + " does not exist");
     } else {
@@ -216,8 +250,7 @@ public class ResearcherController {
   @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<ApiResponse<ResearcherDTO>> delete(@RequestBody final ResearcherModel model) {
     LOG.info("Index: {}", index);
-    if (null == model || null == model.getResearcherId() || !researcherService
-        .exists(model.getResearcherId())) {
+    if (null == model || null == model.getId() || !researcherService.exists(model.getId())) {
       throw new IllegalArgumentException("ResearcherEntity does not exist");
     } else {
       researcherService.delete(mapper.toEntity(model));
@@ -232,42 +265,6 @@ public class ResearcherController {
               .entity(getResearcherDTO(researcherModels, index[0]))
               .build()
       );
-    }
-  }
-
-  private static NavigationDtl resetNavigation() {
-    NavigationDtl dtl = new NavigationDtl();
-    dtl.setFirst(true);
-    dtl.setLast(true);
-    return dtl;
-  }
-
-  private static ResearcherDTO getResearcherDTO(List<ResearcherModel> models, int index) {
-    final NavigationDtl dtl = resetNavigation();
-    if (models.isEmpty()) {
-      final ResearcherModel model = new ResearcherModel();
-      return ResearcherDTO.builder()
-          .researcher(model)
-          .navigationDtl(dtl)
-          .build();
-    }
-    if (index < 0 || index > models.size() - 1) {
-      LOG.info("models.size(): {}", models.size());
-      LOG.info("Index in getResearcherDTO(): {}", index);
-      throw new IndexOutOfBoundsException();
-    } else {
-      final ResearcherModel model = models.get(index);
-      if (index > 0) {
-        dtl.setFirst(false);
-      }
-      if (index < models.size() - 1) {
-        dtl.setLast(false);
-      }
-
-      return ResearcherDTO.builder()
-          .researcher(model)
-          .navigationDtl(dtl)
-          .build();
     }
   }
 }

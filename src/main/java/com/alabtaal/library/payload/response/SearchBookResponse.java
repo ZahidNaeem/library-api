@@ -1,31 +1,30 @@
 package com.alabtaal.library.payload.response;
 
+import java.util.Date;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Date;
 
 @Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class SearchBookResponse {
-    private Long bookId;
-    private String bookName;
-    private Date publicationDate;
-    private String bookCondition;
-    private Integer purchased;
-    private Long authorId;
-    private String authorName;
-    private Long subjectId;
-    private String subjectName;
-    private Long publisherId;
-    private String publisherName;
-    private Long researcherId;
-    private String researcherName;
-//    private Long shelfId;
-//    private String shelfName;
-    private String remarks;
+
+  private UUID id;
+  private String bookName;
+  private Date publicationDate;
+  private String bookCondition;
+  private Integer purchased;
+  private UUID author;
+  private String authorName;
+  private UUID subject;
+  private String subjectName;
+  private UUID publisher;
+  private String publisherName;
+  private UUID researcher;
+  private String researcherName;
+  private String remarks;
 }

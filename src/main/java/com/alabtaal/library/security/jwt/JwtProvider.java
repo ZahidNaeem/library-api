@@ -3,6 +3,7 @@ package com.alabtaal.library.security.jwt;
 import com.alabtaal.library.exception.BadRequestException;
 import com.alabtaal.library.exception.InternalServerErrorException;
 import com.alabtaal.library.model.UserPrincipal;
+import com.alabtaal.library.util.Miscellaneous;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.Jwts.SIG;
@@ -23,11 +24,11 @@ import org.springframework.stereotype.Component;
 public class JwtProvider {
 
   private static final Logger LOG = LoggerFactory.getLogger(JwtProvider.class);
-  private static final String PG_SECRET_KEY = System.getenv("PG_SECRET_KEY");
-  private static final byte[] keyBytes = PG_SECRET_KEY.getBytes(StandardCharsets.UTF_8);
+  private static final String LIBRARY_SECRET_KEY = System.getenv("LIBRARY_SECRET_KEY");
+  private static final byte[] keyBytes = LIBRARY_SECRET_KEY.getBytes(StandardCharsets.UTF_8);
   private static final SecretKey secret = Keys.hmacShaKeyFor(keyBytes);
 
-//  Set token expiry as 1 hour from issuance date
+  //  Set token expiry as 1 hour from issuance date
   @Value("${abt.app.jwtExpiration:#{1*60*60*1000}}")
   private int jwtExpiration;
 

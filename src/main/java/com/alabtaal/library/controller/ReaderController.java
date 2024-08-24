@@ -1,45 +1,41 @@
 package com.alabtaal.library.controller;
 
-import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import com.alabtaal.library.dto.NavigationDtl;
 import com.alabtaal.library.dto.ReaderDTO;
-import com.alabtaal.library.entity.NavigationDtl;
 import com.alabtaal.library.entity.ReaderEntity;
-import com.alabtaal.library.exception.InternalServerErrorException;
 import com.alabtaal.library.mapper.ReaderMapper;
 import com.alabtaal.library.model.ReaderModel;
 import com.alabtaal.library.payload.response.ApiResponse;
 import com.alabtaal.library.service.ReaderService;
-
 import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("readers")
 @RequiredArgsConstructor
 public class ReaderController {
 
-  private static final Logger LOG = LogManager.getLogger(ReaderController.class);
-  private List<ReaderModel> readerModels = new ArrayList<>();
-
-  @PostConstruct
-  public void init() {
-    readerModels = mapper.toModels(readerService.findAll());
-  }
-
+  private static final Logger LOG = LoggerFactory.getLogger(ReaderController.class);
   private final ReaderService readerService;
-
   private final ReaderMapper mapper;
-
   private final int[] indx = {-1};
+  private List<ReaderModel> readerModels = new ArrayList<>();
 
   private static void setReaderForBookTransHeaders(final ReaderEntity reader) {
     if (CollectionUtils.isNotEmpty(reader.getBookTransHeaders())) {
@@ -47,6 +43,47 @@ public class ReaderController {
         bookTransHeader.setReader(reader);
       });
     }
+  }
+
+  private static NavigationDtl resetNavigation() {
+    NavigationDtl dtl = new NavigationDtl();
+    dtl.setFirst(true);
+    dtl.setLast(true);
+    return dtl;
+  }
+
+  private static ReaderDTO getReaderDTO(List<ReaderModel> models, int indx) {
+    final NavigationDtl dtl = resetNavigation();
+    if (models.isEmpty()) {
+      final ReaderModel model = new ReaderModel();
+      return ReaderDTO.builder()
+          .reader(model)
+          .navigationDtl(dtl)
+          .build();
+    }
+    if (indx < 0 || indx > models.size() - 1) {
+      LOG.info("models.size(): {}", models.size());
+      LOG.info("Index in getReaderDTO(): {}", indx);
+      throw new IndexOutOfBoundsException();
+    } else {
+      final ReaderModel model = models.get(indx);
+      if (indx > 0) {
+        dtl.setFirst(false);
+      }
+      if (indx < models.size() - 1) {
+        dtl.setLast(false);
+      }
+
+      return ReaderDTO.builder()
+          .reader(model)
+          .navigationDtl(dtl)
+          .build();
+    }
+  }
+
+  @PostConstruct
+  public void init() {
+    readerModels = mapper.toModels(readerService.findAll());
   }
 
   @GetMapping
@@ -65,17 +102,17 @@ public class ReaderController {
   public ResponseEntity<ApiResponse<List<ReaderModel>>> searchReader(@RequestBody final ReaderModel model) {
     readerModels = mapper.toModels(readerService.searchReader(mapper.toEntity(model)));
     return ResponseEntity.ok(
-            ApiResponse
-                    .<List<ReaderModel>>builder()
-                    .success(true)
-                    .message("searchReader response")
-                    .entity(readerModels)
-                    .build()
+        ApiResponse
+            .<List<ReaderModel>>builder()
+            .success(true)
+            .message("searchReader response")
+            .entity(readerModels)
+            .build()
     );
   }
 
   @GetMapping("{id}")
-  public ResponseEntity<ApiResponse<ReaderDTO>> findById(@PathVariable("id") final Long id) {
+  public ResponseEntity<ApiResponse<ReaderDTO>> findById(@PathVariable("id") final UUID id) {
     final ReaderModel model = mapper.toModel(readerService.findById(id));
     indx[0] = readerModels.indexOf(model);
     LOG.info("Index in findById(): {}", indx[0]);
@@ -90,13 +127,13 @@ public class ReaderController {
   }
 
   @GetMapping("{id}/name")
-  public ResponseEntity<ApiResponse<String>> getReaderName(@PathVariable("id") final Long id) {
+  public ResponseEntity<ApiResponse<String>> getReaderName(@PathVariable("id") final UUID id) {
     return ResponseEntity.ok(
         ApiResponse
             .<String>builder()
             .success(true)
             .message("getReaderName response")
-            .entity(readerService.findById(id).getReaderName())
+            .entity(readerService.findById(id).getName())
             .build()
     );
   }
@@ -196,11 +233,10 @@ public class ReaderController {
   }
 
   @DeleteMapping("{id}")
-  public ResponseEntity<ApiResponse<ReaderDTO>> deleteById(@PathVariable("id") final Long id) {
+  public ResponseEntity<ApiResponse<ReaderDTO>> deleteById(@PathVariable("id") final UUID id) {
     if (!readerService.exists(id)) {
       throw new IllegalArgumentException("ReaderEntity with id: " + id + " does not exist");
     } else {
-      try {
         readerService.deleteById(id);
         init();
         indx[0]--;
@@ -213,21 +249,15 @@ public class ReaderController {
                 .entity(getReaderDTO(readerModels, indx[0]))
                 .build()
         );
-      } catch (Exception e) {
-        e.printStackTrace();
-        throw new InternalServerErrorException(e.getMessage());
-      }
     }
   }
 
   @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<ApiResponse<ReaderDTO>> delete(@RequestBody final ReaderModel model) {
     LOG.info("Index: {}", indx);
-    if (null == model || null == model.getReaderId() || !readerService
-        .exists(model.getReaderId())) {
+    if (null == model || null == model.getId() || !readerService.exists(model.getId())) {
       throw new IllegalArgumentException("ReaderEntity does not exist");
     } else {
-      try {
         readerService.delete(mapper.toEntity(model));
         init();
         indx[0]--;
@@ -240,46 +270,6 @@ public class ReaderController {
                 .entity(getReaderDTO(readerModels, indx[0]))
                 .build()
         );
-      } catch (Exception e) {
-        e.printStackTrace();
-        throw new InternalServerErrorException(e.getMessage());
-      }
-    }
-  }
-
-  private static final NavigationDtl resetNavigation() {
-    NavigationDtl dtl = new NavigationDtl();
-    dtl.setFirst(true);
-    dtl.setLast(true);
-    return dtl;
-  }
-
-  private static final ReaderDTO getReaderDTO(List<ReaderModel> models, int indx) {
-    final NavigationDtl dtl = resetNavigation();
-    if (models.size() < 1) {
-      final ReaderModel model = new ReaderModel();
-      return ReaderDTO.builder()
-          .reader(model)
-          .navigationDtl(dtl)
-          .build();
-    }
-    if (indx < 0 || indx > models.size() - 1) {
-      LOG.info("models.size(): {}", models.size());
-      LOG.info("Index in getReaderDTO(): {}", indx);
-      throw new IndexOutOfBoundsException();
-    } else {
-      final ReaderModel model = models.get(indx);
-      if (indx > 0) {
-        dtl.setFirst(false);
-      }
-      if (indx < models.size() - 1) {
-        dtl.setLast(false);
-      }
-
-      return ReaderDTO.builder()
-          .reader(model)
-          .navigationDtl(dtl)
-          .build();
     }
   }
 }

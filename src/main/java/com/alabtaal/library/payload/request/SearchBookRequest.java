@@ -1,5 +1,6 @@
 package com.alabtaal.library.payload.request;
 
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,8 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SearchBookRequest {
-    private Integer author;
-    private Integer subject;
-    private Integer publisher;
-    private Integer researcher;
+
+  private UUID author;
+  private UUID subject;
+  private UUID publisher;
+  private UUID researcher;
 }

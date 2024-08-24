@@ -1,21 +1,21 @@
 package com.alabtaal.library;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
 
-@ServletComponentScan
-@SpringBootApplication
+@SpringBootApplication(exclude = SecurityAutoConfiguration.class)
+@ComponentScan({"com.alabtaal"})
 public class LibraryApplication {
 
-  private static final Logger LOG = LogManager.getLogger(LibraryApplication.class);
+  private static final Logger LOG = LoggerFactory.getLogger(LibraryApplication.class);
 
   public static void main(String[] args) {
     SpringApplication.run(LibraryApplication.class, args);
-    LOG.debug("==============================================Debug===========================================");
-    LOG.info("==============================================info============================================");
+    LOG.info("=========================================Info =========================================");
+    LOG.debug("=========================================Debug=========================================");
   }
-
 }

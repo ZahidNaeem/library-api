@@ -2,6 +2,7 @@ package com.alabtaal.library.security.jwt;
 
 import com.alabtaal.library.config.JwtConfig;
 import com.alabtaal.library.service.UserDetailsServiceImpl;
+import com.alabtaal.library.util.Miscellaneous;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +24,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-  private static final Logger LOG = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+  private static Logger LOG = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
   private final JwtConfig jwtConfig;
   private final JwtProvider jwtProvider;

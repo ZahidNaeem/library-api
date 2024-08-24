@@ -1,5 +1,6 @@
 package com.alabtaal.library.security;
 
+import com.alabtaal.library.enumeration.RoleName;
 import com.alabtaal.library.security.jwt.JwtAuthEntryPoint;
 import com.alabtaal.library.security.jwt.JwtAuthenticationFilter;
 import com.alabtaal.library.service.UserDetailsServiceImpl;
@@ -32,18 +33,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-  private static final Logger LOG = LoggerFactory.getLogger(WebSecurity.class);
-
-  private final UserDetailsServiceImpl userDetailsService;
-  private final BCryptPasswordEncoder passwordEncoder;
-  private final JwtAuthEntryPoint jwtAuthEntryPoint;
-  private final CustomAccessDeniedHandler accessDeniedHandler;
-  private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
-  @Value("${app.origins.allowed:http://localhost:8080}")
-  private String allowedOrigins;
-
-  private static final String[] AUTH_WHITELIST = {
+  private static Logger LOG = LoggerFactory.getLogger(WebSecurity.class);
+  private static String[] AUTH_WHITELIST = {
       "/",
       "/favicon.ico",
       "/*/*.png",
@@ -59,6 +50,13 @@ public class SecurityConfig {
       "/webjars/**",
       "/error"
   };
+  private final UserDetailsServiceImpl userDetailsService;
+  private final BCryptPasswordEncoder passwordEncoder;
+  private final JwtAuthEntryPoint jwtAuthEntryPoint;
+  private final CustomAccessDeniedHandler accessDeniedHandler;
+  private final JwtAuthenticationFilter jwtAuthenticationFilter;
+  @Value("${app.origins.allowed:http://localhost:3000}")
+  private String allowedOrigins;
 
   @Bean
   public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {

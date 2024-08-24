@@ -1,21 +1,16 @@
 package com.alabtaal.library.dto;
 
+import com.alabtaal.library.model.SubjectModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.alabtaal.library.entity.NavigationDtl;
-import com.alabtaal.library.model.SubjectModel;
-
-import java.io.Serializable;
 
 @Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SubjectDTO implements Serializable {
-
-  private static final long serialVersionUID = 1L;
+public class SubjectDTO {
 
   private NavigationDtl navigationDtl;
   private SubjectModel subject;

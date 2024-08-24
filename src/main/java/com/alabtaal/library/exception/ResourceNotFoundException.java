@@ -8,7 +8,7 @@ public class ResourceNotFoundException extends Exception {
   /**
    *
    */
-  private static final long serialVersionUID = 1L;
+
   private final String resourceName;
   private final String fieldName;
   private final Object fieldValue;

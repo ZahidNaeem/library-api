@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApiResponse<T> {
-    private Boolean success;
-    private String message;
-    private T entity;
+
+  private Boolean success;
+  private String message;
+  private T entity;
 }

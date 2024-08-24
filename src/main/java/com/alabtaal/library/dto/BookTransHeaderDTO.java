@@ -1,21 +1,17 @@
 package com.alabtaal.library.dto;
 
+import com.alabtaal.library.model.BookTransHeaderModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.alabtaal.library.entity.NavigationDtl;
-import com.alabtaal.library.model.BookTransHeaderModel;
-
-import java.io.Serializable;
 
 @Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookTransHeaderDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class BookTransHeaderDTO {
 
-    private NavigationDtl navigationDtl;
-    private BookTransHeaderModel bookTransHeader;
+  private NavigationDtl navigationDtl;
+  private BookTransHeaderModel bookTransHeader;
 }

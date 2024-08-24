@@ -1,33 +1,33 @@
 package com.alabtaal.library.service;
 
 import com.alabtaal.library.entity.AuthorEntity;
-
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 public interface AuthorService {
 
-    List<AuthorEntity> findAll();
+  List<AuthorEntity> findAll();
 
-    List<AuthorEntity> searchAuthor(final AuthorEntity authorEntity);
+  List<AuthorEntity> searchAuthor(final AuthorEntity authorEntity);
 
-    AuthorEntity findById(final Long id);
+  AuthorEntity findById(final UUID id);
 
-    boolean exists(Long id);
+  boolean exists(UUID id);
 
-    AuthorEntity save(AuthorEntity author);
+  AuthorEntity save(AuthorEntity author);
 
-    List<AuthorEntity> save(Set<AuthorEntity> authors);
+  List<AuthorEntity> save(Set<AuthorEntity> authors);
 
-    void delete(AuthorEntity author);
+  void delete(AuthorEntity author);
 
-    void delete(Set<AuthorEntity> authors);
+  void delete(Set<AuthorEntity> authors);
 
-    void deleteById(Long id);
+  void deleteById(UUID id);
 
-    void deleteAll();
+  void deleteAll();
 
-    void deleteAllInBatch();
+  void deleteAllInBatch();
 
-    void deleteInBatch(Set<AuthorEntity> authors);
+  void deleteInBatch(Set<AuthorEntity> authors);
 }
