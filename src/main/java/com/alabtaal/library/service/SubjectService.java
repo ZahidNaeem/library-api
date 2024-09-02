@@ -1,35 +1,36 @@
 package com.alabtaal.library.service;
 
-import com.alabtaal.library.entity.SubjectEntity;
+import com.alabtaal.library.exception.BadRequestException;
+import com.alabtaal.library.model.SubjectModel;
+import com.alabtaal.library.payload.response.ListWithPagination;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.UUID;
 
 public interface SubjectService {
 
-  List<SubjectEntity> findAll();
+  List<SubjectModel> findAll();
 
-  List<SubjectEntity> searchSubject(final SubjectEntity subjectEntity);
+  ListWithPagination<SubjectModel> findAll(
+      final Integer pageNumber,
+      final Integer pageSize,
+      final String sortBy,
+      final String sortDirection) throws BadRequestException;
 
-  SubjectEntity findById(final UUID id);
+  ListWithPagination<SubjectModel> searchSubjects(
+      Map<String, Object>filters,
+      final Integer pageNumber,
+      final Integer pageSize,
+      final String sortBy,
+      final String sortDirection) throws BadRequestException;
+
+  SubjectModel findById(final UUID id);
 
   boolean exists(UUID id);
 
-  SubjectEntity save(SubjectEntity subject);
+  SubjectModel add(SubjectModel model) throws BadRequestException;
 
-  List<SubjectEntity> save(Set<SubjectEntity> subjects);
+  SubjectModel edit(SubjectModel model) throws BadRequestException;
 
-  void delete(SubjectEntity subject);
-
-  void delete(Set<SubjectEntity> subjects);
-
-  void deleteById(UUID id);
-
-  void deleteAll();
-
-  void deleteAllInBatch();
-
-  void deleteInBatch(Set<SubjectEntity> subjects);
-
-  String getSubjectHierarchy(final UUID id);
+  void deleteById(UUID id) throws BadRequestException;
 }

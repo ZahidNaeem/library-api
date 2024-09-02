@@ -1,36 +1,39 @@
 package com.alabtaal.library.service;
 
-import com.alabtaal.library.entity.BookTransHeaderEntity;
-import com.alabtaal.library.entity.ReaderEntity;
+import com.alabtaal.library.enumeration.TransType;
+import com.alabtaal.library.exception.BadRequestException;
+import com.alabtaal.library.model.BookTransHeaderModel;
+import com.alabtaal.library.payload.response.ListWithPagination;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.UUID;
 
 public interface BookTransHeaderService {
 
-  List<BookTransHeaderEntity> findAll();
+  List<BookTransHeaderModel> findAll();
 
-  List<BookTransHeaderEntity> findAllByTransType(final String transType);
+  ListWithPagination<BookTransHeaderModel> findAll(
+      final Integer pageNumber,
+      final Integer pageSize,
+      final String sortBy,
+      final String sortDirection) throws BadRequestException;
 
-  List<BookTransHeaderEntity> findAllByReader(final ReaderEntity reader);
+  ListWithPagination<BookTransHeaderModel> searchBookTransHeaders(
+      Map<String, Object>filters,
+      final Integer pageNumber,
+      final Integer pageSize,
+      final String sortBy,
+      final String sortDirection) throws BadRequestException;
 
-  BookTransHeaderEntity findById(final UUID id);
+  BookTransHeaderModel findById(final UUID id);
 
   boolean exists(UUID id);
 
-  BookTransHeaderEntity save(BookTransHeaderEntity bookTransHeader);
+  BookTransHeaderModel add(BookTransHeaderModel model) throws BadRequestException;
 
-  List<BookTransHeaderEntity> save(Set<BookTransHeaderEntity> shelves);
+  BookTransHeaderModel edit(BookTransHeaderModel model) throws BadRequestException;
 
-  void delete(BookTransHeaderEntity bookTransHeader);
+  void deleteById(UUID id) throws BadRequestException;
 
-  void delete(Set<BookTransHeaderEntity> shelves);
-
-  void deleteById(UUID id);
-
-  void deleteAll();
-
-  void deleteAllInBatch();
-
-  void deleteInBatch(Set<BookTransHeaderEntity> shelves);
+  List<BookTransHeaderModel> findAllByTransType(TransType transType);
 }

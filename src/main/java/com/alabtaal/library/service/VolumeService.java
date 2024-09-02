@@ -1,39 +1,39 @@
 package com.alabtaal.library.service;
 
-import com.alabtaal.library.entity.BookEntity;
-import com.alabtaal.library.entity.VolumeEntity;
-import com.alabtaal.library.payload.response.SearchVolumeResponse;
+import com.alabtaal.library.exception.BadRequestException;
+import com.alabtaal.library.model.BookModel;
+import com.alabtaal.library.model.VolumeModel;
+import com.alabtaal.library.payload.response.ListWithPagination;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.UUID;
 
 public interface VolumeService {
 
-  List<VolumeEntity> findAll();
+  List<VolumeModel> findAll();
 
-  List<VolumeEntity> findAllByBook(final BookEntity book);
+  ListWithPagination<VolumeModel> findAll(
+      final Integer pageNumber,
+      final Integer pageSize,
+      final String sortBy,
+      final String sortDirection) throws BadRequestException;
 
-  List<SearchVolumeResponse> findAllSearchResponses();
+  ListWithPagination<VolumeModel> searchVolumes(
+      Map<String, Object>filters,
+      final Integer pageNumber,
+      final Integer pageSize,
+      final String sortBy,
+      final String sortDirection) throws BadRequestException;
 
-  List<SearchVolumeResponse> findAllByBookId(final UUID id);
+  List<VolumeModel> findAllByBook(final BookModel book);
 
-  VolumeEntity findById(final UUID id);
+  VolumeModel findById(final UUID id);
 
   boolean exists(UUID id);
 
-  VolumeEntity save(VolumeEntity volume);
+  VolumeModel add(VolumeModel model) throws BadRequestException;
 
-  List<VolumeEntity> save(Set<VolumeEntity> volumes);
+  VolumeModel edit(VolumeModel model) throws BadRequestException;
 
-  void delete(VolumeEntity volume);
-
-  void delete(Set<VolumeEntity> volumes);
-
-  void deleteById(UUID id);
-
-  void deleteAll();
-
-  void deleteAllInBatch();
-
-  void deleteInBatch(Set<VolumeEntity> volumes);
+  void deleteById(UUID id) throws BadRequestException;
 }

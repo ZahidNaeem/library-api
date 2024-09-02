@@ -1,82 +1,127 @@
 package com.alabtaal.library.service;
 
 import com.alabtaal.library.entity.RackEntity;
-import com.alabtaal.library.entity.ShelfEntity;
+import com.alabtaal.library.exception.BadRequestException;
+import com.alabtaal.library.mapper.RackMapper;
+import com.alabtaal.library.model.RackModel;
+import com.alabtaal.library.payload.response.ListWithPagination;
 import com.alabtaal.library.repo.RackRepo;
+import com.alabtaal.library.util.DynamicFilter;
+import com.alabtaal.library.util.ListToPageConverter;
+import com.alabtaal.library.util.Miscellaneous;
+import jakarta.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class RackServiceImpl implements RackService {
 
-  public static final Logger LOG = LogManager.getLogger(RackServiceImpl.class);
+  private static List<RackModel> rackModels = new ArrayList<>();
+
+  private static final Logger LOG = LoggerFactory.getLogger(RackServiceImpl.class);
 
   private final RackRepo rackRepo;
+  private final RackMapper rackMapper;
 
-  @Override
-  public List<RackEntity> findAll() {
-    return rackRepo.findAllByOrderByIdAsc();
+  @EventListener(classes = ApplicationStartedEvent.class)
+  @Transactional
+  protected void findAllModels() {
+    rackModels = rackMapper.toModels(rackRepo.findAll());
   }
 
   @Override
-  public List<RackEntity> findAllByShelf(final ShelfEntity shelf) {
-    return rackRepo.findAllByShelfOrderByIdAsc(shelf);
+  public List<RackModel> findAll() {
+    return rackModels;
+  }
+
+  public ListWithPagination<RackModel> findAll(
+      final Integer pageNumber,
+      final Integer pageSize,
+      final String sortBy,
+      final String sortDirection) throws BadRequestException {
+    return ListToPageConverter.convert(
+        rackModels,
+        pageNumber,
+        pageSize,
+        sortBy,
+        sortDirection,
+        RackModel.class);
+  }
+
+  public ListWithPagination<RackModel> searchRacks(
+      Map<String, Object>filters,
+      final Integer pageNumber,
+      final Integer pageSize,
+      final String sortBy,
+      final String sortDirection) throws BadRequestException {
+    final List<RackModel> filteredModels = DynamicFilter.filter(
+        rackModels,
+        filters
+    );
+    return ListToPageConverter.convert(
+        filteredModels,
+        pageNumber,
+        pageSize,
+        sortBy,
+        sortDirection,
+        RackModel.class);
   }
 
   @Override
-  public RackEntity findById(UUID id) {
-    return rackRepo.findById(id)
-        .orElse(new RackEntity());
+  public RackModel findById(UUID id) {
+    return rackModels
+        .stream()
+        .filter(model -> model.getId().equals(id))
+        .findFirst()
+        .orElse(null);
   }
 
   @Override
   public boolean exists(UUID id) {
-    return rackRepo.existsById(id);
+    return rackModels
+        .stream()
+        .anyMatch(model -> model.getId().equals(id));
   }
 
   @Override
-  public RackEntity save(RackEntity rack) {
-    return rackRepo.saveAndFlush(rack);
+  public RackModel add(final RackModel model) throws BadRequestException {
+    model.setId(null);
+    final RackModel savedModel = save(model);
+    rackModels.add(savedModel);
+    return savedModel;
   }
 
   @Override
-  public List<RackEntity> save(Set<RackEntity> racks) {
-    return rackRepo.saveAll(racks);
+  public RackModel edit(final RackModel model) throws BadRequestException {
+    if (!exists(model.getId())) {
+      throw new BadRequestException("Record does not exist");
+    }
+    final RackModel savedModel = save(model);
+    rackModels.set(rackModels.indexOf(model), savedModel);
+    return savedModel;
+  }
+
+  private RackModel save(RackModel model) throws BadRequestException {
+    final RackEntity entity = rackMapper.toEntity(model);
+    Miscellaneous.constraintViolation(entity);
+    return rackMapper.toModel(rackRepo.saveAndFlush(entity));
   }
 
   @Override
-  public void delete(RackEntity rack) {
-    rackRepo.delete(rack);
-  }
-
-  @Override
-  public void delete(Set<RackEntity> racks) {
-    rackRepo.deleteAll(racks);
-  }
-
-  @Override
-  public void deleteById(UUID id) {
+  public void deleteById(UUID id) throws BadRequestException {
+    if (!exists(id)) {
+      throw new BadRequestException("Record does not exist");
+    }
     rackRepo.deleteById(id);
-  }
-
-  @Override
-  public void deleteAll() {
-    rackRepo.deleteAll();
-  }
-
-  @Override
-  public void deleteAllInBatch() {
-    rackRepo.deleteAllInBatch();
-  }
-
-  @Override
-  public void deleteInBatch(Set<RackEntity> racks) {
-    rackRepo.deleteInBatch(racks);
+    rackModels.removeIf(model -> model.getId().equals(id));
   }
 }

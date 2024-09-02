@@ -1,33 +1,36 @@
 package com.alabtaal.library.service;
 
-import com.alabtaal.library.entity.ReaderEntity;
+import com.alabtaal.library.exception.BadRequestException;
+import com.alabtaal.library.model.ReaderModel;
+import com.alabtaal.library.payload.response.ListWithPagination;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.UUID;
 
 public interface ReaderService {
 
-  List<ReaderEntity> findAll();
+  List<ReaderModel> findAll();
 
-  List<ReaderEntity> searchReader(final ReaderEntity readerEntity);
+  ListWithPagination<ReaderModel> findAll(
+      final Integer pageNumber,
+      final Integer pageSize,
+      final String sortBy,
+      final String sortDirection) throws BadRequestException;
 
-  ReaderEntity findById(final UUID id);
+  ListWithPagination<ReaderModel> searchReaders(
+      Map<String, Object>filters,
+      final Integer pageNumber,
+      final Integer pageSize,
+      final String sortBy,
+      final String sortDirection) throws BadRequestException;
+
+  ReaderModel findById(final UUID id);
 
   boolean exists(UUID id);
 
-  ReaderEntity save(ReaderEntity reader);
+  ReaderModel add(ReaderModel model) throws BadRequestException;
 
-  List<ReaderEntity> save(Set<ReaderEntity> readers);
+  ReaderModel edit(ReaderModel model) throws BadRequestException;
 
-  void delete(ReaderEntity reader);
-
-  void delete(Set<ReaderEntity> readers);
-
-  void deleteById(UUID id);
-
-  void deleteAll();
-
-  void deleteAllInBatch();
-
-  void deleteInBatch(Set<ReaderEntity> readers);
+  void deleteById(UUID id) throws BadRequestException;
 }

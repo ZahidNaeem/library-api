@@ -1,40 +1,36 @@
 package com.alabtaal.library.service;
 
-import com.alabtaal.library.entity.BookEntity;
-import com.alabtaal.library.payload.response.SearchBookResponse;
+import com.alabtaal.library.exception.BadRequestException;
+import com.alabtaal.library.model.BookModel;
+import com.alabtaal.library.payload.response.ListWithPagination;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.UUID;
 
 public interface BookService {
 
-  List<BookEntity> findAll();
+  List<BookModel> findAll();
 
-  List<BookEntity> searchBook(final BookEntity bookEntity);
+  ListWithPagination<BookModel> findAll(
+      final Integer pageNumber,
+      final Integer pageSize,
+      final String sortBy,
+      final String sortDirection) throws BadRequestException;
 
-  List<SearchBookResponse> searchByCriteria(
-      final UUID author,
-      final UUID subject,
-      final UUID publisher,
-      final UUID researcher);
+  ListWithPagination<BookModel> searchBooks(
+      Map<String, Object>filters,
+      final Integer pageNumber,
+      final Integer pageSize,
+      final String sortBy,
+      final String sortDirection) throws BadRequestException;
 
-  BookEntity findById(final UUID id);
+  BookModel findById(final UUID id);
 
   boolean exists(UUID id);
 
-  BookEntity save(BookEntity book);
+  BookModel add(BookModel model) throws BadRequestException;
 
-  List<BookEntity> save(Set<BookEntity> books);
+  BookModel edit(BookModel model) throws BadRequestException;
 
-  void delete(BookEntity book);
-
-  void delete(Set<BookEntity> books);
-
-  void deleteById(UUID id);
-
-  void deleteAll();
-
-  void deleteAllInBatch();
-
-  void deleteInBatch(Set<BookEntity> books);
+  void deleteById(UUID id) throws BadRequestException;
 }

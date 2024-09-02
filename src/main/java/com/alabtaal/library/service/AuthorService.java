@@ -1,33 +1,36 @@
 package com.alabtaal.library.service;
 
-import com.alabtaal.library.entity.AuthorEntity;
+import com.alabtaal.library.exception.BadRequestException;
+import com.alabtaal.library.model.AuthorModel;
+import com.alabtaal.library.payload.response.ListWithPagination;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.UUID;
 
 public interface AuthorService {
 
-  List<AuthorEntity> findAll();
+  List<AuthorModel> findAll();
 
-  List<AuthorEntity> searchAuthor(final AuthorEntity authorEntity);
+  ListWithPagination<AuthorModel> findAll(
+      final Integer pageNumber,
+      final Integer pageSize,
+      final String sortBy,
+      final String sortDirection) throws BadRequestException;
 
-  AuthorEntity findById(final UUID id);
+  ListWithPagination<AuthorModel> searchAuthors(
+      Map<String, Object>filters,
+      final Integer pageNumber,
+      final Integer pageSize,
+      final String sortBy,
+      final String sortDirection) throws BadRequestException;
+
+  AuthorModel findById(final UUID id);
 
   boolean exists(UUID id);
 
-  AuthorEntity save(AuthorEntity author);
+  AuthorModel add(AuthorModel model) throws BadRequestException;
 
-  List<AuthorEntity> save(Set<AuthorEntity> authors);
+  AuthorModel edit(AuthorModel model) throws BadRequestException;
 
-  void delete(AuthorEntity author);
-
-  void delete(Set<AuthorEntity> authors);
-
-  void deleteById(UUID id);
-
-  void deleteAll();
-
-  void deleteAllInBatch();
-
-  void deleteInBatch(Set<AuthorEntity> authors);
+  void deleteById(UUID id) throws BadRequestException;
 }

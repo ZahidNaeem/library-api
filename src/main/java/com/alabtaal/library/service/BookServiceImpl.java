@@ -1,91 +1,127 @@
 package com.alabtaal.library.service;
 
 import com.alabtaal.library.entity.BookEntity;
-import com.alabtaal.library.payload.response.SearchBookResponse;
+import com.alabtaal.library.exception.BadRequestException;
+import com.alabtaal.library.mapper.BookMapper;
+import com.alabtaal.library.model.BookModel;
+import com.alabtaal.library.payload.response.ListWithPagination;
 import com.alabtaal.library.repo.BookRepo;
+import com.alabtaal.library.util.DynamicFilter;
+import com.alabtaal.library.util.ListToPageConverter;
+import com.alabtaal.library.util.Miscellaneous;
+import jakarta.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
 
+  private static List<BookModel> bookModels = new ArrayList<>();
+
   private static final Logger LOG = LoggerFactory.getLogger(BookServiceImpl.class);
 
   private final BookRepo bookRepo;
+  private final BookMapper bookMapper;
 
-  @Override
-  public List<BookEntity> findAll() {
-    return bookRepo.findAllByOrderByIdAsc();
+  @EventListener(classes = ApplicationStartedEvent.class)
+  @Transactional
+  protected void findAllModels() {
+    bookModels = bookMapper.toModels(bookRepo.findAll());
   }
 
   @Override
-  public List<BookEntity> searchBook(BookEntity bookEntity) {
-    return bookRepo.searchBook(bookEntity);
+  public List<BookModel> findAll() {
+    return bookModels;
+  }
+
+  public ListWithPagination<BookModel> findAll(
+      final Integer pageNumber,
+      final Integer pageSize,
+      final String sortBy,
+      final String sortDirection) throws BadRequestException {
+    return ListToPageConverter.convert(
+        bookModels,
+        pageNumber,
+        pageSize,
+        sortBy,
+        sortDirection,
+        BookModel.class);
+  }
+
+  public ListWithPagination<BookModel> searchBooks(
+      Map<String, Object>filters,
+      final Integer pageNumber,
+      final Integer pageSize,
+      final String sortBy,
+      final String sortDirection) throws BadRequestException {
+    final List<BookModel> filteredModels = DynamicFilter.filter(
+        bookModels,
+        filters
+    );
+    return ListToPageConverter.convert(
+        filteredModels,
+        pageNumber,
+        pageSize,
+        sortBy,
+        sortDirection,
+        BookModel.class);
   }
 
   @Override
-  public List<SearchBookResponse> searchByCriteria(
-      final UUID author,
-      final UUID subject,
-      final UUID publisher,
-      final UUID researcher) {
-    return bookRepo.searchBookByCriteria(author, subject, publisher, researcher);
-  }
-
-  @Override
-  public BookEntity findById(UUID id) {
-    return bookRepo.findById(id)
-        .orElse(new BookEntity());
+  public BookModel findById(UUID id) {
+    return bookModels
+        .stream()
+        .filter(model -> model.getId().equals(id))
+        .findFirst()
+        .orElse(null);
   }
 
   @Override
   public boolean exists(UUID id) {
-    return bookRepo.existsById(id);
+    return bookModels
+        .stream()
+        .anyMatch(model -> model.getId().equals(id));
   }
 
   @Override
-  public BookEntity save(BookEntity book) {
-    return bookRepo.saveAndFlush(book);
+  public BookModel add(final BookModel model) throws BadRequestException {
+    model.setId(null);
+    final BookModel savedModel = save(model);
+    bookModels.add(savedModel);
+    return savedModel;
   }
 
   @Override
-  public List<BookEntity> save(Set<BookEntity> books) {
-    return bookRepo.saveAll(books);
+  public BookModel edit(final BookModel model) throws BadRequestException {
+    if (!exists(model.getId())) {
+      throw new BadRequestException("Record does not exist");
+    }
+    final BookModel savedModel = save(model);
+    bookModels.set(bookModels.indexOf(model), savedModel);
+    return savedModel;
+  }
+
+  private BookModel save(BookModel model) throws BadRequestException {
+    final BookEntity entity = bookMapper.toEntity(model);
+    Miscellaneous.constraintViolation(entity);
+    return bookMapper.toModel(bookRepo.saveAndFlush(entity));
   }
 
   @Override
-  public void delete(BookEntity book) {
-    bookRepo.delete(book);
-  }
-
-  @Override
-  public void delete(Set<BookEntity> books) {
-    bookRepo.deleteAll(books);
-  }
-
-  @Override
-  public void deleteById(UUID id) {
+  public void deleteById(UUID id) throws BadRequestException {
+    if (!exists(id)) {
+      throw new BadRequestException("Record does not exist");
+    }
     bookRepo.deleteById(id);
-  }
-
-  @Override
-  public void deleteAll() {
-    bookRepo.deleteAll();
-  }
-
-  @Override
-  public void deleteAllInBatch() {
-    bookRepo.deleteAllInBatch();
-  }
-
-  @Override
-  public void deleteInBatch(Set<BookEntity> books) {
-    bookRepo.deleteInBatch(books);
+    bookModels.removeIf(model -> model.getId().equals(id));
   }
 }

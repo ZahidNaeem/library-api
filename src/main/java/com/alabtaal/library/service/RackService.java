@@ -1,34 +1,36 @@
 package com.alabtaal.library.service;
 
-import com.alabtaal.library.entity.RackEntity;
-import com.alabtaal.library.entity.ShelfEntity;
+import com.alabtaal.library.exception.BadRequestException;
+import com.alabtaal.library.model.RackModel;
+import com.alabtaal.library.payload.response.ListWithPagination;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.UUID;
 
 public interface RackService {
 
-  List<RackEntity> findAll();
+  List<RackModel> findAll();
 
-  List<RackEntity> findAllByShelf(final ShelfEntity shelf);
+  ListWithPagination<RackModel> findAll(
+      final Integer pageNumber,
+      final Integer pageSize,
+      final String sortBy,
+      final String sortDirection) throws BadRequestException;
 
-  RackEntity findById(final UUID id);
+  ListWithPagination<RackModel> searchRacks(
+      Map<String, Object>filters,
+      final Integer pageNumber,
+      final Integer pageSize,
+      final String sortBy,
+      final String sortDirection) throws BadRequestException;
+
+  RackModel findById(final UUID id);
 
   boolean exists(UUID id);
 
-  RackEntity save(RackEntity rack);
+  RackModel add(RackModel model) throws BadRequestException;
 
-  List<RackEntity> save(Set<RackEntity> racks);
+  RackModel edit(RackModel model) throws BadRequestException;
 
-  void delete(RackEntity rack);
-
-  void delete(Set<RackEntity> racks);
-
-  void deleteById(UUID id);
-
-  void deleteAll();
-
-  void deleteAllInBatch();
-
-  void deleteInBatch(Set<RackEntity> racks);
+  void deleteById(UUID id) throws BadRequestException;
 }

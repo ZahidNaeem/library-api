@@ -1,33 +1,36 @@
 package com.alabtaal.library.service;
 
-import com.alabtaal.library.entity.ShelfEntity;
+import com.alabtaal.library.exception.BadRequestException;
+import com.alabtaal.library.model.ShelfModel;
+import com.alabtaal.library.payload.response.ListWithPagination;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.UUID;
 
 public interface ShelfService {
 
-  List<ShelfEntity> findAll();
+  List<ShelfModel> findAll();
 
-  List<ShelfEntity> searchShelf(final ShelfEntity shelfEntity);
+  ListWithPagination<ShelfModel> findAll(
+      final Integer pageNumber,
+      final Integer pageSize,
+      final String sortBy,
+      final String sortDirection) throws BadRequestException;
 
-  ShelfEntity findById(final UUID id);
+  ListWithPagination<ShelfModel> searchShelves(
+      Map<String, Object>filters,
+      final Integer pageNumber,
+      final Integer pageSize,
+      final String sortBy,
+      final String sortDirection) throws BadRequestException;
+
+  ShelfModel findById(final UUID id);
 
   boolean exists(UUID id);
 
-  ShelfEntity save(ShelfEntity shelf);
+  ShelfModel add(ShelfModel model) throws BadRequestException;
 
-  List<ShelfEntity> save(Set<ShelfEntity> shelves);
+  ShelfModel edit(ShelfModel model) throws BadRequestException;
 
-  void delete(ShelfEntity shelf);
-
-  void delete(Set<ShelfEntity> shelves);
-
-  void deleteById(UUID id);
-
-  void deleteAll();
-
-  void deleteAllInBatch();
-
-  void deleteInBatch(Set<ShelfEntity> shelves);
+  void deleteById(UUID id) throws BadRequestException;
 }

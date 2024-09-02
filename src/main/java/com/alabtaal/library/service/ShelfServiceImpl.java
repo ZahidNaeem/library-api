@@ -1,81 +1,127 @@
 package com.alabtaal.library.service;
 
 import com.alabtaal.library.entity.ShelfEntity;
+import com.alabtaal.library.exception.BadRequestException;
+import com.alabtaal.library.mapper.ShelfMapper;
+import com.alabtaal.library.model.ShelfModel;
+import com.alabtaal.library.payload.response.ListWithPagination;
 import com.alabtaal.library.repo.ShelfRepo;
+import com.alabtaal.library.util.DynamicFilter;
+import com.alabtaal.library.util.ListToPageConverter;
+import com.alabtaal.library.util.Miscellaneous;
+import jakarta.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class ShelfServiceImpl implements ShelfService {
 
+  private static List<ShelfModel> shelfModels = new ArrayList<>();
+
   private static final Logger LOG = LoggerFactory.getLogger(ShelfServiceImpl.class);
 
   private final ShelfRepo shelfRepo;
+  private final ShelfMapper shelfMapper;
 
-  @Override
-  public List<ShelfEntity> findAll() {
-    return shelfRepo.findAllByOrderByIdAsc();
+  @EventListener(classes = ApplicationStartedEvent.class)
+  @Transactional
+  protected void findAllModels() {
+    shelfModels = shelfMapper.toModels(shelfRepo.findAll());
   }
 
   @Override
-  public List<ShelfEntity> searchShelf(ShelfEntity shelfEntity) {
-    return shelfRepo.searchShelf(shelfEntity);
+  public List<ShelfModel> findAll() {
+    return shelfModels;
+  }
+
+  public ListWithPagination<ShelfModel> findAll(
+      final Integer pageNumber,
+      final Integer pageSize,
+      final String sortBy,
+      final String sortDirection) throws BadRequestException {
+    return ListToPageConverter.convert(
+        shelfModels,
+        pageNumber,
+        pageSize,
+        sortBy,
+        sortDirection,
+        ShelfModel.class);
+  }
+
+  public ListWithPagination<ShelfModel> searchShelves(
+      Map<String, Object>filters,
+      final Integer pageNumber,
+      final Integer pageSize,
+      final String sortBy,
+      final String sortDirection) throws BadRequestException {
+    final List<ShelfModel> filteredModels = DynamicFilter.filter(
+        shelfModels,
+        filters
+    );
+    return ListToPageConverter.convert(
+        filteredModels,
+        pageNumber,
+        pageSize,
+        sortBy,
+        sortDirection,
+        ShelfModel.class);
   }
 
   @Override
-  public ShelfEntity findById(UUID id) {
-    return shelfRepo.findById(id)
-        .orElse(new ShelfEntity());
+  public ShelfModel findById(UUID id) {
+    return shelfModels
+        .stream()
+        .filter(model -> model.getId().equals(id))
+        .findFirst()
+        .orElse(null);
   }
 
   @Override
   public boolean exists(UUID id) {
-    return shelfRepo.existsById(id);
+    return shelfModels
+        .stream()
+        .anyMatch(model -> model.getId().equals(id));
   }
 
   @Override
-  public ShelfEntity save(ShelfEntity shelf) {
-    return shelfRepo.saveAndFlush(shelf);
+  public ShelfModel add(ShelfModel model) throws BadRequestException {
+    model.setId(null);
+    final ShelfModel savedModel = save(model);
+    shelfModels.add(savedModel);
+    return savedModel;
   }
 
   @Override
-  public List<ShelfEntity> save(Set<ShelfEntity> shelves) {
-    return shelfRepo.saveAll(shelves);
+  public ShelfModel edit(ShelfModel model) throws BadRequestException {
+    if (!exists(model.getId())) {
+      throw new BadRequestException("Record does not exist");
+    }
+    final ShelfModel savedModel = save(model);
+    shelfModels.set(shelfModels.indexOf(model), savedModel);
+    return savedModel;
+  }
+
+  private ShelfModel save(ShelfModel model) throws BadRequestException {
+    final ShelfEntity entity = shelfMapper.toEntity(model);
+    Miscellaneous.constraintViolation(entity);
+    return shelfMapper.toModel(shelfRepo.saveAndFlush(entity));
   }
 
   @Override
-  public void delete(ShelfEntity shelf) {
-    shelfRepo.delete(shelf);
-  }
-
-  @Override
-  public void delete(Set<ShelfEntity> shelves) {
-    shelfRepo.deleteAll(shelves);
-  }
-
-  @Override
-  public void deleteById(UUID id) {
+  public void deleteById(UUID id) throws BadRequestException {
+    if (!exists(id)) {
+      throw new BadRequestException("Record does not exist");
+    }
     shelfRepo.deleteById(id);
-  }
-
-  @Override
-  public void deleteAll() {
-    shelfRepo.deleteAll();
-  }
-
-  @Override
-  public void deleteAllInBatch() {
-    shelfRepo.deleteAllInBatch();
-  }
-
-  @Override
-  public void deleteInBatch(Set<ShelfEntity> shelves) {
-    shelfRepo.deleteInBatch(shelves);
+    shelfModels.removeIf(model -> model.getId().equals(id));
   }
 }

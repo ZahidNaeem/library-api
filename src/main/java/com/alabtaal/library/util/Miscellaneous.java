@@ -30,7 +30,7 @@ import org.springframework.util.CollectionUtils;
 //@RequiredArgsConstructor
 public class Miscellaneous {
 
-  private static Logger LOG = LoggerFactory.getLogger(Miscellaneous.class);
+  private static final Logger LOG = LoggerFactory.getLogger(Miscellaneous.class);
   private static Validator validator;
 
   public Miscellaneous(final Validator validator) {
@@ -100,15 +100,18 @@ public class Miscellaneous {
     return FieldUtils.getField(clazz, fieldName, true) != null;
   }
 
-  public static <T> Pageable handlePaginationValues(Integer pageNumber, Integer pageSize,
+  public static <T> Pageable handlePaginationValues(
+      Integer pageNumber,
+      Integer pageSize,
       String sortBy,
-      final String sortDirection, final Class<T> clazz) throws BadRequestException {
-    pageNumber = pageNumber == null || pageNumber <= 0 ? 0 : pageNumber - 1;
+      final String sortDirection,
+      final Class<T> clazz) throws BadRequestException {
+    pageNumber = pageNumber == null || pageNumber <= 0 ? 0 : pageNumber;
     pageSize = pageSize == null ? 10 : pageSize;
     sortBy = sortBy == null ? "creationDate" : sortBy;
     final boolean fieldExists = fieldExists(clazz, sortBy);
     if (!fieldExists) {
-      throw new BadRequestException(sortBy + " field does not exist.");
+      throw new BadRequestException("Field '" + sortBy + "' (used in sort by) does not exist.");
     }
     final Direction direction =
         sortDirection == null ? Direction.DESC : Direction.fromString(sortDirection);

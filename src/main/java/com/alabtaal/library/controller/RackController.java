@@ -1,20 +1,17 @@
 package com.alabtaal.library.controller;
 
-import com.alabtaal.library.entity.RackEntity;
+import com.alabtaal.library.exception.BadRequestException;
+import com.alabtaal.library.exception.InternalServerErrorException;
+import com.alabtaal.library.exception.ResourceNotFoundException;
 import com.alabtaal.library.mapper.RackMapper;
-import com.alabtaal.library.model.RackDetail;
 import com.alabtaal.library.model.RackModel;
 import com.alabtaal.library.payload.response.ApiResponse;
+import com.alabtaal.library.payload.response.ListWithPagination;
 import com.alabtaal.library.service.RackService;
-import com.alabtaal.library.service.ShelfService;
-import jakarta.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -23,154 +20,130 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @RestController
-@RequestMapping("racks")
+@RequestMapping(value = "racks")
 @RequiredArgsConstructor
 public class RackController {
 
   private static final Logger LOG = LoggerFactory.getLogger(RackController.class);
 
   private final RackService rackService;
-
-  private final RackMapper mapper;
-
-  private final ShelfService shelfService;
-  private List<RackModel> rackModels = new ArrayList<>();
-
-  private static void setRackForVolumes(final RackEntity rack) {
-    if (CollectionUtils.isNotEmpty(rack.getVolumes())) {
-      rack.getVolumes().forEach(volume -> {
-        volume.setRack(rack);
-      });
-    }
-  }
-
-  @PostConstruct
-  public void init() {
-    rackModels = mapper.toModels(rackService.findAll());
-  }
+  private final RackMapper rackMapper;
 
   @GetMapping
-  public ResponseEntity<ApiResponse<List<RackModel>>> findAll() {
+  public ResponseEntity<ApiResponse<ListWithPagination<RackModel>>> findAll(
+      @RequestParam(required = false) final Integer pageNumber,
+      @RequestParam(required = false) final Integer pageSize,
+      @RequestParam(required = false) final String sortBy,
+      @RequestParam(required = false) final String sortDirection)
+      throws BadRequestException, InternalServerErrorException {
+    final ListWithPagination<RackModel> racks = rackService.findAll(
+        pageNumber,
+        pageSize,
+        sortBy,
+        sortDirection
+    );
+    return ResponseEntity.ok(
+        ApiResponse
+            .<ListWithPagination<RackModel>>builder()
+            .success(true)
+            .message(
+                "Got racks successfully with pagination - Page Number: " + racks.getPageNumber()
+                    + " Page Size: " + racks.getPageSize() + " Total Pages: "
+                    + racks.getTotalPages())
+            .entity(racks)
+            .build());
+  }
+
+  @GetMapping(value = "/all")
+  public ResponseEntity<ApiResponse<List<RackModel>>> findAll()
+      throws InternalServerErrorException {
     return ResponseEntity.ok(
         ApiResponse
             .<List<RackModel>>builder()
             .success(true)
-            .message("findAll response")
-            .entity(rackModels)
-            .build()
-    );
+            .message("Got all racks successfully")
+            .entity(rackService.findAll())
+            .build());
   }
 
-  @GetMapping("details")
-  public ResponseEntity<ApiResponse<List<RackDetail>>> findAllDetails() {
+  @GetMapping(value = "/search")
+  public ResponseEntity<ApiResponse<ListWithPagination<RackModel>>> searchRacks(
+      @RequestBody final Map<String, Object> filters,
+      @RequestParam(required = false) final Integer pageNumber,
+      @RequestParam(required = false) final Integer pageSize,
+      @RequestParam(required = false) final String sortBy,
+      @RequestParam(required = false) final String sortDirection)
+      throws BadRequestException {
+    final ListWithPagination<RackModel> racks = rackService.searchRacks(filters,
+        pageNumber, pageSize, sortBy, sortDirection);
     return ResponseEntity.ok(
         ApiResponse
-            .<List<RackDetail>>builder()
+            .<ListWithPagination<RackModel>>builder()
             .success(true)
-            .message("findAllDetails response")
-            .entity(mapper.toDetails(rackService.findAll()))
-            .build()
-    );
+            .message(
+                "Got racks filtered by search params successfully with pagination - Page Number: "
+                    + racks.getPageNumber()
+                    + " Page Size: " + racks.getPageSize() + " Total Pages: "
+                    + racks.getTotalPages())
+            .entity(racks)
+            .build());
   }
 
-  @GetMapping("{id}")
-  public ResponseEntity<ApiResponse<RackModel>> findById(@PathVariable("id") final UUID id) {
+  @GetMapping(value = "id/{id}")
+  public ResponseEntity<ApiResponse<RackModel>> findById(
+      @PathVariable(value = "id") final
+      UUID id)
+      throws InternalServerErrorException {
     return ResponseEntity.ok(
         ApiResponse
             .<RackModel>builder()
             .success(true)
-            .message("findById response")
-            .entity(mapper.toModel(rackService.findById(id)))
-            .build()
-    );
-  }
-
-  @GetMapping("shelf/{shelfId}")
-  public ResponseEntity<ApiResponse<List<RackModel>>> findByShelf(@PathVariable("shelfId") final UUID shelfId) {
-    return ResponseEntity.ok(
-        ApiResponse
-            .<List<RackModel>>builder()
-            .success(true)
-            .message("findByShelf response")
-            .entity(mapper.toModels(rackService.findAllByShelf(shelfService.findById(shelfId))))
-            .build()
-    );
+            .message("Got rack by ID successfully")
+            .entity(rackService.findById(id))
+            .build());
   }
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<ApiResponse<RackModel>> save(@RequestBody final RackModel model) {
-    final RackEntity rack = mapper.toEntity(model);
-    final RackEntity savedRack = rackService.save(rack);
-    setRackForVolumes(rack);
+  public ResponseEntity<ApiResponse<RackModel>> add(@RequestBody final RackModel model)
+      throws BadRequestException {
     return ResponseEntity.ok(
         ApiResponse
             .<RackModel>builder()
             .success(true)
-            .message("Rack saved seccessfully")
-            .entity(mapper.toModel(savedRack))
-            .build()
-    );
+            .message("Rack added successfully")
+            .entity(rackService.add(model))
+            .build());
   }
 
-  @PostMapping(path = "all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<ApiResponse<List<RackEntity>>> saveAll(@RequestBody final Set<RackModel> rackModel) {
-    final Set<RackEntity> racks = new HashSet<>();
-    rackModel.forEach(model -> {
-      final RackEntity rack = mapper.toEntity(model);
-      setRackForVolumes(rack);
-      racks.add(rack);
-    });
+  @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<ApiResponse<RackModel>> edit(@RequestBody final RackModel model)
+      throws BadRequestException {
     return ResponseEntity.ok(
         ApiResponse
-            .<List<RackEntity>>builder()
+            .<RackModel>builder()
             .success(true)
-            .message("All racks saved seccessfully")
-            .entity(rackService.save(racks))
-            .build()
-    );
+            .message("Rack updated successfully")
+            .entity(rackService.edit(model))
+            .build());
   }
 
-  @DeleteMapping("{id}")
-  public ResponseEntity<ApiResponse<Boolean>> deleteById(@PathVariable("id") final UUID id) {
-    if (!rackService.exists(id)) {
-      throw new IllegalArgumentException("Item rack with id: " + id + " does not exist");
-    } else {
-
-        rackService.deleteById(id);
-        return ResponseEntity.ok(
-            ApiResponse
-                .<Boolean>builder()
-                .success(true)
-                .message("Rack deleted seccessfully")
-                .entity(true)
-                .build()
-        );
-
-    }
-  }
-
-  @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<ApiResponse<Boolean>> delete(@RequestBody final RackModel model) {
-    if (null == model || null == model.getId() || !rackService.exists(model.getId())) {
-      throw new IllegalArgumentException("Item rack does not exist");
-    } else {
-
-        rackService.delete(mapper.toEntity(model));
-        return ResponseEntity.ok(
-            ApiResponse
-                .<Boolean>builder()
-                .success(true)
-                .message("Rack deleted seccessfully")
-                .entity(true)
-                .build()
-        );
-
-    }
+  @DeleteMapping
+  public ResponseEntity<ApiResponse<Boolean>> delete(@RequestParam(value = "id") final UUID id)
+      throws InternalServerErrorException, ResourceNotFoundException, BadRequestException {
+    rackService.deleteById(id);
+    return ResponseEntity.ok(
+        ApiResponse
+            .<Boolean>builder()
+            .success(true)
+            .message("Rack deleted successfully")
+            .entity(null)
+            .build());
   }
 }

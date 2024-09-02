@@ -1,33 +1,36 @@
 package com.alabtaal.library.service;
 
-import com.alabtaal.library.entity.ResearcherEntity;
+import com.alabtaal.library.exception.BadRequestException;
+import com.alabtaal.library.model.ResearcherModel;
+import com.alabtaal.library.payload.response.ListWithPagination;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.UUID;
 
 public interface ResearcherService {
 
-  List<ResearcherEntity> findAll();
+  List<ResearcherModel> findAll();
 
-  List<ResearcherEntity> searchResearcher(final ResearcherEntity researcherEntity);
+  ListWithPagination<ResearcherModel> findAll(
+      final Integer pageNumber,
+      final Integer pageSize,
+      final String sortBy,
+      final String sortDirection) throws BadRequestException;
 
-  ResearcherEntity findById(final UUID id);
+  ListWithPagination<ResearcherModel> searchResearchers(
+      Map<String, Object>filters,
+      final Integer pageNumber,
+      final Integer pageSize,
+      final String sortBy,
+      final String sortDirection) throws BadRequestException;
+
+  ResearcherModel findById(final UUID id);
 
   boolean exists(UUID id);
 
-  ResearcherEntity save(ResearcherEntity researcher);
+  ResearcherModel add(ResearcherModel model) throws BadRequestException;
 
-  List<ResearcherEntity> save(Set<ResearcherEntity> researchers);
+  ResearcherModel edit(ResearcherModel model) throws BadRequestException;
 
-  void delete(ResearcherEntity researcher);
-
-  void delete(Set<ResearcherEntity> researchers);
-
-  void deleteById(UUID id);
-
-  void deleteAll();
-
-  void deleteAllInBatch();
-
-  void deleteInBatch(Set<ResearcherEntity> researchers);
+  void deleteById(UUID id) throws BadRequestException;
 }

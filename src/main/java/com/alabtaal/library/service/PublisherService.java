@@ -1,33 +1,36 @@
 package com.alabtaal.library.service;
 
-import com.alabtaal.library.entity.PublisherEntity;
+import com.alabtaal.library.exception.BadRequestException;
+import com.alabtaal.library.model.PublisherModel;
+import com.alabtaal.library.payload.response.ListWithPagination;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.UUID;
 
 public interface PublisherService {
 
-  List<PublisherEntity> findAll();
+  List<PublisherModel> findAll();
 
-  List<PublisherEntity> searchPublisher(final PublisherEntity publisherEntity);
+  ListWithPagination<PublisherModel> findAll(
+      final Integer pageNumber,
+      final Integer pageSize,
+      final String sortBy,
+      final String sortDirection) throws BadRequestException;
 
-  PublisherEntity findById(final UUID id);
+  ListWithPagination<PublisherModel> searchPublishers(
+      Map<String, Object>filters,
+      final Integer pageNumber,
+      final Integer pageSize,
+      final String sortBy,
+      final String sortDirection) throws BadRequestException;
+
+  PublisherModel findById(final UUID id);
 
   boolean exists(UUID id);
 
-  PublisherEntity save(PublisherEntity publisher);
+  PublisherModel add(PublisherModel model) throws BadRequestException;
 
-  List<PublisherEntity> save(Set<PublisherEntity> publishers);
+  PublisherModel edit(PublisherModel model) throws BadRequestException;
 
-  void delete(PublisherEntity publisher);
-
-  void delete(Set<PublisherEntity> publishers);
-
-  void deleteById(UUID id);
-
-  void deleteAll();
-
-  void deleteAllInBatch();
-
-  void deleteInBatch(Set<PublisherEntity> publishers);
+  void deleteById(UUID id) throws BadRequestException;
 }
