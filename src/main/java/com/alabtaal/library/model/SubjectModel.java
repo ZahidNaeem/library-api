@@ -24,6 +24,8 @@ public class SubjectModel extends Auditable<String> {
 
   private UUID parentSubject;
 
+  private String parentSubjectName;
+
   private String remarks;
 
   private List<BookModel> books;

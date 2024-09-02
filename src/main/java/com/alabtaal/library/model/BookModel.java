@@ -1,6 +1,9 @@
 package com.alabtaal.library.model;
 
 import com.alabtaal.library.entity.Auditable;
+import com.alabtaal.library.enumeration.BookCondition;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -23,7 +26,8 @@ public class BookModel extends Auditable<String> {
 
   private Date publicationDate;
 
-  private String bookCondition;
+  @Enumerated(value = EnumType.STRING)
+  private BookCondition bookCondition;
 
   private Integer purchased;
 

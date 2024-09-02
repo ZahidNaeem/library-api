@@ -1,10 +1,11 @@
 package com.alabtaal.library.entity;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.alabtaal.library.enumeration.BookCondition;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -52,8 +53,10 @@ public class BookEntity extends Auditable<String> {
   @Column(name = "publication_date")
   private Date publicationDate;
 
+  @NotNull
   @Column(name = "book_condition")
-  private String bookCondition;
+  @Enumerated(value = EnumType.STRING)
+  private BookCondition bookCondition;
 
   @Column(name = "purchased")
   private Integer purchased;

@@ -1,6 +1,9 @@
 package com.alabtaal.library.model;
 
 import com.alabtaal.library.entity.Auditable;
+import com.alabtaal.library.enumeration.TransType;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -19,7 +22,8 @@ public class BookTransHeaderModel extends Auditable<String> {
 
   private UUID id;
 
-  private String transType;
+  @Enumerated(value = EnumType.STRING)
+  private TransType transType;
 
   private Date transDate;
 
