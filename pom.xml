@@ -16,7 +16,7 @@
   <description>Library</description>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <mapstruct.version>1.6.0</mapstruct.version>
         <maven.compiler.version>3.8.1</maven.compiler.version>
         <lombok.version>1.18.34</lombok.version>
@@ -133,48 +133,10 @@
             <artifactId>HikariCP</artifactId>
             <version>5.1.0</version>
         </dependency>
-        <!--    Spring Fox-->
-<!--        <dependency>-->
-<!--            <groupId>io.springfox</groupId>-->
-<!--            <artifactId>springfox-swagger2</artifactId>-->
-<!--            <version>${springfox.swagger.version}</version>-->
-<!--            <scope>compile</scope>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>io.springfox</groupId>-->
-<!--            <artifactId>springfox-swagger-ui</artifactId>-->
-<!--            <version>${springfox.swagger.version}</version>-->
-<!--            <scope>compile</scope>-->
-<!--        </dependency>-->
-        <!--    mail-->
-<!--        <dependency>-->
-<!--            <groupId>com.google.apis</groupId>-->
-<!--            <artifactId>google-api-services-gmail</artifactId>-->
-<!--            <version>v1-rev20220404-1.32.1</version>-->
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <groupId>com.google.oauth-client</groupId>-->
-<!--                    <artifactId>google-oauth-client</artifactId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.google.oauth-client</groupId>-->
-<!--            <artifactId>google-oauth-client</artifactId>-->
-<!--            <version>1.35.0</version>-->
-<!--        </dependency>-->
-        <!-- send email -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
-        <!--unitils-->
-<!--        <dependency>-->
-<!--            <groupId>org.unitils</groupId>-->
-<!--            <artifactId>unitils-core</artifactId>-->
-<!--            <version>3.4</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
         <!--hamcrest-->
         <dependency>
             <groupId>org.hamcrest</groupId>
@@ -195,16 +157,6 @@
             <version>${junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.vaadin.external.google</groupId>-->
-<!--            <artifactId>android-json</artifactId>-->
-<!--            <version>0.0.20131108.vaadin1</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>javax.enterprise</groupId>-->
-<!--            <artifactId>cdi-api</artifactId>-->
-<!--            <version>2.0-PFD</version>-->
-<!--        </dependency>-->
     </dependencies>
 
   <build>
