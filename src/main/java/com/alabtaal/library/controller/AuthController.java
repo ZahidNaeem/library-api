@@ -2,6 +2,7 @@ package com.alabtaal.library.controller;
 
 import com.alabtaal.library.entity.UserEntity;
 import com.alabtaal.library.exception.BadRequestException;
+import com.alabtaal.library.exception.InternalServerErrorException;
 import com.alabtaal.library.mapper.UserMapper;
 import com.alabtaal.library.payload.request.LoginRequest;
 import com.alabtaal.library.payload.request.SignupRequest;
@@ -36,7 +37,7 @@ public class AuthController {
 
   private final UserMapper userMapper;
 
-  private final JwtProvider tokenProvider;
+  private final JwtProvider jwtProvider;
 
   @PostMapping("/login")
   public ResponseEntity<ApiResponse<JwtAuthenticationResponse>> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -49,7 +50,7 @@ public class AuthController {
 
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
-    final String jwt = tokenProvider.generateJwt(authentication);
+    final String jwt = jwtProvider.generateJwt(authentication);
     return ResponseEntity.ok(
         ApiResponse
             .<JwtAuthenticationResponse>builder()
@@ -88,6 +89,20 @@ public class AuthController {
                 .entity(true)
                 .build()
         );
+  }
+
+  @GetMapping("validate-token")
+  public ResponseEntity<ApiResponse<Boolean>> validateJwtToken(
+      @RequestParam(value = "jwt") final String jwt) throws InternalServerErrorException, BadRequestException {
+    final boolean isTokenValid = jwtProvider.validateJwtToken(jwt);
+    return ResponseEntity.ok(
+        ApiResponse
+            .<Boolean>builder()
+            .success(isTokenValid)
+            .message("Token is valid")
+            .entity(isTokenValid)
+            .build()
+    );
   }
 
   @GetMapping("/checkEmailExists")
