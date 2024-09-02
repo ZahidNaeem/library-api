@@ -5,19 +5,19 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Arrays;
 
-public enum RoleName {
-  ROLE_ADMIN("admin"),
-  ROLE_USER("user");
+public enum BookCondition {
+  NEW("new"),
+  OLD("old");
 
   private final String value;
 
-  RoleName(final String value) {
+  BookCondition(final String value) {
     this.value = value;
   }
 
   @JsonCreator
-  public static RoleName fromValue(final String value) throws BadRequestException {
-    return Arrays.stream(RoleName.values())
+  public static BookCondition fromValue(final String value) throws BadRequestException {
+    return Arrays.stream(BookCondition.values())
         .filter(role -> role.getValue().equalsIgnoreCase(value))
         .findFirst()
         .orElseThrow(

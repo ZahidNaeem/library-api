@@ -5,23 +5,23 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Arrays;
 
-public enum RoleName {
-  ROLE_ADMIN("admin"),
-  ROLE_USER("user");
+public enum TransType {
+  ISSUE("issue"),
+  RECEIPT("receipt");
 
   private final String value;
 
-  RoleName(final String value) {
+  TransType(final String value) {
     this.value = value;
   }
 
   @JsonCreator
-  public static RoleName fromValue(final String value) throws BadRequestException {
-    return Arrays.stream(RoleName.values())
+  public static TransType fromValue(final String value) throws BadRequestException {
+    return Arrays.stream(TransType.values())
         .filter(role -> role.getValue().equalsIgnoreCase(value))
         .findFirst()
         .orElseThrow(
-            () -> new BadRequestException("Role with value '" + value + "' not found"));
+            () -> new BadRequestException("Trans. Type with value '" + value + "' not found"));
   }
 
   @JsonValue

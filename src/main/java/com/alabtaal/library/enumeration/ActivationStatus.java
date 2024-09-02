@@ -1,6 +1,6 @@
 package com.alabtaal.library.enumeration;
 
-import com.alabtaal.library.exception.ActivationStatusNotFoundException;
+import com.alabtaal.library.exception.BadRequestException;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Arrays;
@@ -20,11 +20,11 @@ public enum ActivationStatus {
 
   @JsonCreator
   public static ActivationStatus fromValue(final String value)
-      throws ActivationStatusNotFoundException {
+      throws BadRequestException {
     return Arrays.stream(ActivationStatus.values())
         .filter(status -> status.getValue().equalsIgnoreCase(value))
         .findFirst()
-        .orElseThrow(() -> new ActivationStatusNotFoundException(
+        .orElseThrow(() -> new BadRequestException(
             "Activation Status with value " + value + " not found"));
   }
 
