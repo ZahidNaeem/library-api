@@ -3,6 +3,7 @@ package com.alabtaal.library.mapper;
 import com.alabtaal.library.entity.ReaderEntity;
 import com.alabtaal.library.mapper.qualifier.Qualifier;
 import com.alabtaal.library.model.ReaderModel;
+import com.alabtaal.library.payload.response.ListWithPagination;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
@@ -12,15 +13,13 @@ import org.mapstruct.Mapping;
 
 @Mapper(
     componentModel = "spring",
-    uses = {Qualifier.class},
+    uses = {Qualifier.class, BookTransHeaderMapper.class},
     injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
 public interface ReaderMapper {
 
-  @Mapping(target = "bookTransHeaders", qualifiedByName = "bookTransHeaderModels")
   ReaderModel toModel(final ReaderEntity reader);
 
-  @Mapping(target = "bookTransHeaders", qualifiedByName = "bookTransHeaderEntities")
   ReaderEntity toEntity(final ReaderModel model);
 
   default List<ReaderModel> toModels(final List<ReaderEntity> readers) {
@@ -43,5 +42,32 @@ public interface ReaderMapper {
       readers.add(this.toEntity(model));
     });
     return readers;
+  }
+
+  default ListWithPagination<ReaderEntity> toEntitiesWithPagination(
+      final ListWithPagination<ReaderModel> models) {
+
+    return ListWithPagination
+        .<ReaderEntity>builder()
+        .list(toEntities(models.getList()))
+        .pageSize(models.getPageSize())
+        .pageNumber(models.getPageNumber())
+        .totalPages(models.getTotalPages())
+        .totalPageRecords(models.getTotalPageRecords())
+        .totalRecords(models.getTotalRecords())
+        .build();
+  }
+
+  default ListWithPagination<ReaderModel> toModelsWithPagination(
+      final ListWithPagination<ReaderEntity> entities) {
+    return ListWithPagination
+        .<ReaderModel>builder()
+        .list(toModels(entities.getList()))
+        .pageSize(entities.getPageSize())
+        .pageNumber(entities.getPageNumber())
+        .totalPages(entities.getTotalPages())
+        .totalPageRecords(entities.getTotalPageRecords())
+        .totalRecords(entities.getTotalRecords())
+        .build();
   }
 }

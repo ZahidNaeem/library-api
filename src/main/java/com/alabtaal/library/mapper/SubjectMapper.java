@@ -3,6 +3,7 @@ package com.alabtaal.library.mapper;
 import com.alabtaal.library.entity.SubjectEntity;
 import com.alabtaal.library.mapper.qualifier.Qualifier;
 import com.alabtaal.library.model.SubjectModel;
+import com.alabtaal.library.payload.response.ListWithPagination;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
@@ -12,16 +13,15 @@ import org.mapstruct.Mapping;
 
 @Mapper(
     componentModel = "spring",
-    uses = {Qualifier.class},
+    uses = {Qualifier.class, BookMapper.class},
     injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
 public interface SubjectMapper {
 
-  @Mapping(target = "books", qualifiedByName = "bookModels")
-  @Mapping(target = "parentSubject", qualifiedByName = "parentSubjectETM")
+  @Mapping(target = "parentSubject", source = "parentSubject.id")
+  @Mapping(target = "parentSubjectName", source = "parentSubject.name")
   SubjectModel toModel(final SubjectEntity subject);
 
-  @Mapping(target = "books", qualifiedByName = "bookEntities")
   @Mapping(target = "parentSubject", qualifiedByName = "parentSubjectMTE")
   SubjectEntity toEntity(final SubjectModel model);
 
@@ -45,5 +45,32 @@ public interface SubjectMapper {
       subjects.add(this.toEntity(model));
     });
     return subjects;
+  }
+
+  default ListWithPagination<SubjectEntity> toEntitiesWithPagination(
+      final ListWithPagination<SubjectModel> models) {
+
+    return ListWithPagination
+        .<SubjectEntity>builder()
+        .list(toEntities(models.getList()))
+        .pageSize(models.getPageSize())
+        .pageNumber(models.getPageNumber())
+        .totalPages(models.getTotalPages())
+        .totalPageRecords(models.getTotalPageRecords())
+        .totalRecords(models.getTotalRecords())
+        .build();
+  }
+
+  default ListWithPagination<SubjectModel> toModelsWithPagination(
+      final ListWithPagination<SubjectEntity> entities) {
+    return ListWithPagination
+        .<SubjectModel>builder()
+        .list(toModels(entities.getList()))
+        .pageSize(entities.getPageSize())
+        .pageNumber(entities.getPageNumber())
+        .totalPages(entities.getTotalPages())
+        .totalPageRecords(entities.getTotalPageRecords())
+        .totalRecords(entities.getTotalRecords())
+        .build();
   }
 }

@@ -4,6 +4,7 @@ import com.alabtaal.library.entity.BookEntity;
 import com.alabtaal.library.mapper.qualifier.Qualifier;
 import com.alabtaal.library.model.BookExportToExcel;
 import com.alabtaal.library.model.BookModel;
+import com.alabtaal.library.payload.response.ListWithPagination;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
@@ -13,18 +14,16 @@ import org.mapstruct.Mapping;
 
 @Mapper(
     componentModel = "spring",
-    uses = {Qualifier.class},
+    uses = {Qualifier.class, BookTransLineMapper.class, VolumeMapper.class},
     injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
 public interface BookMapper {
 
-  @Mapping(target = "author", qualifiedByName = "authorETM")
-  @Mapping(target = "subject", qualifiedByName = "subjectETM")
-  @Mapping(target = "publisher", qualifiedByName = "publisherETM")
-  @Mapping(target = "researcher", qualifiedByName = "researcherETM")
-  @Mapping(target = "shelf", qualifiedByName = "shelfETM")
-  @Mapping(target = "volumes", qualifiedByName = "volumeModels")
-  @Mapping(target = "bookTransLines", qualifiedByName = "bookTransLineModels")
+  @Mapping(target = "author", source = "author.id")
+  @Mapping(target = "subject", source = "subject.id")
+  @Mapping(target = "publisher", source = "publisher.id")
+  @Mapping(target = "researcher", source = "researcher.id")
+  @Mapping(target = "shelf", source = "shelf.id")
   BookModel toModel(final BookEntity book);
 
   @Mapping(target = "author", qualifiedByName = "authorMTE")
@@ -32,8 +31,6 @@ public interface BookMapper {
   @Mapping(target = "publisher", qualifiedByName = "publisherMTE")
   @Mapping(target = "researcher", qualifiedByName = "researcherMTE")
   @Mapping(target = "shelf", qualifiedByName = "shelfMTE")
-  @Mapping(target = "volumes", qualifiedByName = "volumeEntities")
-  @Mapping(target = "bookTransLines", qualifiedByName = "bookTransLineEntities")
   BookEntity toEntity(final BookModel model);
 
   @Mapping(target = "author", qualifiedByName = "authorMTX")
@@ -77,14 +74,30 @@ public interface BookMapper {
     return books;
   }
 
-    /*public List<SearchBookResponse> toSearchBookResponses(final List<BookEntity> Books) {
-        if (CollectionUtils.isEmpty(Books)) {
-            return new ArrayList<>();
-        }
-        final List<SearchBookResponse> searchBookResponses = new ArrayList<>();
-        Books.forEach(BookEntity -> {
-            searchBookResponses.add(this.toSearchBookResponse(BookEntity));
-        });
-        return searchBookResponses;
-    }*/
+  default ListWithPagination<BookEntity> toEntitiesWithPagination(
+      final ListWithPagination<BookModel> models) {
+
+    return ListWithPagination
+        .<BookEntity>builder()
+        .list(toEntities(models.getList()))
+        .pageSize(models.getPageSize())
+        .pageNumber(models.getPageNumber())
+        .totalPages(models.getTotalPages())
+        .totalPageRecords(models.getTotalPageRecords())
+        .totalRecords(models.getTotalRecords())
+        .build();
+  }
+
+  default ListWithPagination<BookModel> toModelsWithPagination(
+      final ListWithPagination<BookEntity> entities) {
+    return ListWithPagination
+        .<BookModel>builder()
+        .list(toModels(entities.getList()))
+        .pageSize(entities.getPageSize())
+        .pageNumber(entities.getPageNumber())
+        .totalPages(entities.getTotalPages())
+        .totalPageRecords(entities.getTotalPageRecords())
+        .totalRecords(entities.getTotalRecords())
+        .build();
+  }
 }

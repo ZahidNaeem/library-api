@@ -3,6 +3,7 @@ package com.alabtaal.library.mapper;
 import com.alabtaal.library.entity.AuthorEntity;
 import com.alabtaal.library.mapper.qualifier.Qualifier;
 import com.alabtaal.library.model.AuthorModel;
+import com.alabtaal.library.payload.response.ListWithPagination;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
@@ -12,15 +13,13 @@ import org.mapstruct.Mapping;
 
 @Mapper(
     componentModel = "spring",
-    uses = {Qualifier.class},
+    uses = {Qualifier.class, BookMapper.class},
     injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
 public interface AuthorMapper {
 
-  @Mapping(target = "books", qualifiedByName = "bookModels")
   AuthorModel toModel(final AuthorEntity author);
 
-  @Mapping(target = "books", qualifiedByName = "bookEntities")
   AuthorEntity toEntity(final AuthorModel model);
 
   default List<AuthorModel> toModels(final List<AuthorEntity> authors) {
@@ -43,5 +42,32 @@ public interface AuthorMapper {
       authors.add(this.toEntity(model));
     });
     return authors;
+  }
+
+  default ListWithPagination<AuthorEntity> toEntitiesWithPagination(
+      final ListWithPagination<AuthorModel> models) {
+
+    return ListWithPagination
+        .<AuthorEntity>builder()
+        .list(toEntities(models.getList()))
+        .pageSize(models.getPageSize())
+        .pageNumber(models.getPageNumber())
+        .totalPages(models.getTotalPages())
+        .totalPageRecords(models.getTotalPageRecords())
+        .totalRecords(models.getTotalRecords())
+        .build();
+  }
+
+  default ListWithPagination<AuthorModel> toModelsWithPagination(
+      final ListWithPagination<AuthorEntity> entities) {
+    return ListWithPagination
+        .<AuthorModel>builder()
+        .list(toModels(entities.getList()))
+        .pageSize(entities.getPageSize())
+        .pageNumber(entities.getPageNumber())
+        .totalPages(entities.getTotalPages())
+        .totalPageRecords(entities.getTotalPageRecords())
+        .totalRecords(entities.getTotalRecords())
+        .build();
   }
 }

@@ -3,6 +3,7 @@ package com.alabtaal.library.mapper;
 import com.alabtaal.library.entity.BookTransLineEntity;
 import com.alabtaal.library.mapper.qualifier.Qualifier;
 import com.alabtaal.library.model.BookTransLineModel;
+import com.alabtaal.library.payload.response.ListWithPagination;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
@@ -17,9 +18,9 @@ import org.mapstruct.Mapping;
 )
 public interface BookTransLineMapper {
 
-  @Mapping(target = "bookTransHeader", qualifiedByName = "bookTransHeaderETM")
-  @Mapping(target = "book", qualifiedByName = "bookETM")
-  @Mapping(target = "volume", qualifiedByName = "volumeETM")
+  @Mapping(target = "bookTransHeader", source = "bookTransHeader.id")
+  @Mapping(target = "book", source = "book.id")
+  @Mapping(target = "volume", source = "volume.id")
   BookTransLineModel toModel(final BookTransLineEntity bookTransLine);
 
   @Mapping(target = "bookTransHeader", qualifiedByName = "bookTransHeaderMTE")
@@ -47,5 +48,32 @@ public interface BookTransLineMapper {
       bookTransLines.add(this.toEntity(model));
     });
     return bookTransLines;
+  }
+
+  default ListWithPagination<BookTransLineEntity> toEntitiesWithPagination(
+      final ListWithPagination<BookTransLineModel> models) {
+
+    return ListWithPagination
+        .<BookTransLineEntity>builder()
+        .list(toEntities(models.getList()))
+        .pageSize(models.getPageSize())
+        .pageNumber(models.getPageNumber())
+        .totalPages(models.getTotalPages())
+        .totalPageRecords(models.getTotalPageRecords())
+        .totalRecords(models.getTotalRecords())
+        .build();
+  }
+
+  default ListWithPagination<BookTransLineModel> toModelsWithPagination(
+      final ListWithPagination<BookTransLineEntity> entities) {
+    return ListWithPagination
+        .<BookTransLineModel>builder()
+        .list(toModels(entities.getList()))
+        .pageSize(entities.getPageSize())
+        .pageNumber(entities.getPageNumber())
+        .totalPages(entities.getTotalPages())
+        .totalPageRecords(entities.getTotalPageRecords())
+        .totalRecords(entities.getTotalRecords())
+        .build();
   }
 }

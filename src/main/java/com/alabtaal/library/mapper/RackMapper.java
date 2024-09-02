@@ -4,6 +4,7 @@ import com.alabtaal.library.entity.RackEntity;
 import com.alabtaal.library.mapper.qualifier.Qualifier;
 import com.alabtaal.library.model.RackDetail;
 import com.alabtaal.library.model.RackModel;
+import com.alabtaal.library.payload.response.ListWithPagination;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
@@ -13,21 +14,19 @@ import org.mapstruct.Mapping;
 
 @Mapper(
     componentModel = "spring",
-    uses = {Qualifier.class},
+    uses = {Qualifier.class, VolumeMapper.class},
     injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
 public interface RackMapper {
 
-  @Mapping(target = "shelf", qualifiedByName = "shelfETM")
-  @Mapping(target = "volumes", qualifiedByName = "volumesETM")
+  @Mapping(target = "shelf", source = "shelf.id")
   RackModel toModel(final RackEntity rack);
 
   @Mapping(target = "shelf", qualifiedByName = "shelfMTE")
-  @Mapping(target = "volumes", qualifiedByName = "volumesMTE")
   RackEntity toEntity(final RackModel model);
 
-  @Mapping(target = "shelf", qualifiedByName = "shelfETM")
-  @Mapping(target = "shelfName", source = "shelf", qualifiedByName = "shelfETD")
+  @Mapping(target = "shelf", source = "shelf.id")
+  @Mapping(target = "shelfName", source = "shelf.name")
   RackDetail toDetail(final RackEntity rack);
 
   default List<RackModel> toModels(final List<RackEntity> racks) {
@@ -61,5 +60,32 @@ public interface RackMapper {
       details.add(this.toDetail(rack));
     });
     return details;
+  }
+
+  default ListWithPagination<RackEntity> toEntitiesWithPagination(
+      final ListWithPagination<RackModel> models) {
+
+    return ListWithPagination
+        .<RackEntity>builder()
+        .list(toEntities(models.getList()))
+        .pageSize(models.getPageSize())
+        .pageNumber(models.getPageNumber())
+        .totalPages(models.getTotalPages())
+        .totalPageRecords(models.getTotalPageRecords())
+        .totalRecords(models.getTotalRecords())
+        .build();
+  }
+
+  default ListWithPagination<RackModel> toModelsWithPagination(
+      final ListWithPagination<RackEntity> entities) {
+    return ListWithPagination
+        .<RackModel>builder()
+        .list(toModels(entities.getList()))
+        .pageSize(entities.getPageSize())
+        .pageNumber(entities.getPageNumber())
+        .totalPages(entities.getTotalPages())
+        .totalPageRecords(entities.getTotalPageRecords())
+        .totalRecords(entities.getTotalRecords())
+        .build();
   }
 }

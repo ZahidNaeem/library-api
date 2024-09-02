@@ -3,6 +3,7 @@ package com.alabtaal.library.mapper;
 import com.alabtaal.library.entity.BookTransHeaderEntity;
 import com.alabtaal.library.mapper.qualifier.Qualifier;
 import com.alabtaal.library.model.BookTransHeaderModel;
+import com.alabtaal.library.payload.response.ListWithPagination;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
@@ -12,17 +13,15 @@ import org.mapstruct.Mapping;
 
 @Mapper(
     componentModel = "spring",
-    uses = {Qualifier.class},
+    uses = {Qualifier.class, BookTransLineMapper.class},
     injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
 public interface BookTransHeaderMapper {
 
-  @Mapping(target = "reader", qualifiedByName = "readerETM")
-  @Mapping(target = "bookTransLines", qualifiedByName = "bookTransLineModels")
+  @Mapping(target = "reader", source = "reader.id")
   BookTransHeaderModel toModel(final BookTransHeaderEntity bookTransHeader);
 
   @Mapping(target = "reader", qualifiedByName = "readerMTE")
-  @Mapping(target = "bookTransLines", qualifiedByName = "bookTransLineEntities")
   BookTransHeaderEntity toEntity(final BookTransHeaderModel model);
 
   default List<BookTransHeaderModel> toModels(final List<BookTransHeaderEntity> bookTransHeaders) {
@@ -45,5 +44,32 @@ public interface BookTransHeaderMapper {
       bookTransHeaders.add(this.toEntity(model));
     });
     return bookTransHeaders;
+  }
+
+  default ListWithPagination<BookTransHeaderEntity> toEntitiesWithPagination(
+      final ListWithPagination<BookTransHeaderModel> models) {
+
+    return ListWithPagination
+        .<BookTransHeaderEntity>builder()
+        .list(toEntities(models.getList()))
+        .pageSize(models.getPageSize())
+        .pageNumber(models.getPageNumber())
+        .totalPages(models.getTotalPages())
+        .totalPageRecords(models.getTotalPageRecords())
+        .totalRecords(models.getTotalRecords())
+        .build();
+  }
+
+  default ListWithPagination<BookTransHeaderModel> toModelsWithPagination(
+      final ListWithPagination<BookTransHeaderEntity> entities) {
+    return ListWithPagination
+        .<BookTransHeaderModel>builder()
+        .list(toModels(entities.getList()))
+        .pageSize(entities.getPageSize())
+        .pageNumber(entities.getPageNumber())
+        .totalPages(entities.getTotalPages())
+        .totalPageRecords(entities.getTotalPageRecords())
+        .totalRecords(entities.getTotalRecords())
+        .build();
   }
 }
