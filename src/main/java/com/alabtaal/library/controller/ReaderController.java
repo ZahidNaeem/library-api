@@ -34,34 +34,8 @@ public class ReaderController {
   private static final Logger LOG = LoggerFactory.getLogger(ReaderController.class);
 
   private final ReaderService readerService;
-  private final ReaderMapper readerMapper;
 
   @GetMapping
-  public ResponseEntity<ApiResponse<ListWithPagination<ReaderModel>>> findAll(
-      @RequestParam(required = false) final Integer pageNumber,
-      @RequestParam(required = false) final Integer pageSize,
-      @RequestParam(required = false) final String sortBy,
-      @RequestParam(required = false) final String sortDirection)
-      throws BadRequestException, InternalServerErrorException {
-    final ListWithPagination<ReaderModel> readers = readerService.findAll(
-        pageNumber,
-        pageSize,
-        sortBy,
-        sortDirection
-    );
-    return ResponseEntity.ok(
-        ApiResponse
-            .<ListWithPagination<ReaderModel>>builder()
-            .success(true)
-            .message(
-                "Got readers successfully with pagination - Page Number: " + readers.getPageNumber()
-                    + " Page Size: " + readers.getPageSize() + " Total Pages: "
-                    + readers.getTotalPages())
-            .entity(readers)
-            .build());
-  }
-
-  @GetMapping(value = "/all")
   public ResponseEntity<ApiResponse<List<ReaderModel>>> findAll()
       throws InternalServerErrorException {
     return ResponseEntity.ok(
