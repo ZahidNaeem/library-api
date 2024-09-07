@@ -61,7 +61,7 @@ public class VolumeEntity extends Auditable<String> {
   @JoinColumn(name = "rack_id")
   private RackEntity rack;
 
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "volume")
+  @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "volume")
   @Exclude
   private List<BookTransLineEntity> bookTransLines;
 

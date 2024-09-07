@@ -64,11 +64,11 @@ public class BookEntity extends Auditable<String> {
   @Column(name = "remarks")
   private String remarks;
 
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "book")
+  @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "book")
   @Exclude
   private List<VolumeEntity> volumes;
 
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "book")
+  @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "book")
   @Exclude
   private List<BookTransLineEntity> bookTransLines;
 

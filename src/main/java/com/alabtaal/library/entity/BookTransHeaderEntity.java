@@ -60,7 +60,7 @@ public class BookTransHeaderEntity extends Auditable<String> {
   @Column(name = "remarks")
   private String remarks;
 
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "bookTransHeader")
+  @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "bookTransHeader")
   @Exclude
   private List<BookTransLineEntity> bookTransLines;
 

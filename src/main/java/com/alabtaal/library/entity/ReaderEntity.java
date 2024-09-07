@@ -47,7 +47,7 @@ public class ReaderEntity extends Auditable<String> {
   @Column(name = "remarks")
   private String remarks;
 
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "reader")
+  @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "reader")
   @Exclude
   private List<BookTransHeaderEntity> bookTransHeaders;
 
