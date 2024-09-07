@@ -34,34 +34,8 @@ public class VolumeController {
   private static final Logger LOG = LoggerFactory.getLogger(VolumeController.class);
 
   private final VolumeService volumeService;
-  private final VolumeMapper volumeMapper;
 
   @GetMapping
-  public ResponseEntity<ApiResponse<ListWithPagination<VolumeModel>>> findAll(
-      @RequestParam(required = false) final Integer pageNumber,
-      @RequestParam(required = false) final Integer pageSize,
-      @RequestParam(required = false) final String sortBy,
-      @RequestParam(required = false) final String sortDirection)
-      throws BadRequestException, InternalServerErrorException {
-    final ListWithPagination<VolumeModel> volumes = volumeService.findAll(
-        pageNumber,
-        pageSize,
-        sortBy,
-        sortDirection
-    );
-    return ResponseEntity.ok(
-        ApiResponse
-            .<ListWithPagination<VolumeModel>>builder()
-            .success(true)
-            .message(
-                "Got volumes successfully with pagination - Page Number: " + volumes.getPageNumber()
-                    + " Page Size: " + volumes.getPageSize() + " Total Pages: "
-                    + volumes.getTotalPages())
-            .entity(volumes)
-            .build());
-  }
-
-  @GetMapping(value = "/all")
   public ResponseEntity<ApiResponse<List<VolumeModel>>> findAll()
       throws InternalServerErrorException {
     return ResponseEntity.ok(
@@ -73,7 +47,7 @@ public class VolumeController {
             .build());
   }
 
-  @GetMapping(value = "/search")
+  @PostMapping(value = "/search")
   public ResponseEntity<ApiResponse<ListWithPagination<VolumeModel>>> searchVolumes(
       @RequestBody final Map<String, Object> filters,
       @RequestParam(required = false) final Integer pageNumber,

@@ -34,34 +34,8 @@ public class RackController {
   private static final Logger LOG = LoggerFactory.getLogger(RackController.class);
 
   private final RackService rackService;
-  private final RackMapper rackMapper;
 
   @GetMapping
-  public ResponseEntity<ApiResponse<ListWithPagination<RackModel>>> findAll(
-      @RequestParam(required = false) final Integer pageNumber,
-      @RequestParam(required = false) final Integer pageSize,
-      @RequestParam(required = false) final String sortBy,
-      @RequestParam(required = false) final String sortDirection)
-      throws BadRequestException, InternalServerErrorException {
-    final ListWithPagination<RackModel> racks = rackService.findAll(
-        pageNumber,
-        pageSize,
-        sortBy,
-        sortDirection
-    );
-    return ResponseEntity.ok(
-        ApiResponse
-            .<ListWithPagination<RackModel>>builder()
-            .success(true)
-            .message(
-                "Got racks successfully with pagination - Page Number: " + racks.getPageNumber()
-                    + " Page Size: " + racks.getPageSize() + " Total Pages: "
-                    + racks.getTotalPages())
-            .entity(racks)
-            .build());
-  }
-
-  @GetMapping(value = "/all")
   public ResponseEntity<ApiResponse<List<RackModel>>> findAll()
       throws InternalServerErrorException {
     return ResponseEntity.ok(
@@ -73,7 +47,7 @@ public class RackController {
             .build());
   }
 
-  @GetMapping(value = "/search")
+  @PostMapping(value = "/search")
   public ResponseEntity<ApiResponse<ListWithPagination<RackModel>>> searchRacks(
       @RequestBody final Map<String, Object> filters,
       @RequestParam(required = false) final Integer pageNumber,

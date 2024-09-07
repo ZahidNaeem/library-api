@@ -34,34 +34,8 @@ public class ResearcherController {
   private static final Logger LOG = LoggerFactory.getLogger(ResearcherController.class);
 
   private final ResearcherService researcherService;
-  private final ResearcherMapper researcherMapper;
 
   @GetMapping
-  public ResponseEntity<ApiResponse<ListWithPagination<ResearcherModel>>> findAll(
-      @RequestParam(required = false) final Integer pageNumber,
-      @RequestParam(required = false) final Integer pageSize,
-      @RequestParam(required = false) final String sortBy,
-      @RequestParam(required = false) final String sortDirection)
-      throws BadRequestException, InternalServerErrorException {
-    final ListWithPagination<ResearcherModel> researchers = researcherService.findAll(
-        pageNumber,
-        pageSize,
-        sortBy,
-        sortDirection
-    );
-    return ResponseEntity.ok(
-        ApiResponse
-            .<ListWithPagination<ResearcherModel>>builder()
-            .success(true)
-            .message(
-                "Got researchers successfully with pagination - Page Number: " + researchers.getPageNumber()
-                    + " Page Size: " + researchers.getPageSize() + " Total Pages: "
-                    + researchers.getTotalPages())
-            .entity(researchers)
-            .build());
-  }
-
-  @GetMapping(value = "/all")
   public ResponseEntity<ApiResponse<List<ResearcherModel>>> findAll()
       throws InternalServerErrorException {
     return ResponseEntity.ok(
@@ -73,7 +47,7 @@ public class ResearcherController {
             .build());
   }
 
-  @GetMapping(value = "/search")
+  @PostMapping(value = "/search")
   public ResponseEntity<ApiResponse<ListWithPagination<ResearcherModel>>> searchResearchers(
       @RequestBody final Map<String, Object> filters,
       @RequestParam(required = false) final Integer pageNumber,

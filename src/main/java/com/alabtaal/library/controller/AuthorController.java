@@ -36,31 +36,6 @@ public class AuthorController {
   private final AuthorService authorService;
 
   @GetMapping
-  public ResponseEntity<ApiResponse<ListWithPagination<AuthorModel>>> findAll(
-      @RequestParam(required = false) final Integer pageNumber,
-      @RequestParam(required = false) final Integer pageSize,
-      @RequestParam(required = false) final String sortBy,
-      @RequestParam(required = false) final String sortDirection)
-      throws BadRequestException, InternalServerErrorException {
-    final ListWithPagination<AuthorModel> authors = authorService.findAll(
-        pageNumber,
-        pageSize,
-        sortBy,
-        sortDirection
-    );
-    return ResponseEntity.ok(
-        ApiResponse
-            .<ListWithPagination<AuthorModel>>builder()
-            .success(true)
-            .message(
-                "Got authors successfully with pagination - Page Number: " + authors.getPageNumber()
-                    + " Page Size: " + authors.getPageSize() + " Total Pages: "
-                    + authors.getTotalPages())
-            .entity(authors)
-            .build());
-  }
-
-  @GetMapping(value = "/all")
   public ResponseEntity<ApiResponse<List<AuthorModel>>> findAll()
       throws InternalServerErrorException {
     return ResponseEntity.ok(
@@ -72,7 +47,7 @@ public class AuthorController {
             .build());
   }
 
-  @GetMapping(value = "/search")
+  @PostMapping(value = "/search")
   public ResponseEntity<ApiResponse<ListWithPagination<AuthorModel>>> searchAuthors(
       @RequestBody final Map<String, Object> filters,
       @RequestParam(required = false) final Integer pageNumber,

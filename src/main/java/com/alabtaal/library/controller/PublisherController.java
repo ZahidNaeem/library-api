@@ -34,34 +34,8 @@ public class PublisherController {
   private static final Logger LOG = LoggerFactory.getLogger(PublisherController.class);
 
   private final PublisherService publisherService;
-  private final PublisherMapper publisherMapper;
 
   @GetMapping
-  public ResponseEntity<ApiResponse<ListWithPagination<PublisherModel>>> findAll(
-      @RequestParam(required = false) final Integer pageNumber,
-      @RequestParam(required = false) final Integer pageSize,
-      @RequestParam(required = false) final String sortBy,
-      @RequestParam(required = false) final String sortDirection)
-      throws BadRequestException, InternalServerErrorException {
-    final ListWithPagination<PublisherModel> publishers = publisherService.findAll(
-        pageNumber,
-        pageSize,
-        sortBy,
-        sortDirection
-    );
-    return ResponseEntity.ok(
-        ApiResponse
-            .<ListWithPagination<PublisherModel>>builder()
-            .success(true)
-            .message(
-                "Got publishers successfully with pagination - Page Number: " + publishers.getPageNumber()
-                    + " Page Size: " + publishers.getPageSize() + " Total Pages: "
-                    + publishers.getTotalPages())
-            .entity(publishers)
-            .build());
-  }
-
-  @GetMapping(value = "/all")
   public ResponseEntity<ApiResponse<List<PublisherModel>>> findAll()
       throws InternalServerErrorException {
     return ResponseEntity.ok(
@@ -73,7 +47,7 @@ public class PublisherController {
             .build());
   }
 
-  @GetMapping(value = "/search")
+  @PostMapping(value = "/search")
   public ResponseEntity<ApiResponse<ListWithPagination<PublisherModel>>> searchPublishers(
       @RequestBody final Map<String, Object> filters,
       @RequestParam(required = false) final Integer pageNumber,

@@ -35,34 +35,8 @@ public class SubjectController {
   private static final Logger LOG = LoggerFactory.getLogger(SubjectController.class);
 
   private final SubjectService subjectService;
-  private final SubjectMapper subjectMapper;
 
   @GetMapping
-  public ResponseEntity<ApiResponse<ListWithPagination<SubjectModel>>> findAll(
-      @RequestParam(required = false) final Integer pageNumber,
-      @RequestParam(required = false) final Integer pageSize,
-      @RequestParam(required = false) final String sortBy,
-      @RequestParam(required = false) final String sortDirection)
-      throws BadRequestException, InternalServerErrorException {
-    final ListWithPagination<SubjectModel> subjects = subjectService.findAll(
-        pageNumber,
-        pageSize,
-        sortBy,
-        sortDirection
-    );
-    return ResponseEntity.ok(
-        ApiResponse
-            .<ListWithPagination<SubjectModel>>builder()
-            .success(true)
-            .message(
-                "Got subjects successfully with pagination - Page Number: " + subjects.getPageNumber()
-                    + " Page Size: " + subjects.getPageSize() + " Total Pages: "
-                    + subjects.getTotalPages())
-            .entity(subjects)
-            .build());
-  }
-
-  @GetMapping(value = "/all")
   public ResponseEntity<ApiResponse<List<SubjectModel>>> findAll()
       throws InternalServerErrorException {
     return ResponseEntity.ok(
@@ -93,24 +67,6 @@ public class SubjectController {
                     + subjects.getPageNumber()
                     + " Page Size: " + subjects.getPageSize() + " Total Pages: "
                     + subjects.getTotalPages())
-            .entity(subjects)
-            .build());
-  }
-
-  @GetMapping(value = "/parent-subjects")
-  public ResponseEntity<ApiResponse<List<SubjectModel>>> findParentSubjects() {
-    final List<SubjectModel> subjects = subjectService.findAll()
-        .stream()
-        .collect(Collectors.toMap(SubjectModel::getName, SubjectModel::getId))
-        .entrySet()
-        .stream()
-        .map((entry) -> SubjectModel.builder().parentSubjectName(entry.getKey()).parentSubject(entry.getValue()).build())
-        .toList();
-    return ResponseEntity.ok(
-        ApiResponse
-            .<List<SubjectModel>>builder()
-            .success(true)
-            .message("Got parent subjects successfully")
             .entity(subjects)
             .build());
   }

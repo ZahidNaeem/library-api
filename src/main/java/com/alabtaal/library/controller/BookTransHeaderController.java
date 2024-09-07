@@ -34,34 +34,8 @@ public class BookTransHeaderController {
   private static final Logger LOG = LoggerFactory.getLogger(BookTransHeaderController.class);
 
   private final BookTransHeaderService bookTransHeaderService;
-  private final BookTransHeaderMapper bookTransHeaderMapper;
 
   @GetMapping
-  public ResponseEntity<ApiResponse<ListWithPagination<BookTransHeaderModel>>> findAll(
-      @RequestParam(required = false) final Integer pageNumber,
-      @RequestParam(required = false) final Integer pageSize,
-      @RequestParam(required = false) final String sortBy,
-      @RequestParam(required = false) final String sortDirection)
-      throws BadRequestException, InternalServerErrorException {
-    final ListWithPagination<BookTransHeaderModel> bookTransHeaders = bookTransHeaderService.findAll(
-        pageNumber,
-        pageSize,
-        sortBy,
-        sortDirection
-    );
-    return ResponseEntity.ok(
-        ApiResponse
-            .<ListWithPagination<BookTransHeaderModel>>builder()
-            .success(true)
-            .message(
-                "Got bookTransHeaders successfully with pagination - Page Number: " + bookTransHeaders.getPageNumber()
-                    + " Page Size: " + bookTransHeaders.getPageSize() + " Total Pages: "
-                    + bookTransHeaders.getTotalPages())
-            .entity(bookTransHeaders)
-            .build());
-  }
-
-  @GetMapping(value = "/all")
   public ResponseEntity<ApiResponse<List<BookTransHeaderModel>>> findAll()
       throws InternalServerErrorException {
     return ResponseEntity.ok(
@@ -73,7 +47,7 @@ public class BookTransHeaderController {
             .build());
   }
 
-  @GetMapping(value = "/search")
+  @PostMapping(value = "/search")
   public ResponseEntity<ApiResponse<ListWithPagination<BookTransHeaderModel>>> searchBookTransHeaders(
       @RequestBody final Map<String, Object> filters,
       @RequestParam(required = false) final Integer pageNumber,

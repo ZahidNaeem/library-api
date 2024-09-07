@@ -34,34 +34,8 @@ public class ShelfController {
   private static final Logger LOG = LoggerFactory.getLogger(ShelfController.class);
 
   private final ShelfService shelfService;
-  private final ShelfMapper shelfMapper;
 
   @GetMapping
-  public ResponseEntity<ApiResponse<ListWithPagination<ShelfModel>>> findAll(
-      @RequestParam(required = false) final Integer pageNumber,
-      @RequestParam(required = false) final Integer pageSize,
-      @RequestParam(required = false) final String sortBy,
-      @RequestParam(required = false) final String sortDirection)
-      throws BadRequestException, InternalServerErrorException {
-    final ListWithPagination<ShelfModel> shelves = shelfService.findAll(
-        pageNumber,
-        pageSize,
-        sortBy,
-        sortDirection
-    );
-    return ResponseEntity.ok(
-        ApiResponse
-            .<ListWithPagination<ShelfModel>>builder()
-            .success(true)
-            .message(
-                "Got shelves successfully with pagination - Page Number: " + shelves.getPageNumber()
-                    + " Page Size: " + shelves.getPageSize() + " Total Pages: "
-                    + shelves.getTotalPages())
-            .entity(shelves)
-            .build());
-  }
-
-  @GetMapping(value = "/all")
   public ResponseEntity<ApiResponse<List<ShelfModel>>> findAll()
       throws InternalServerErrorException {
     return ResponseEntity.ok(
@@ -73,7 +47,7 @@ public class ShelfController {
             .build());
   }
 
-  @GetMapping(value = "/search")
+  @PostMapping(value = "/search")
   public ResponseEntity<ApiResponse<ListWithPagination<ShelfModel>>> searchShelves(
       @RequestBody final Map<String, Object> filters,
       @RequestParam(required = false) final Integer pageNumber,
