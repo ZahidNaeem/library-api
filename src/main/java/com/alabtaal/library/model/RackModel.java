@@ -18,7 +18,7 @@ public class RackModel extends Auditable<String> {
 
   private UUID id;
   private String rowKey;
-  private String rackName;
+  private String name;
   private String remarks;
   private List<VolumeModel> volumes;
   private UUID shelf;

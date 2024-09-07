@@ -1,6 +1,7 @@
 package com.alabtaal.library.entity;
 
 import com.alabtaal.library.enumeration.BookCondition;
+import com.alabtaal.library.enumeration.BookSource;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -58,8 +59,9 @@ public class BookEntity extends Auditable<String> {
   @Enumerated(value = EnumType.STRING)
   private BookCondition bookCondition;
 
-  @Column(name = "purchased")
-  private Integer purchased;
+  @Column(name = "book_source")
+  @Enumerated(value = EnumType.STRING)
+  private BookSource bookSource;
 
   @Column(name = "remarks")
   private String remarks;

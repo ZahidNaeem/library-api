@@ -314,7 +314,7 @@
       </column>
       <column name="PUBLICATION_DATE" type="timestamp"/>
       <column name="BOOK_CONDITION" type="varchar(255)"/>
-      <column name="PURCHASED" type="integer"/>
+      <column name="BOOK_SOURCE" type="varchar(255)"/>
       <column name="AUTHOR_ID" type="${uuid_type}"/>
       <column name="SUBJECT_ID" type="${uuid_type}"/>
       <column name="PUBLISHER_ID" type="${uuid_type}"/>

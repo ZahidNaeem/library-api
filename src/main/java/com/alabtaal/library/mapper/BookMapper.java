@@ -37,7 +37,6 @@ public interface BookMapper {
   @Mapping(target = "subject", qualifiedByName = "subjectMTX")
   @Mapping(target = "publisher", qualifiedByName = "publisherMTX")
   @Mapping(target = "researcher", qualifiedByName = "researcherMTX")
-  @Mapping(target = "purchased", expression = "java(model != null ? model.getPurchased() == 1 ? \"purchased\" : model.getPurchased() == 0 ? \"Gifted\" : \"Other\" : null)")
   @Mapping(target = "volumes", expression = "java(model != null && model.getVolumes() != null ? model.getVolumes().size() : 0)")
   BookExportToExcel toExcel(final BookModel model);
 

@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class RackDetail extends Auditable<String> {
 
   private UUID id;
-  private String rackName;
+  private String name;
   private String remarks;
   private UUID shelf;
   private String shelfName;
