@@ -9,10 +9,12 @@ import com.alabtaal.library.repo.BookRepo;
 import com.alabtaal.library.util.DynamicFilter;
 import com.alabtaal.library.util.ListToPageConverter;
 import com.alabtaal.library.util.Miscellaneous;
+import com.alabtaal.library.util.RelationshipHandler;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -106,13 +108,19 @@ public class BookServiceImpl implements BookService {
       throw new BadRequestException("Record does not exist");
     }
     final BookModel savedModel = save(model);
-    bookModels.set(bookModels.indexOf(model), savedModel);
+        final Optional<BookModel> modelFound = bookModels
+        .stream()
+        .filter(bookModel -> bookModel.getId().equals(savedModel.getId()))
+        .findFirst();
+
+    modelFound.ifPresent(bookModel -> bookModels.set(bookModels.indexOf(bookModel), savedModel));
     return savedModel;
   }
 
   private BookModel save(BookModel model) throws BadRequestException {
     final BookEntity entity = bookMapper.toEntity(model);
-    Miscellaneous.constraintViolation(entity);
+    RelationshipHandler.setParentForChildren(entity);
+Miscellaneous.constraintViolation(entity);
     return bookMapper.toModel(bookRepo.saveAndFlush(entity));
   }
 

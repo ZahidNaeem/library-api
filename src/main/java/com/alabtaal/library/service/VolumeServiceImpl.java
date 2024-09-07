@@ -12,10 +12,12 @@ import com.alabtaal.library.repo.VolumeRepo;
 import com.alabtaal.library.util.DynamicFilter;
 import com.alabtaal.library.util.ListToPageConverter;
 import com.alabtaal.library.util.Miscellaneous;
+import com.alabtaal.library.util.RelationshipHandler;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -110,13 +112,19 @@ public class VolumeServiceImpl implements VolumeService {
       throw new BadRequestException("Record does not exist");
     }
     final VolumeModel savedModel = save(model);
-    volumeModels.set(volumeModels.indexOf(model), savedModel);
+        final Optional<VolumeModel> modelFound = volumeModels
+        .stream()
+        .filter(volumeModel -> volumeModel.getId().equals(savedModel.getId()))
+        .findFirst();
+
+    modelFound.ifPresent(volumeModel -> volumeModels.set(volumeModels.indexOf(volumeModel), savedModel));
     return savedModel;
   }
 
   private VolumeModel save(VolumeModel model) throws BadRequestException {
     final VolumeEntity entity = volumeMapper.toEntity(model);
-    Miscellaneous.constraintViolation(entity);
+    RelationshipHandler.setParentForChildren(entity);
+Miscellaneous.constraintViolation(entity);
     return volumeMapper.toModel(volumeRepo.saveAndFlush(entity));
   }
 

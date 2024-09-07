@@ -9,10 +9,12 @@ import com.alabtaal.library.repo.ResearcherRepo;
 import com.alabtaal.library.util.DynamicFilter;
 import com.alabtaal.library.util.ListToPageConverter;
 import com.alabtaal.library.util.Miscellaneous;
+import com.alabtaal.library.util.RelationshipHandler;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -106,13 +108,19 @@ public class ResearcherServiceImpl implements ResearcherService {
       throw new BadRequestException("Record does not exist");
     }
     final ResearcherModel savedModel = save(model);
-    researcherModels.set(researcherModels.indexOf(model), savedModel);
+        final Optional<ResearcherModel> modelFound = researcherModels
+        .stream()
+        .filter(researcherModel -> researcherModel.getId().equals(savedModel.getId()))
+        .findFirst();
+
+    modelFound.ifPresent(researcherModel -> researcherModels.set(researcherModels.indexOf(researcherModel), savedModel));
     return savedModel;
   }
 
   private ResearcherModel save(ResearcherModel model) throws BadRequestException {
     final ResearcherEntity entity = researcherMapper.toEntity(model);
-    Miscellaneous.constraintViolation(entity);
+    RelationshipHandler.setParentForChildren(entity);
+Miscellaneous.constraintViolation(entity);
     return researcherMapper.toModel(researcherRepo.saveAndFlush(entity));
   }
 

@@ -7,6 +7,7 @@ import com.alabtaal.library.mapper.UserMapper;
 import com.alabtaal.library.payload.request.SignupRequest;
 import com.alabtaal.library.repo.UserRepo;
 import com.alabtaal.library.util.Miscellaneous;
+import com.alabtaal.library.util.RelationshipHandler;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +57,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserEntity save(final UserEntity entity) throws BadRequestException {
-    Miscellaneous.constraintViolation(entity);
+    RelationshipHandler.setParentForChildren(entity);
+Miscellaneous.constraintViolation(entity);
     return userRepo.saveAndFlush(entity);
   }
 

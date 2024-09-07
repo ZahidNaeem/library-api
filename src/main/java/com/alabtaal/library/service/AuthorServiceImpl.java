@@ -9,10 +9,12 @@ import com.alabtaal.library.repo.AuthorRepo;
 import com.alabtaal.library.util.DynamicFilter;
 import com.alabtaal.library.util.ListToPageConverter;
 import com.alabtaal.library.util.Miscellaneous;
+import com.alabtaal.library.util.RelationshipHandler;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -106,13 +108,19 @@ public class AuthorServiceImpl implements AuthorService {
       throw new BadRequestException("Record does not exist");
     }
     final AuthorModel savedModel = save(model);
-    authorModels.set(authorModels.indexOf(model), savedModel);
+        final Optional<AuthorModel> modelFound = authorModels
+        .stream()
+        .filter(authorModel -> authorModel.getId().equals(savedModel.getId()))
+        .findFirst();
+
+    modelFound.ifPresent(authorModel -> authorModels.set(authorModels.indexOf(authorModel), savedModel));
     return savedModel;
   }
 
   private AuthorModel save(AuthorModel model) throws BadRequestException {
     final AuthorEntity entity = authorMapper.toEntity(model);
-    Miscellaneous.constraintViolation(entity);
+    RelationshipHandler.setParentForChildren(entity);
+Miscellaneous.constraintViolation(entity);
     return authorMapper.toModel(authorRepo.saveAndFlush(entity));
   }
 

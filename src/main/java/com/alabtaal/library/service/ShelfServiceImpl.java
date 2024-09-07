@@ -9,10 +9,12 @@ import com.alabtaal.library.repo.ShelfRepo;
 import com.alabtaal.library.util.DynamicFilter;
 import com.alabtaal.library.util.ListToPageConverter;
 import com.alabtaal.library.util.Miscellaneous;
+import com.alabtaal.library.util.RelationshipHandler;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -58,7 +60,7 @@ public class ShelfServiceImpl implements ShelfService {
   }
 
   public ListWithPagination<ShelfModel> searchShelves(
-      Map<String, Object>filters,
+      Map<String, Object> filters,
       final Integer pageNumber,
       final Integer pageSize,
       final String sortBy,
@@ -106,13 +108,19 @@ public class ShelfServiceImpl implements ShelfService {
       throw new BadRequestException("Record does not exist");
     }
     final ShelfModel savedModel = save(model);
-    shelfModels.set(shelfModels.indexOf(model), savedModel);
+    final Optional<ShelfModel> modelFound = shelfModels
+        .stream()
+        .filter(shelfModel -> shelfModel.getId().equals(savedModel.getId()))
+        .findFirst();
+
+    modelFound.ifPresent(shelfModel -> shelfModels.set(shelfModels.indexOf(shelfModel), savedModel));
     return savedModel;
   }
 
   private ShelfModel save(ShelfModel model) throws BadRequestException {
     final ShelfEntity entity = shelfMapper.toEntity(model);
-    Miscellaneous.constraintViolation(entity);
+    RelationshipHandler.setParentForChildren(entity);
+Miscellaneous.constraintViolation(entity);
     return shelfMapper.toModel(shelfRepo.saveAndFlush(entity));
   }
 

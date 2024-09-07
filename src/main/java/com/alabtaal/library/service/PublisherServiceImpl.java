@@ -9,10 +9,12 @@ import com.alabtaal.library.repo.PublisherRepo;
 import com.alabtaal.library.util.DynamicFilter;
 import com.alabtaal.library.util.ListToPageConverter;
 import com.alabtaal.library.util.Miscellaneous;
+import com.alabtaal.library.util.RelationshipHandler;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -106,13 +108,19 @@ public class PublisherServiceImpl implements PublisherService {
       throw new BadRequestException("Record does not exist");
     }
     final PublisherModel savedModel = save(model);
-    publisherModels.set(publisherModels.indexOf(model), savedModel);
+        final Optional<PublisherModel> modelFound = publisherModels
+        .stream()
+        .filter(publisherModel -> publisherModel.getId().equals(savedModel.getId()))
+        .findFirst();
+
+    modelFound.ifPresent(publisherModel -> publisherModels.set(publisherModels.indexOf(publisherModel), savedModel));
     return savedModel;
   }
 
   private PublisherModel save(PublisherModel model) throws BadRequestException {
     final PublisherEntity entity = publisherMapper.toEntity(model);
-    Miscellaneous.constraintViolation(entity);
+    RelationshipHandler.setParentForChildren(entity);
+Miscellaneous.constraintViolation(entity);
     return publisherMapper.toModel(publisherRepo.saveAndFlush(entity));
   }
 

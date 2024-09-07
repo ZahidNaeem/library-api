@@ -9,10 +9,12 @@ import com.alabtaal.library.repo.ReaderRepo;
 import com.alabtaal.library.util.DynamicFilter;
 import com.alabtaal.library.util.ListToPageConverter;
 import com.alabtaal.library.util.Miscellaneous;
+import com.alabtaal.library.util.RelationshipHandler;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -106,13 +108,19 @@ public class ReaderServiceImpl implements ReaderService {
       throw new BadRequestException("Record does not exist");
     }
     final ReaderModel savedModel = save(model);
-    readerModels.set(readerModels.indexOf(model), savedModel);
+        final Optional<ReaderModel> modelFound = readerModels
+        .stream()
+        .filter(readerModel -> readerModel.getId().equals(savedModel.getId()))
+        .findFirst();
+
+    modelFound.ifPresent(readerModel -> readerModels.set(readerModels.indexOf(readerModel), savedModel));
     return savedModel;
   }
 
   private ReaderModel save(ReaderModel model) throws BadRequestException {
     final ReaderEntity entity = readerMapper.toEntity(model);
-    Miscellaneous.constraintViolation(entity);
+    RelationshipHandler.setParentForChildren(entity);
+Miscellaneous.constraintViolation(entity);
     return readerMapper.toModel(readerRepo.saveAndFlush(entity));
   }
 

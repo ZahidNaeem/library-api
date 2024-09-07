@@ -9,10 +9,12 @@ import com.alabtaal.library.repo.BookTransLineRepo;
 import com.alabtaal.library.util.DynamicFilter;
 import com.alabtaal.library.util.ListToPageConverter;
 import com.alabtaal.library.util.Miscellaneous;
+import com.alabtaal.library.util.RelationshipHandler;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -106,13 +108,19 @@ public class BookTransLineServiceImpl implements BookTransLineService {
       throw new BadRequestException("Record does not exist");
     }
     final BookTransLineModel savedModel = save(model);
-    bookTransLineModels.set(bookTransLineModels.indexOf(model), savedModel);
+        final Optional<BookTransLineModel> modelFound = bookTransLineModels
+        .stream()
+        .filter(bookTransLineModel -> bookTransLineModel.getId().equals(savedModel.getId()))
+        .findFirst();
+
+    modelFound.ifPresent(bookTransLineModel -> bookTransLineModels.set(bookTransLineModels.indexOf(bookTransLineModel), savedModel));
     return savedModel;
   }
 
   private BookTransLineModel save(BookTransLineModel model) throws BadRequestException {
     final BookTransLineEntity entity = bookTransLineMapper.toEntity(model);
-    Miscellaneous.constraintViolation(entity);
+    RelationshipHandler.setParentForChildren(entity);
+Miscellaneous.constraintViolation(entity);
     return bookTransLineMapper.toModel(bookTransLineRepo.saveAndFlush(entity));
   }
 

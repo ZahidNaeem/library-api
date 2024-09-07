@@ -9,6 +9,7 @@ import com.alabtaal.library.repo.SubjectRepo;
 import com.alabtaal.library.util.DynamicFilter;
 import com.alabtaal.library.util.ListToPageConverter;
 import com.alabtaal.library.util.Miscellaneous;
+import com.alabtaal.library.util.RelationshipHandler;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -118,7 +119,8 @@ public class SubjectServiceImpl implements SubjectService {
 
   private SubjectModel save(SubjectModel model) throws BadRequestException {
     final SubjectEntity entity = subjectMapper.toEntity(model);
-    Miscellaneous.constraintViolation(entity);
+    RelationshipHandler.setParentForChildren(entity);
+Miscellaneous.constraintViolation(entity);
     return subjectMapper.toModel(subjectRepo.saveAndFlush(entity));
   }
 

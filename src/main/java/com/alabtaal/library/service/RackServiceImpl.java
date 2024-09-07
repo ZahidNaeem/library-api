@@ -9,10 +9,12 @@ import com.alabtaal.library.repo.RackRepo;
 import com.alabtaal.library.util.DynamicFilter;
 import com.alabtaal.library.util.ListToPageConverter;
 import com.alabtaal.library.util.Miscellaneous;
+import com.alabtaal.library.util.RelationshipHandler;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -106,13 +108,19 @@ public class RackServiceImpl implements RackService {
       throw new BadRequestException("Record does not exist");
     }
     final RackModel savedModel = save(model);
-    rackModels.set(rackModels.indexOf(model), savedModel);
+        final Optional<RackModel> modelFound = rackModels
+        .stream()
+        .filter(rackModel -> rackModel.getId().equals(savedModel.getId()))
+        .findFirst();
+
+    modelFound.ifPresent(rackModel -> rackModels.set(rackModels.indexOf(rackModel), savedModel));
     return savedModel;
   }
 
   private RackModel save(RackModel model) throws BadRequestException {
     final RackEntity entity = rackMapper.toEntity(model);
-    Miscellaneous.constraintViolation(entity);
+    RelationshipHandler.setParentForChildren(entity);
+Miscellaneous.constraintViolation(entity);
     return rackMapper.toModel(rackRepo.saveAndFlush(entity));
   }
 

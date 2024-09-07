@@ -12,10 +12,12 @@ import com.alabtaal.library.repo.BookTransHeaderRepo;
 import com.alabtaal.library.util.DynamicFilter;
 import com.alabtaal.library.util.ListToPageConverter;
 import com.alabtaal.library.util.Miscellaneous;
+import com.alabtaal.library.util.RelationshipHandler;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -109,13 +111,19 @@ public class BookTransHeaderServiceImpl implements BookTransHeaderService {
       throw new BadRequestException("Record does not exist");
     }
     final BookTransHeaderModel savedModel = save(model);
-    bookTransHeaderModels.set(bookTransHeaderModels.indexOf(model), savedModel);
+        final Optional<BookTransHeaderModel> modelFound = bookTransHeaderModels
+        .stream()
+        .filter(bookTransHeaderModel -> bookTransHeaderModel.getId().equals(savedModel.getId()))
+        .findFirst();
+
+    modelFound.ifPresent(bookTransHeaderModel -> bookTransHeaderModels.set(bookTransHeaderModels.indexOf(bookTransHeaderModel), savedModel));
     return savedModel;
   }
 
   private BookTransHeaderModel save(BookTransHeaderModel model) throws BadRequestException {
     final BookTransHeaderEntity entity = bookTransHeaderMapper.toEntity(model);
-    Miscellaneous.constraintViolation(entity);
+    RelationshipHandler.setParentForChildren(entity);
+Miscellaneous.constraintViolation(entity);
     return bookTransHeaderMapper.toModel(bookTransHeaderRepo.saveAndFlush(entity));
   }
 
