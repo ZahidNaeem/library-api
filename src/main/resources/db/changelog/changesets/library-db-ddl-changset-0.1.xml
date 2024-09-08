@@ -17,7 +17,7 @@
   <property name="currentSchema" value="library"/>
 
   <changeSet id="create-table-authors" author="Zahid Naeem">
-    <preConditions>
+     <preConditions onFail="MARK_RAN">
       <not>
         <tableExists tableName="authors" schemaName="${currentSchema}"/>
       </not>
@@ -40,7 +40,7 @@
   </changeSet>
 
   <changeSet id="create-table-publishers" author="Zahid Naeem">
-    <preConditions>
+     <preConditions onFail="MARK_RAN">
       <not>
         <tableExists tableName="publishers" schemaName="${currentSchema}"/>
       </not>
@@ -63,7 +63,7 @@
   </changeSet>
 
   <changeSet id="create-table-readers" author="Zahid Naeem">
-    <preConditions>
+     <preConditions onFail="MARK_RAN">
       <not>
         <tableExists tableName="readers" schemaName="${currentSchema}"/>
       </not>
@@ -86,7 +86,7 @@
   </changeSet>
 
   <changeSet id="create-table-researchers" author="Zahid Naeem">
-    <preConditions>
+     <preConditions onFail="MARK_RAN">
       <not>
         <tableExists tableName="researchers" schemaName="${currentSchema}"/>
       </not>
@@ -109,7 +109,7 @@
   </changeSet>
 
   <changeSet id="create-table-roles" author="Zahid Naeem">
-    <preConditions>
+     <preConditions onFail="MARK_RAN">
       <not>
         <tableExists tableName="roles" schemaName="${currentSchema}"/>
       </not>
@@ -131,7 +131,7 @@
   </changeSet>
 
   <changeSet id="create-table-subjects" author="Zahid Naeem">
-    <preConditions>
+     <preConditions onFail="MARK_RAN">
       <not>
         <tableExists tableName="subjects" schemaName="${currentSchema}"/>
       </not>
@@ -173,7 +173,7 @@
   </changeSet>
 
   <changeSet id="create-table-users" author="Zahid Naeem">
-    <preConditions>
+     <preConditions onFail="MARK_RAN">
       <not>
         <tableExists tableName="users" schemaName="${currentSchema}"/>
       </not>
@@ -206,7 +206,7 @@
   </changeSet>
 
   <changeSet id="create-table-user_roles" author="Zahid Naeem">
-    <preConditions>
+     <preConditions onFail="MARK_RAN">
       <not>
         <tableExists tableName="user_roles" schemaName="${currentSchema}"/>
       </not>
@@ -238,7 +238,7 @@
   </changeSet>
 
   <changeSet id="create-table-shelves" author="Zahid Naeem">
-    <preConditions>
+     <preConditions onFail="MARK_RAN">
       <not>
         <tableExists tableName="shelves" schemaName="${currentSchema}"/>
       </not>
@@ -263,7 +263,7 @@
   </changeSet>
 
   <changeSet id="create-table-racks" author="Zahid Naeem">
-    <preConditions>
+     <preConditions onFail="MARK_RAN">
       <not>
         <tableExists tableName="racks" schemaName="${currentSchema}"/>
       </not>
@@ -271,9 +271,6 @@
     <createTable tableName="racks" schemaName="${currentSchema}">
       <column name="RACK_ID" type="${uuid_type}" valueComputed="${uuid_function}">
         <constraints primaryKey="true" nullable="false" primaryKeyName="pk_racks"/>
-      </column>
-      <column name="ROW_KEY" type="varchar(255)">
-        <constraints nullable="false"/>
       </column>
       <column name="RACK_NAME" type="varchar(255)">
         <constraints nullable="false"/>
@@ -300,7 +297,7 @@
   </changeSet>
 
   <changeSet id="create-table-books" author="Zahid Naeem">
-    <preConditions>
+     <preConditions onFail="MARK_RAN">
       <not>
         <tableExists tableName="books" schemaName="${currentSchema}"/>
       </not>
@@ -373,7 +370,7 @@
   </changeSet>
 
   <changeSet id="create-table-volumes" author="Zahid Naeem">
-    <preConditions>
+     <preConditions onFail="MARK_RAN">
       <not>
         <tableExists tableName="volumes" schemaName="${currentSchema}"/>
       </not>
@@ -383,9 +380,6 @@
         <constraints primaryKey="true" nullable="false" primaryKeyName="pk_volumes"/>
       </column>
       <column name="VOLUME_NAME" type="varchar(255)">
-        <constraints nullable="false"/>
-      </column>
-      <column name="ROW_KEY" type="varchar(255)">
         <constraints nullable="false"/>
       </column>
       <column name="BOOK_ID" type="${uuid_type}"/>
@@ -409,7 +403,7 @@
   </changeSet>
 
   <changeSet id="create-table-book_trans_headers" author="Zahid Naeem">
-    <preConditions>
+     <preConditions onFail="MARK_RAN">
       <not>
         <tableExists tableName="book_trans_headers" schemaName="${currentSchema}"/>
       </not>
@@ -417,12 +411,6 @@
     <createTable tableName="book_trans_headers" schemaName="${currentSchema}">
       <column name="HEADER_ID" type="${uuid_type}" valueComputed="${uuid_function}">
         <constraints primaryKey="true" nullable="false" primaryKeyName="pk_book_trans_headers"/>
-      </column>
-      <column name="TRANS_TYPE" type="varchar(255)">
-        <constraints nullable="false"/>
-      </column>
-      <column name="TRANS_DATE" type="timestamp">
-        <constraints nullable="false"/>
       </column>
       <column name="READER_ID" type="${uuid_type}">
         <constraints nullable="false"/>
@@ -441,7 +429,7 @@
   </changeSet>
 
   <changeSet id="create-table-book_trans_lines" author="Zahid Naeem">
-    <preConditions>
+     <preConditions onFail="MARK_RAN">
       <not>
         <tableExists tableName="book_trans_lines" schemaName="${currentSchema}"/>
       </not>
@@ -450,28 +438,26 @@
       <column name="LINE_ID" type="${uuid_type}" valueComputed="${uuid_function}">
         <constraints primaryKey="true" nullable="false" primaryKeyName="pk_book_trans_lines"/>
       </column>
-      <column name="ROW_KEY" type="varchar(255)">
-        <constraints nullable="false"/>
-      </column>
-      <column name="BOOK_ID" type="${uuid_type}">
-        <constraints nullable="false"/>
-      </column>
       <column name="VOLUME_ID" type="${uuid_type}">
         <constraints nullable="false"/>
       </column>
-      <column name="HEADER_ID" type="${uuid_type}"/>
+      <column name="ISSUANCE_DATE" type="TIMESTAMP">
+        <constraints nullable="false"/>
+      </column>
+      <column name="RECEIPT_DATE" type="TIMESTAMP"/>
+      <column name="REMARKS" type="varchar(255)"/>
+      <column name="HEADER_ID" type="${uuid_type}">
+        <constraints nullable="false"/>
+      </column>
       <column name="CREATED_BY" type="varchar(255)"/>
       <column name="CREATION_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
       <column name="LAST_UPDATED_BY" type="varchar(255)"/>
       <column name="LAST_UPDATE_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
     </createTable>
-    <addForeignKeyConstraint constraintName="FK_BOOK_TRANS_LINES_ON_BOOK"
-      baseTableName="book_trans_lines"
-      baseTableSchemaName="${currentSchema}"
-      referencedTableName="books"
-      referencedTableSchemaName="${currentSchema}"
-      baseColumnNames="book_id"
-      referencedColumnNames="book_id"/>
+    <addUniqueConstraint constraintName="header_id_volume_id_uk"
+      tableName="book_trans_lines"
+      schemaName="${currentSchema}"
+      columnNames="header_id, volume_id"/>
 
     <addForeignKeyConstraint constraintName="FK_BOOK_TRANS_LINES_ON_HEADER"
       baseTableName="book_trans_lines"
@@ -490,72 +476,30 @@
       referencedColumnNames="volume_id"/>
   </changeSet>
 
-  <changeSet id="create-view-book_trans_vu" author="Zahid Naeem">
-    <comment>Creating view book_trans_vu</comment>
-    <createView
-      schemaName="${currentSchema}"
-      viewName="book_trans_vu"
-      replaceIfExists="true">
-      SELECT 0 TNUM
-           ,'ADDED' TRANS_TYPE
-           ,V.CREATION_DATE TRANS_DATE
-           ,V.VOLUME_ID
-           ,V.VOLUME_NAME
-           ,B.BOOK_ID
-           ,B.BOOK_NAME
-      FROM VOLUMES V, BOOKS B
-      WHERE V.BOOK_ID = B.BOOK_ID
-      UNION ALL
-      SELECT -1 TNUM
-           ,H.TRANS_TYPE
-           ,H.TRANS_DATE
-           ,L.VOLUME_ID
-           ,V.VOLUME_NAME
-           ,B.BOOK_ID
-           ,B.BOOK_NAME
-      FROM BOOK_TRANS_LINES L
-         ,BOOK_TRANS_HEADERS H
-         ,VOLUMES V
-         ,BOOKS B
-      WHERE     L.HEADER_ID = H.HEADER_ID
-        AND L.VOLUME_ID = V.VOLUME_ID
-        AND V.BOOK_ID = B.BOOK_ID
-        AND H.TRANS_TYPE = 'ISSUE'
-      UNION ALL
-      SELECT 1 TNUM
-           ,H.TRANS_TYPE
-           ,H.TRANS_DATE
-           ,L.VOLUME_ID
-           ,V.VOLUME_NAME
-           ,B.BOOK_ID
-           ,B.BOOK_NAME
-      FROM BOOK_TRANS_LINES L
-         ,BOOK_TRANS_HEADERS H
-         ,VOLUMES V
-         ,BOOKS B
-      WHERE     L.HEADER_ID = H.HEADER_ID
-        AND L.VOLUME_ID = V.VOLUME_ID
-        AND V.BOOK_ID = B.BOOK_ID
-        AND H.TRANS_TYPE = 'RECEIPT'
-    </createView>
-  </changeSet>
-
   <changeSet id="create-function-get_subject_hierarchy" author="Zahid Naeem">
     <createProcedure
       schemaName="${currentSchema}"
       procedureName="get_subject_hierarchy">
-      CREATE OR REPLACE FUNCTION GET_SUBJECT_HIERARCHY(P_SUBJECT_ID ${uuid_type})
-      RETURN VARCHAR2
+      CREATE
+      OR REPLACE FUNCTION GET_SUBJECT_HIERARCHY(P_SUBJECT_ID
+      ${uuid_type}
+      )
+      RETURN
+      VARCHAR2
       IS
-        V_VALUE   VARCHAR2(4000);
+      V_VALUE
+      VARCHAR2
+      (
+      4000
+      );
       BEGIN
-        SELECT LISTAGG (S.SUBJECT_ID, ',') WITHIN GROUP (ORDER BY S.SUBJECT_ID)
-          INTO V_VALUE
-          FROM SUBJECT S
-          START WITH S.SUBJECT_ID = P_SUBJECT_ID
-          CONNECT BY PRIOR S.SUBJECT_ID = S.PARENT_SUBJECT_ID;
-  
-        RETURN V_VALUE;
+      SELECT LISTAGG(S.SUBJECT_ID, ',') WITHIN GROUP (ORDER BY S.SUBJECT_ID)
+      INTO V_VALUE
+      FROM SUBJECT S
+      START WITH S.SUBJECT_ID = P_SUBJECT_ID
+      CONNECT BY PRIOR S.SUBJECT_ID = S.PARENT_SUBJECT_ID;
+
+      RETURN V_VALUE;
       END;
     </createProcedure>
   </changeSet>
@@ -564,15 +508,18 @@
     <createProcedure
       schemaName="${currentSchema}"
       procedureName="record_exists">
-        CREATE OR REPLACE FUNCTION RECORD_EXISTS (P_TABLE          VARCHAR2,
+      CREATE
+      OR REPLACE FUNCTION RECORD_EXISTS (P_TABLE          VARCHAR2,
                                                   P_COLUMN         VARCHAR2,
                                                   P_COLUMN_VALUE   VARCHAR2)
         RETURN SMALLINT
         IS
           V_QUERY    VARCHAR2 (4000);
-          V_RESULT   SMALLINT;
-        BEGIN
-          V_QUERY :=
+          V_RESULT
+      SMALLINT;
+      BEGIN
+          V_QUERY
+      :=
           'SELECT COUNT(1) FROM '
           || P_TABLE
           || ' WHERE '
@@ -580,10 +527,10 @@
           || ' = '
           || P_COLUMN_VALUE;
 
-          EXECUTE IMMEDIATE V_QUERY INTO V_RESULT;
+      EXECUTE IMMEDIATE V_QUERY INTO V_RESULT;
 
-          RETURN V_RESULT;
-        END;
+      RETURN V_RESULT;
+      END;
     </createProcedure>
   </changeSet>
 </databaseChangeLog>
