@@ -6,9 +6,9 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Arrays;
 
 public enum BookSource {
-  PURCHASED("purchased"),
-  GIFTED("gifted"),
-  OTHER("other");
+  PURCHASED("Purchased"),
+  GIFTED("Gifted"),
+  OTHER("Other");
 
   private final String value;
 

@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Arrays;
 
 public enum BookCondition {
-  NEW("new"),
-  OLD("old");
+  NEW("New"),
+  OLD("Old");
 
   private final String value;
 
