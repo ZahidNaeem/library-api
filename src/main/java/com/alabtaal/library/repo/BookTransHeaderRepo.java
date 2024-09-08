@@ -14,6 +14,4 @@ public interface BookTransHeaderRepo extends JpaRepository<BookTransHeaderEntity
   Page<BookTransHeaderEntity> findAll(Specification<BookTransHeaderEntity> spec, final Pageable pageable);
 
   List<BookTransHeaderEntity> findAllByReader(final ReaderEntity reader);
-
-  List<BookTransHeaderEntity> findAllByTransType(final String transType);
 }
