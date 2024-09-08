@@ -36,7 +36,8 @@ public class ResearcherServiceImpl implements ResearcherService {
 
   @EventListener(classes = ApplicationStartedEvent.class)
   @Transactional
-  protected void findAllModels() {
+  @Override
+  public void refreshCachedModels() {
     researcherModels = researcherMapper.toModels(researcherRepo.findAll());
   }
 

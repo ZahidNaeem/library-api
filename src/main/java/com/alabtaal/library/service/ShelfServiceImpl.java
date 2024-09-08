@@ -36,7 +36,8 @@ public class ShelfServiceImpl implements ShelfService {
 
   @EventListener(classes = ApplicationStartedEvent.class)
   @Transactional
-  protected void findAllModels() {
+  @Override
+  public void refreshCachedModels() {
     shelfModels = shelfMapper.toModels(shelfRepo.findAll());
   }
 

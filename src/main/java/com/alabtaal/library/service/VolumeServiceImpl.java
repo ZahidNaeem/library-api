@@ -40,7 +40,8 @@ public class VolumeServiceImpl implements VolumeService {
 
   @EventListener(classes = ApplicationStartedEvent.class)
   @Transactional
-  protected void findAllModels() {
+  @Override
+  public void refreshCachedModels() {
     volumeModels = volumeMapper.toModels(volumeRepo.findAll());
   }
 

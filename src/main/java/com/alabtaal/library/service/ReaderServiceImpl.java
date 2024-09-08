@@ -36,7 +36,8 @@ public class ReaderServiceImpl implements ReaderService {
 
   @EventListener(classes = ApplicationStartedEvent.class)
   @Transactional
-  protected void findAllModels() {
+  @Override
+  public void refreshCachedModels() {
     readerModels = readerMapper.toModels(readerRepo.findAll());
   }
 

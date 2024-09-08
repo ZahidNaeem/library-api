@@ -1,9 +1,6 @@
 package com.alabtaal.library.service;
 
-import static java.util.stream.Collectors.toList;
-
 import com.alabtaal.library.entity.BookTransHeaderEntity;
-import com.alabtaal.library.enumeration.TransType;
 import com.alabtaal.library.exception.BadRequestException;
 import com.alabtaal.library.mapper.BookTransHeaderMapper;
 import com.alabtaal.library.model.BookTransHeaderModel;
@@ -39,7 +36,8 @@ public class BookTransHeaderServiceImpl implements BookTransHeaderService {
 
   @EventListener(classes = ApplicationStartedEvent.class)
   @Transactional
-  protected void findAllModels() {
+  @Override
+  public void refreshCachedModels() {
     bookTransHeaderModels = bookTransHeaderMapper.toModels(bookTransHeaderRepo.findAll());
   }
 
@@ -134,13 +132,5 @@ Miscellaneous.constraintViolation(entity);
     }
     bookTransHeaderRepo.deleteById(id);
     bookTransHeaderModels.removeIf(model -> model.getId().equals(id));
-  }
-
-  @Override
-  public List<BookTransHeaderModel> findAllByTransType(TransType transType) {
-    return bookTransHeaderModels
-        .stream()
-        .filter(model -> model.getTransType().equals(transType))
-        .toList();
   }
 }

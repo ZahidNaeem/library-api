@@ -1,14 +1,20 @@
 package com.alabtaal.library.service;
 
-import com.alabtaal.library.enumeration.TransType;
 import com.alabtaal.library.exception.BadRequestException;
 import com.alabtaal.library.model.BookTransHeaderModel;
 import com.alabtaal.library.payload.response.ListWithPagination;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.event.EventListener;
 
 public interface BookTransHeaderService {
+
+  @EventListener(classes = ApplicationStartedEvent.class)
+  @Transactional
+  void refreshCachedModels();
 
   List<BookTransHeaderModel> findAll();
 
@@ -34,6 +40,4 @@ public interface BookTransHeaderService {
   BookTransHeaderModel edit(BookTransHeaderModel model) throws BadRequestException;
 
   void deleteById(UUID id) throws BadRequestException;
-
-  List<BookTransHeaderModel> findAllByTransType(TransType transType);
 }

@@ -36,7 +36,8 @@ public class AuthorServiceImpl implements AuthorService {
 
   @EventListener(classes = ApplicationStartedEvent.class)
   @Transactional
-  protected void findAllModels() {
+  @Override
+  public void refreshCachedModels() {
     authorModels = authorMapper.toModels(authorRepo.findAll());
   }
 

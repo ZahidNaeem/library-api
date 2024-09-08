@@ -36,7 +36,8 @@ public class SubjectServiceImpl implements SubjectService {
 
   @EventListener(classes = ApplicationStartedEvent.class)
   @Transactional
-  protected void findAllModels() {
+  @Override
+  public void refreshCachedModels() {
     subjectModels = subjectMapper.toModels(subjectRepo.findAll());
   }
 

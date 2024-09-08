@@ -36,7 +36,8 @@ public class BookTransLineServiceImpl implements BookTransLineService {
 
   @EventListener(classes = ApplicationStartedEvent.class)
   @Transactional
-  protected void findAllModels() {
+  @Override
+  public void refreshCachedModels() {
     bookTransLineModels = bookTransLineMapper.toModels(bookTransLineRepo.findAll());
   }
 

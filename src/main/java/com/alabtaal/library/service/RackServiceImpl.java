@@ -36,7 +36,8 @@ public class RackServiceImpl implements RackService {
 
   @EventListener(classes = ApplicationStartedEvent.class)
   @Transactional
-  protected void findAllModels() {
+  @Override
+  public void refreshCachedModels() {
     rackModels = rackMapper.toModels(rackRepo.findAll());
   }
 

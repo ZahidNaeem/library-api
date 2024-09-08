@@ -36,7 +36,8 @@ public class BookServiceImpl implements BookService {
 
   @EventListener(classes = ApplicationStartedEvent.class)
   @Transactional
-  protected void findAllModels() {
+  @Override
+  public void refreshCachedModels() {
     bookModels = bookMapper.toModels(bookRepo.findAll());
   }
 

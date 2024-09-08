@@ -36,7 +36,8 @@ public class PublisherServiceImpl implements PublisherService {
 
   @EventListener(classes = ApplicationStartedEvent.class)
   @Transactional
-  protected void findAllModels() {
+  @Override
+  public void refreshCachedModels() {
     publisherModels = publisherMapper.toModels(publisherRepo.findAll());
   }
 

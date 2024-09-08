@@ -4,11 +4,18 @@ import com.alabtaal.library.exception.BadRequestException;
 import com.alabtaal.library.model.BookModel;
 import com.alabtaal.library.model.VolumeModel;
 import com.alabtaal.library.payload.response.ListWithPagination;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.event.EventListener;
 
 public interface VolumeService {
+
+  @EventListener(classes = ApplicationStartedEvent.class)
+  @Transactional
+  void refreshCachedModels();
 
   List<VolumeModel> findAll();
 
