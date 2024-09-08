@@ -13,19 +13,19 @@ import jakarta.persistence.UniqueConstraint;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.proxy.HibernateProxy;
 
 @Entity
 @Table(name = "roles", schema = "library", uniqueConstraints = {
-    @UniqueConstraint(name = "role_name_uk", columnNames = {"name"})
+    @UniqueConstraint(name = "role_name_uk", columnNames = {"role_name"})
 })
-@Builder
+@SuperBuilder
 @Getter
 @Setter
 @ToString

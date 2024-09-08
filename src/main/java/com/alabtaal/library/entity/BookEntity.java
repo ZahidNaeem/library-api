@@ -22,15 +22,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.ToString.Exclude;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.proxy.HibernateProxy;
 
-@Builder
+@SuperBuilder
 @Getter
 @Setter
 @ToString
@@ -69,10 +69,6 @@ public class BookEntity extends Auditable<String> {
   @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "book")
   @Exclude
   private List<VolumeEntity> volumes;
-
-  @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "book")
-  @Exclude
-  private List<BookTransLineEntity> bookTransLines;
 
   @ManyToOne
   @JoinColumn(name = "author_id")

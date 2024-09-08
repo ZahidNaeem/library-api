@@ -1,11 +1,8 @@
 package com.alabtaal.library.entity;
 
-import com.alabtaal.library.enumeration.TransType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,20 +12,19 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.ToString.Exclude;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.proxy.HibernateProxy;
 
-@Builder
+@SuperBuilder
 @Getter
 @Setter
 @ToString
@@ -42,15 +38,6 @@ public class BookTransHeaderEntity extends Auditable<String> {
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "header_id")
   private UUID id;
-
-  @NotNull
-  @Column(name = "trans_type")
-  @Enumerated(value = EnumType.STRING)
-  private TransType transType;
-
-  @NotNull
-  @Column(name = "trans_date")
-  private Date transDate;
 
   @NotNull
   @ManyToOne

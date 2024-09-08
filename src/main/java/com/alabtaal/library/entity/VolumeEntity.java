@@ -17,15 +17,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.ToString.Exclude;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.proxy.HibernateProxy;
 
-@Builder
+@SuperBuilder
 @Getter
 @Setter
 @ToString
@@ -41,10 +41,6 @@ public class VolumeEntity extends Auditable<String> {
   @GeneratedValue(strategy = GenerationType.UUID)
   @Column(name = "volume_id", columnDefinition = "BINARY(16)")
   private UUID id;
-
-  @NotNull
-  @Column(name = "row_key")
-  private String rowKey;
 
   @NotNull
   @Column(name = "volume_name")

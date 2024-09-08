@@ -8,25 +8,29 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.proxy.HibernateProxy;
 
-@Builder
+@SuperBuilder
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "book_trans_lines", schema = "library")
+@Table(name = "book_trans_lines", schema = "library", uniqueConstraints = {
+    @UniqueConstraint(name = "header_id_volume_id_uk", columnNames = {"header_id", "volume_id"})
+})
 public class BookTransLineEntity extends Auditable<String> {
 
   @Id
@@ -35,20 +39,21 @@ public class BookTransLineEntity extends Auditable<String> {
   private UUID id;
 
   @NotNull
-  @Column(name = "row_key")
-  private String rowKey;
-
-  @NotNull
-  @ManyToOne
-  @JoinColumn(name = "book_id")
-  private BookEntity book;
-
-  @NotNull
   @ManyToOne
   @JoinColumn(name = "volume_id")
   private VolumeEntity volume;
 
-  //    @NotNull
+  @NotNull
+  @Column(name = "issuance_date")
+  private Date issuanceDate;
+
+  @Column(name = "receipt_date")
+  private Date receiptDate;
+
+  @Column(name = "remarks")
+  private String remarks;
+
+  @NotNull
   @ManyToOne
   @JoinColumn(name = "header_id")
   private BookTransHeaderEntity bookTransHeader;
