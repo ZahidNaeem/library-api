@@ -3,11 +3,13 @@ package com.alabtaal.library.controller;
 import com.alabtaal.library.exception.BadRequestException;
 import com.alabtaal.library.exception.InternalServerErrorException;
 import com.alabtaal.library.exception.ResourceNotFoundException;
-import com.alabtaal.library.mapper.VolumeMapper;
+import com.alabtaal.library.model.BookTransLineModel;
 import com.alabtaal.library.model.VolumeModel;
 import com.alabtaal.library.payload.response.ApiResponse;
 import com.alabtaal.library.payload.response.ListWithPagination;
+import com.alabtaal.library.service.BookTransLineService;
 import com.alabtaal.library.service.VolumeService;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -34,16 +36,38 @@ public class VolumeController {
   private static final Logger LOG = LoggerFactory.getLogger(VolumeController.class);
 
   private final VolumeService volumeService;
+  private final BookTransLineService bookTransLineService;
 
   @GetMapping
-  public ResponseEntity<ApiResponse<List<VolumeModel>>> findAll()
-      throws InternalServerErrorException {
+  public ResponseEntity<ApiResponse<List<VolumeModel>>> findAll() {
     return ResponseEntity.ok(
         ApiResponse
             .<List<VolumeModel>>builder()
             .success(true)
             .message("Got all volumes successfully")
             .entity(volumeService.findAll())
+            .build());
+  }
+
+  @GetMapping(value = "filtered-volumes")
+  public ResponseEntity<ApiResponse<List<String>>> findAllFilteredVolumes() {
+    bookTransLineService.refreshCachedModels();
+    final List<UUID> alreadyIssuedVolumes = bookTransLineService.findAll()
+        .stream()
+        .filter(model -> model.getIssuanceDate() != null && (model.getReceiptDate() == null || model.getReceiptDate().after(new Date())))
+        .map(BookTransLineModel::getVolume)
+        .toList();
+    volumeService.refreshCachedModels();
+    final List<String> filteredVolumes = volumeService.findAll()
+        .stream()
+        .map(volume -> "{\"volume\": \"" + volume.getId() + "\", \"volumeName\": \"" + volume.getBookName() + " - V. " + volume.getName() + "\"" + (alreadyIssuedVolumes.contains(volume.getId()) ? ", \"disabled\": true" : "") + "}")
+        .toList();
+    return ResponseEntity.ok(
+        ApiResponse
+            .<List<String>>builder()
+            .success(true)
+            .message("Got all filtered volumes successfully")
+            .entity(filteredVolumes)
             .build());
   }
 
