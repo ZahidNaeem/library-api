@@ -19,12 +19,11 @@ import org.mapstruct.Mapping;
 public interface BookTransLineMapper {
 
   @Mapping(target = "bookTransHeader", source = "bookTransHeader.id")
-  @Mapping(target = "book", source = "book.id")
   @Mapping(target = "volume", source = "volume.id")
+  @Mapping(target = "volumeName",expression = "java(bookTransLine.getVolume().getBook().getName() + \" - V. \" + bookTransLine.getVolume().getName())")
   BookTransLineModel toModel(final BookTransLineEntity bookTransLine);
 
   @Mapping(target = "bookTransHeader", qualifiedByName = "bookTransHeaderMTE")
-  @Mapping(target = "book", qualifiedByName = "bookMTE")
   @Mapping(target = "volume", qualifiedByName = "volumeMTE")
   BookTransLineEntity toEntity(final BookTransLineModel model);
 

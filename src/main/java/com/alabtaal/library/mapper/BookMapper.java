@@ -20,10 +20,15 @@ import org.mapstruct.Mapping;
 public interface BookMapper {
 
   @Mapping(target = "author", source = "author.id")
+  @Mapping(target = "authorName", source = "author.name")
   @Mapping(target = "subject", source = "subject.id")
+  @Mapping(target = "subjectName", source = "subject.name")
   @Mapping(target = "publisher", source = "publisher.id")
+  @Mapping(target = "publisherName", source = "publisher.name")
   @Mapping(target = "researcher", source = "researcher.id")
+  @Mapping(target = "researcherName", source = "researcher.name")
   @Mapping(target = "shelf", source = "shelf.id")
+  @Mapping(target = "shelfName", source = "shelf.name")
   BookModel toModel(final BookEntity book);
 
   @Mapping(target = "author", qualifiedByName = "authorMTE")
@@ -37,7 +42,7 @@ public interface BookMapper {
   @Mapping(target = "subject", qualifiedByName = "subjectMTX")
   @Mapping(target = "publisher", qualifiedByName = "publisherMTX")
   @Mapping(target = "researcher", qualifiedByName = "researcherMTX")
-  @Mapping(target = "volumes", expression = "java(model != null && model.getVolumes() != null ? model.getVolumes().size() : 0)")
+  @Mapping(target = "volumes", expression = "java(model.getVolumes() != null ? model.getVolumes().size() : 0)")
   BookExportToExcel toExcel(final BookModel model);
 
   default List<BookModel> toModels(final List<BookEntity> Books) {

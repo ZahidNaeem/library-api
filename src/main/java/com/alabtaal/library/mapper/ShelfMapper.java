@@ -9,7 +9,6 @@ import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 @Mapper(
     componentModel = "spring",

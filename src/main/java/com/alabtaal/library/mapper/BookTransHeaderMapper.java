@@ -19,6 +19,7 @@ import org.mapstruct.Mapping;
 public interface BookTransHeaderMapper {
 
   @Mapping(target = "reader", source = "reader.id")
+  @Mapping(target = "readerName", source = "reader.name")
   BookTransHeaderModel toModel(final BookTransHeaderEntity bookTransHeader);
 
   @Mapping(target = "reader", qualifiedByName = "readerMTE")

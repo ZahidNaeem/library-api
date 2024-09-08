@@ -2,7 +2,6 @@ package com.alabtaal.library.mapper;
 
 import com.alabtaal.library.entity.RackEntity;
 import com.alabtaal.library.mapper.qualifier.Qualifier;
-import com.alabtaal.library.model.RackDetail;
 import com.alabtaal.library.model.RackModel;
 import com.alabtaal.library.payload.response.ListWithPagination;
 import java.util.ArrayList;
@@ -20,14 +19,11 @@ import org.mapstruct.Mapping;
 public interface RackMapper {
 
   @Mapping(target = "shelf", source = "shelf.id")
+  @Mapping(target = "shelfName", source = "shelf.name")
   RackModel toModel(final RackEntity rack);
 
   @Mapping(target = "shelf", qualifiedByName = "shelfMTE")
   RackEntity toEntity(final RackModel model);
-
-  @Mapping(target = "shelf", source = "shelf.id")
-  @Mapping(target = "shelfName", source = "shelf.name")
-  RackDetail toDetail(final RackEntity rack);
 
   default List<RackModel> toModels(final List<RackEntity> racks) {
     if (CollectionUtils.isEmpty(racks)) {
@@ -49,17 +45,6 @@ public interface RackMapper {
       racks.add(this.toEntity(model));
     });
     return racks;
-  }
-
-  default List<RackDetail> toDetails(final List<RackEntity> racks) {
-    if (CollectionUtils.isEmpty(racks)) {
-      return new ArrayList<>();
-    }
-    final List<RackDetail> details = new ArrayList<>();
-    racks.forEach(rack -> {
-      details.add(this.toDetail(rack));
-    });
-    return details;
   }
 
   default ListWithPagination<RackEntity> toEntitiesWithPagination(

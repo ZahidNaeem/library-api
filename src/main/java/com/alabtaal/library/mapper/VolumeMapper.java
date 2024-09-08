@@ -19,7 +19,9 @@ import org.mapstruct.Mapping;
 public interface VolumeMapper {
 
   @Mapping(target = "book", source = "book.id")
+  @Mapping(target = "bookName", source = "book.name")
   @Mapping(target = "rack", source = "rack.id")
+  @Mapping(target = "rackName", source = "rack.name")
   VolumeModel toModel(final VolumeEntity volume);
 
   @Mapping(target = "book", qualifiedByName = "bookMTE")
