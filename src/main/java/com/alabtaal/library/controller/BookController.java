@@ -3,7 +3,6 @@ package com.alabtaal.library.controller;
 import com.alabtaal.library.exception.BadRequestException;
 import com.alabtaal.library.exception.InternalServerErrorException;
 import com.alabtaal.library.exception.ResourceNotFoundException;
-import com.alabtaal.library.mapper.BookMapper;
 import com.alabtaal.library.model.BookModel;
 import com.alabtaal.library.payload.response.ApiResponse;
 import com.alabtaal.library.payload.response.ListWithPagination;
