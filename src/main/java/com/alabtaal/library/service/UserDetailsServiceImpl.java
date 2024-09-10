@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-  private static Logger LOG = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
+  private static final Logger LOG = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
   private final UserServiceImpl userService;
 

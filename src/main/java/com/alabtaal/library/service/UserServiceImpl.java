@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-  private static Logger LOG = LoggerFactory.getLogger(UserServiceImpl.class);
+  private static final Logger LOG = LoggerFactory.getLogger(UserServiceImpl.class);
   private final UserRepo userRepo;
   private final UserMapper userMapper;
 

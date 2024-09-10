@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-  private static Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+  private static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
   @ExceptionHandler(value = BadRequestException.class)
   public ResponseEntity<ApiResponse<Boolean>> handleBadRequestException(final AppException ex) {

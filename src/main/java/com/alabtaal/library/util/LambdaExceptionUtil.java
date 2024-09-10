@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 public final class LambdaExceptionUtil {
 
-  private static Logger LOG = LoggerFactory.getLogger(LambdaExceptionUtil.class);
+  private static final Logger LOG = LoggerFactory.getLogger(LambdaExceptionUtil.class);
 
   /**
    * .forEach(rethrowConsumer(name -> System.out.println(Class.forName(name)))); or .forEach(rethrowConsumer(ClassNameUtil::println));
