@@ -1,0 +1,4 @@
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@//oracle-11g-ee:1521/EE.oracle.docker
+
