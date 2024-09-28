@@ -18,7 +18,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -33,8 +32,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-  private static Logger LOG = LoggerFactory.getLogger(WebSecurity.class);
-  private static String[] AUTH_WHITELIST = {
+  private static final Logger LOG = LoggerFactory.getLogger(WebSecurity.class);
+  private static final String[] AUTH_WHITELIST = {
       "/",
       "/favicon.ico",
       "/*/*.png",
@@ -69,11 +68,6 @@ public class SecurityConfig {
   }
 
   @Bean
-  public WebSecurityCustomizer webSecurityCustomizer() {
-    return (web) -> web.ignoring().requestMatchers(AUTH_WHITELIST);
-  }
-
-  @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -86,7 +80,8 @@ public class SecurityConfig {
               exceptionHandling.accessDeniedHandler(accessDeniedHandler);
             })
 
-        .authorizeHttpRequests(authz -> authz
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers(AUTH_WHITELIST).permitAll()
             .requestMatchers("/auth/**").permitAll()
             .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
             .requestMatchers(HttpMethod.PUT, "/users/**").permitAll()
