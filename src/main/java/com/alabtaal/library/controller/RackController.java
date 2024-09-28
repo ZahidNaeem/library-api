@@ -34,6 +34,18 @@ public class RackController {
 
   private final RackService rackService;
 
+  @GetMapping(value = "refresh")
+  public ResponseEntity<ApiResponse<String>> refresh() {
+    rackService.refreshCachedModels();
+    return ResponseEntity.ok(
+        ApiResponse
+            .<String>builder()
+            .success(true)
+            .message("Refresh successful")
+            .entity("Refresh successful")
+            .build());
+  }
+
   @GetMapping
   public ResponseEntity<ApiResponse<List<RackModel>>> findAll()
       throws InternalServerErrorException {

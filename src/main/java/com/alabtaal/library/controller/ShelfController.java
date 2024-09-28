@@ -34,6 +34,18 @@ public class ShelfController {
 
   private final ShelfService shelfService;
 
+  @GetMapping(value = "refresh")
+  public ResponseEntity<ApiResponse<String>> refresh() {
+    shelfService.refreshCachedModels();
+    return ResponseEntity.ok(
+        ApiResponse
+            .<String>builder()
+            .success(true)
+            .message("Refresh successful")
+            .entity("Refresh successful")
+            .build());
+  }
+
   @GetMapping
   public ResponseEntity<ApiResponse<List<ShelfModel>>> findAll()
       throws InternalServerErrorException {

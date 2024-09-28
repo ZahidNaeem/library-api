@@ -34,6 +34,18 @@ public class AuthorController {
 
   private final AuthorService authorService;
 
+  @GetMapping(value = "refresh")
+  public ResponseEntity<ApiResponse<String>> refresh() {
+    authorService.refreshCachedModels();
+    return ResponseEntity.ok(
+        ApiResponse
+            .<String>builder()
+            .success(true)
+            .message("Refresh successful")
+            .entity("Refresh successful")
+            .build());
+  }
+
   @GetMapping
   public ResponseEntity<ApiResponse<List<AuthorModel>>> findAll()
       throws InternalServerErrorException {

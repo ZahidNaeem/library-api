@@ -34,6 +34,18 @@ public class ResearcherController {
 
   private final ResearcherService researcherService;
 
+  @GetMapping(value = "refresh")
+  public ResponseEntity<ApiResponse<String>> refresh() {
+    researcherService.refreshCachedModels();
+    return ResponseEntity.ok(
+        ApiResponse
+            .<String>builder()
+            .success(true)
+            .message("Refresh successful")
+            .entity("Refresh successful")
+            .build());
+  }
+
   @GetMapping
   public ResponseEntity<ApiResponse<List<ResearcherModel>>> findAll()
       throws InternalServerErrorException {

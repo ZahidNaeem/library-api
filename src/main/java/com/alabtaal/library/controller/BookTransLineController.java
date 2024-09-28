@@ -34,6 +34,18 @@ public class BookTransLineController {
 
   private final BookTransLineService bookTransLineService;
 
+  @GetMapping(value = "refresh")
+  public ResponseEntity<ApiResponse<String>> refresh() {
+    bookTransLineService.refreshCachedModels();
+    return ResponseEntity.ok(
+        ApiResponse
+            .<String>builder()
+            .success(true)
+            .message("Refresh successful")
+            .entity("Refresh successful")
+            .build());
+  }
+
   @GetMapping
   public ResponseEntity<ApiResponse<List<BookTransLineModel>>> findAll()
       throws InternalServerErrorException {

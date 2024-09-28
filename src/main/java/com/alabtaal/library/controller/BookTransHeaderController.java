@@ -34,6 +34,18 @@ public class BookTransHeaderController {
 
   private final BookTransHeaderService bookTransHeaderService;
 
+  @GetMapping(value = "refresh")
+  public ResponseEntity<ApiResponse<String>> refresh() {
+    bookTransHeaderService.refreshCachedModels();
+    return ResponseEntity.ok(
+        ApiResponse
+            .<String>builder()
+            .success(true)
+            .message("Refresh successful")
+            .entity("Refresh successful")
+            .build());
+  }
+
   @GetMapping
   public ResponseEntity<ApiResponse<List<BookTransHeaderModel>>> findAll()
       throws InternalServerErrorException {

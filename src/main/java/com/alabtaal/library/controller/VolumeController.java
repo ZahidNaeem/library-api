@@ -38,6 +38,18 @@ public class VolumeController {
   private final VolumeService volumeService;
   private final BookTransLineService bookTransLineService;
 
+  @GetMapping(value = "refresh")
+  public ResponseEntity<ApiResponse<String>> refresh() {
+    volumeService.refreshCachedModels();
+    return ResponseEntity.ok(
+        ApiResponse
+            .<String>builder()
+            .success(true)
+            .message("Refresh successful")
+            .entity("Refresh successful")
+            .build());
+  }
+
   @GetMapping
   public ResponseEntity<ApiResponse<List<VolumeModel>>> findAll() {
     return ResponseEntity.ok(
