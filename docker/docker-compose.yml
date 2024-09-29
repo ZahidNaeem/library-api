@@ -1,0 +1,27 @@
+services:
+  library-api:
+    container_name: library-api
+    build: ./api
+    restart: unless-stopped
+    environment:
+      LIBRARY_USERNAME: ${LIBRARY_USERNAME}
+      LIBRARY_PASSWORD: ${LIBRARY_PASSWORD}
+      LIBRARY_SECRET_KEY: ${LIBRARY_SECRET_KEY}
+    ports:
+      - "8082:8082"
+      - "1082:1082"
+    networks:
+      - docker_alabtaalnet
+  library-ui:
+    container_name: library-ui
+    build: ./ui
+    restart: unless-stopped
+    depends_on:
+      - library-api
+    ports:
+      - "8083:80"
+    networks:
+      - docker_alabtaalnet
+networks:
+  docker_alabtaalnet:
+    external: true
