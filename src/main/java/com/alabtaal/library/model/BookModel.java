@@ -7,6 +7,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,6 +28,8 @@ public class BookModel extends Auditable<String> {
 
   private Date publicationDate;
 
+  private Integer edition;
+
   @Enumerated(value = EnumType.STRING)
   private BookCondition bookCondition;
 
@@ -37,23 +40,13 @@ public class BookModel extends Auditable<String> {
 
   private List<VolumeModel> volumes;
 
-  private UUID author;
+  private Set<AuthorModel> authors;
 
-  private String authorName;
-
-  private UUID subject;
-
-  private String subjectName;
+  private Set<SubjectModel> subjects;
 
   private UUID publisher;
 
   private String publisherName;
 
-  private UUID researcher;
-
-  private String researcherName;
-
-  private UUID shelf;
-
-  private String shelfName;
+  private Set<ResearcherModel> researchers;
 }

@@ -310,13 +310,10 @@
         <constraints nullable="false"/>
       </column>
       <column name="PUBLICATION_DATE" type="timestamp"/>
+      <column name="EDITION" type="int"/>
       <column name="BOOK_CONDITION" type="varchar(255)"/>
       <column name="BOOK_SOURCE" type="varchar(255)"/>
-      <column name="AUTHOR_ID" type="${uuid_type}"/>
-      <column name="SUBJECT_ID" type="${uuid_type}"/>
       <column name="PUBLISHER_ID" type="${uuid_type}"/>
-      <column name="RESEARCHER_ID" type="${uuid_type}"/>
-      <column name="SHELF_ID" type="${uuid_type}"/>
       <column name="REMARKS" type="varchar(255)"/>
       <column name="CREATED_BY" type="varchar(255)"/>
       <column name="CREATION_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
@@ -328,14 +325,6 @@
       schemaName="${currentSchema}"
       columnNames="book_name"/>
 
-    <addForeignKeyConstraint constraintName="FK_BOOKS_ON_AUTHOR"
-      baseTableName="books"
-      baseTableSchemaName="${currentSchema}"
-      referencedTableName="authors"
-      referencedTableSchemaName="${currentSchema}"
-      baseColumnNames="author_id"
-      referencedColumnNames="author_id"/>
-
     <addForeignKeyConstraint constraintName="FK_BOOKS_ON_PUBLISHER"
       baseTableName="books"
       baseTableSchemaName="${currentSchema}"
@@ -343,30 +332,123 @@
       referencedTableSchemaName="${currentSchema}"
       baseColumnNames="publisher_id"
       referencedColumnNames="publisher_id"/>
+  </changeSet>
 
-    <addForeignKeyConstraint constraintName="FK_BOOKS_ON_RESEARCHER"
-      baseTableName="books"
+  <changeSet id="create-table-book_authors" author="Zahid Naeem">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="book_authors" schemaName="${currentSchema}"/>
+      </not>
+    </preConditions>
+    <createTable tableName="book_authors" schemaName="${currentSchema}">
+      <column name="ID" type="${uuid_type}" valueComputed="${uuid_function}">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="pk_book_authors"/>
+      </column>
+      <column name="BOOK_ID" type="${uuid_type}"/>
+      <column name="AUTHOR_ID" type="${uuid_type}"/>
+      <column name="CREATED_BY" type="varchar(255)"/>
+      <column name="CREATION_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+      <column name="LAST_UPDATED_BY" type="varchar(255)"/>
+      <column name="LAST_UPDATE_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+    </createTable>
+    <addUniqueConstraint constraintName="book_authors_uk1"
+      tableName="book_authors"
+      schemaName="${currentSchema}"
+      columnNames="book_id, author_id"/>
+
+    <addForeignKeyConstraint constraintName="FK1_BOOK_AUTHORS"
+      baseTableName="book_authors"
       baseTableSchemaName="${currentSchema}"
-      referencedTableName="researchers"
+      referencedTableName="books"
       referencedTableSchemaName="${currentSchema}"
-      baseColumnNames="researcher_id"
-      referencedColumnNames="researcher_id"/>
+      baseColumnNames="book_id"
+      referencedColumnNames="book_id"/>
 
-    <addForeignKeyConstraint constraintName="FK_BOOKS_ON_SHELF"
-      baseTableName="books"
+    <addForeignKeyConstraint constraintName="FK2_BOOK_AUTHORS"
+      baseTableName="book_authors"
       baseTableSchemaName="${currentSchema}"
-      referencedTableName="shelves"
+      referencedTableName="authors"
       referencedTableSchemaName="${currentSchema}"
-      baseColumnNames="shelf_id"
-      referencedColumnNames="shelf_id"/>
+      baseColumnNames="author_id"
+      referencedColumnNames="author_id"/>
+  </changeSet>
 
-    <addForeignKeyConstraint constraintName="FK_BOOKS_ON_SUBJECT"
-      baseTableName="books"
+  <changeSet id="create-table-book_subjects" author="Zahid Naeem">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="book_subjects" schemaName="${currentSchema}"/>
+      </not>
+    </preConditions>
+    <createTable tableName="book_subjects" schemaName="${currentSchema}">
+      <column name="ID" type="${uuid_type}" valueComputed="${uuid_function}">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="pk_book_subjects"/>
+      </column>
+      <column name="BOOK_ID" type="${uuid_type}"/>
+      <column name="SUBJECT_ID" type="${uuid_type}"/>
+      <column name="CREATED_BY" type="varchar(255)"/>
+      <column name="CREATION_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+      <column name="LAST_UPDATED_BY" type="varchar(255)"/>
+      <column name="LAST_UPDATE_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+    </createTable>
+    <addUniqueConstraint constraintName="book_subjects_uk1"
+      tableName="book_subjects"
+      schemaName="${currentSchema}"
+      columnNames="book_id, subject_id"/>
+
+    <addForeignKeyConstraint constraintName="FK1_BOOK_SUBJECTS"
+      baseTableName="book_subjects"
+      baseTableSchemaName="${currentSchema}"
+      referencedTableName="books"
+      referencedTableSchemaName="${currentSchema}"
+      baseColumnNames="book_id"
+      referencedColumnNames="book_id"/>
+
+    <addForeignKeyConstraint constraintName="FK2_BOOK_SUBJECTS"
+      baseTableName="book_subjects"
       baseTableSchemaName="${currentSchema}"
       referencedTableName="subjects"
       referencedTableSchemaName="${currentSchema}"
       baseColumnNames="subject_id"
       referencedColumnNames="subject_id"/>
+  </changeSet>
+
+  <changeSet id="create-table-book_researchers" author="Zahid Naeem">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="book_researchers" schemaName="${currentSchema}"/>
+      </not>
+    </preConditions>
+    <createTable tableName="book_researchers" schemaName="${currentSchema}">
+      <column name="ID" type="${uuid_type}" valueComputed="${uuid_function}">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="pk_book_researchers"/>
+      </column>
+      <column name="BOOK_ID" type="${uuid_type}"/>
+      <column name="RESEARCHER_ID" type="${uuid_type}"/>
+      <column name="CREATED_BY" type="varchar(255)"/>
+      <column name="CREATION_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+      <column name="LAST_UPDATED_BY" type="varchar(255)"/>
+      <column name="LAST_UPDATE_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+    </createTable>
+    <addUniqueConstraint constraintName="book_researchers_uk1"
+      tableName="book_researchers"
+      schemaName="${currentSchema}"
+      columnNames="book_id, researcher_id"/>
+
+    <addForeignKeyConstraint constraintName="FK1_BOOK_RESEARCHERS"
+      baseTableName="book_researchers"
+      baseTableSchemaName="${currentSchema}"
+      referencedTableName="books"
+      referencedTableSchemaName="${currentSchema}"
+      baseColumnNames="book_id"
+      referencedColumnNames="book_id"/>
+
+    <addForeignKeyConstraint constraintName="FK2_BOOK_RESEARCHERS"
+      baseTableName="book_researchers"
+      baseTableSchemaName="${currentSchema}"
+      referencedTableName="researchers"
+      referencedTableSchemaName="${currentSchema}"
+      baseColumnNames="researcher_id"
+      referencedColumnNames="researcher_id"/>
   </changeSet>
 
   <changeSet id="create-table-volumes" author="Zahid Naeem">
@@ -382,6 +464,7 @@
       <column name="VOLUME_NAME" type="varchar(255)">
         <constraints nullable="false"/>
       </column>
+      <column name="PAGES" type="int"/>
       <column name="BOOK_ID" type="${uuid_type}"/>
       <column name="RACK_ID" type="${uuid_type}"/>
       <column name="REMARKS" type="varchar(255)"/>
@@ -392,9 +475,12 @@
     </createTable>
     <addUniqueConstraint constraintName="book_id_volume_name_uk" tableName="volumes"
       schemaName="${currentSchema}" columnNames="book_id, volume_id"/>
-    <addForeignKeyConstraint constraintName="FK_VOLUMES_ON_BOOK" baseTableName="volumes"
-      baseTableschemaName="${currentSchema}" baseColumnNames="book_id"
-      referencedTableName="books" referencedTableschemaName="${currentSchema}"
+    <addForeignKeyConstraint constraintName="FK_VOLUMES_ON_BOOK"
+      baseTableName="volumes"
+      baseTableschemaName="${currentSchema}"
+      baseColumnNames="book_id"
+      referencedTableName="books"
+      referencedTableschemaName="${currentSchema}"
       referencedColumnNames="book_id"/>
     <addForeignKeyConstraint constraintName="FK_VOLUMES_ON_RACK" baseTableName="volumes"
       baseTableschemaName="${currentSchema}" baseColumnNames="rack_id"

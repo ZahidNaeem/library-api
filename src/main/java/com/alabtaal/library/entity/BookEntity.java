@@ -12,6 +12,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -20,6 +22,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -54,6 +57,9 @@ public class BookEntity extends Auditable<String> {
   @Column(name = "publication_date")
   private Date publicationDate;
 
+  @Column(name = "edition")
+  private Integer edition;
+
   @NotNull
   @Column(name = "book_condition")
   @Enumerated(value = EnumType.STRING)
@@ -70,25 +76,30 @@ public class BookEntity extends Auditable<String> {
   @Exclude
   private List<VolumeEntity> volumes;
 
-  @ManyToOne
-  @JoinColumn(name = "author_id")
-  private AuthorEntity author;
+  @ManyToMany(fetch = FetchType.LAZY)
+  @JoinTable(name = "BOOK_AUTHORS",
+      schema = "library",
+      joinColumns = @JoinColumn(name = "AUTHOR_ID"),
+      inverseJoinColumns = @JoinColumn(name = "BOOK_ID"))
+  private Set<AuthorEntity> authors;
 
-  @ManyToOne
-  @JoinColumn(name = "subject_id")
-  private SubjectEntity subject;
+  @ManyToMany(fetch = FetchType.LAZY)
+  @JoinTable(name = "BOOK_SUBJECTS",
+      schema = "library",
+      joinColumns = @JoinColumn(name = "SUBJECT_ID"),
+      inverseJoinColumns = @JoinColumn(name = "BOOK_ID"))
+  private Set<SubjectEntity> subjects;
 
   @ManyToOne
   @JoinColumn(name = "publisher_id")
   private PublisherEntity publisher;
 
-  @ManyToOne
-  @JoinColumn(name = "researcher_id")
-  private ResearcherEntity researcher;
-
-  @ManyToOne
-  @JoinColumn(name = "shelf_id")
-  private ShelfEntity shelf;
+  @ManyToMany(fetch = FetchType.LAZY)
+  @JoinTable(name = "BOOK_RESEARCHERS",
+      schema = "library",
+      joinColumns = @JoinColumn(name = "RESEARCHER_ID"),
+      inverseJoinColumns = @JoinColumn(name = "BOOK_ID"))
+  private Set<ResearcherEntity> researchers;
 
   @Override
   public final boolean equals(Object o) {

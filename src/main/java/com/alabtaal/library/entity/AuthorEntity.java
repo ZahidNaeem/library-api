@@ -1,13 +1,12 @@
 package com.alabtaal.library.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
@@ -47,7 +46,7 @@ public class AuthorEntity extends Auditable<String> {
   @Column(name = "remarks")
   private String remarks;
 
-  @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "author")
+  @ManyToMany(fetch = FetchType.LAZY, mappedBy = "authors")
   @Exclude
   private List<BookEntity> books;
 

@@ -49,10 +49,6 @@ public class ShelfEntity extends Auditable<String> {
 
   @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "shelf")
   @Exclude
-  private List<BookEntity> books;
-
-  @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "shelf")
-  @Exclude
   private List<RackEntity> racks;
 
   @Override

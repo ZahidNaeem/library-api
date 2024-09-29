@@ -18,6 +18,7 @@ public class VolumeModel extends Auditable<String> {
 
   private UUID id;
   private String name;
+  private Integer pages;
   private String remarks;
   private UUID book;
   private String bookName;

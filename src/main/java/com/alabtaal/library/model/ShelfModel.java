@@ -19,6 +19,5 @@ public class ShelfModel extends Auditable<String> {
   private UUID id;
   private String name;
   private String remarks;
-  private List<BookModel> books;
   private List<RackModel> racks;
 }

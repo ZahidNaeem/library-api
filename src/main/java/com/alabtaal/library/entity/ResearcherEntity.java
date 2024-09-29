@@ -1,18 +1,17 @@
 package com.alabtaal.library.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -47,9 +46,9 @@ public class ResearcherEntity extends Auditable<String> {
   @Column(name = "remarks")
   private String remarks;
 
-  @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "researcher")
+  @ManyToMany(fetch = FetchType.LAZY, mappedBy = "researchers")
   @Exclude
-  private List<BookEntity> books;
+  private Set<BookEntity> books;
 
   @Override
   public final boolean equals(Object o) {

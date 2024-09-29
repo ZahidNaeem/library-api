@@ -1,7 +1,7 @@
 package com.alabtaal.library.model;
 
 import com.alabtaal.library.entity.Auditable;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,5 +22,5 @@ public class ResearcherModel extends Auditable<String> {
 
   private String remarks;
 
-  private List<BookModel> books;
+  private Set<BookModel> books;
 }

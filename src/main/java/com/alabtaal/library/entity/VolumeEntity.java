@@ -46,6 +46,9 @@ public class VolumeEntity extends Auditable<String> {
   @Column(name = "volume_name")
   private String name;
 
+  @Column(name = "pages")
+  private Integer pages;
+
   @Column(name = "remarks")
   private String remarks;
 
