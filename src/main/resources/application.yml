@@ -18,6 +18,11 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        format_sql: true
+#        generate_statistics: true
 
   liquibase:
     enabled: true
@@ -30,10 +35,10 @@ logging:
   level:
     org:
       hibernate:
-        SQL: debug
         type:
           descriptor:
-            sql: trace
+            sql:
+              BasicBinder: trace
       springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor: debug
       apache.coyote.http11.Http11InputBuffer: debug
       liquibase: trace
