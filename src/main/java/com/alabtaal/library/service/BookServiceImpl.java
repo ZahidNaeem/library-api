@@ -27,10 +27,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
 
-  private static List<BookModel> bookModels = new ArrayList<>();
-
   private static final Logger LOG = LoggerFactory.getLogger(BookServiceImpl.class);
-
+  private static List<BookModel> bookModels = new ArrayList<>();
   private final BookRepo bookRepo;
   private final BookMapper bookMapper;
 
@@ -61,7 +59,7 @@ public class BookServiceImpl implements BookService {
   }
 
   public ListWithPagination<BookModel> searchBooks(
-      Map<String, Object>filters,
+      Map<String, Object> filters,
       final Integer pageNumber,
       final Integer pageSize,
       final String sortBy,
@@ -109,7 +107,7 @@ public class BookServiceImpl implements BookService {
       throw new BadRequestException("Record does not exist");
     }
     final BookModel savedModel = save(model);
-        final Optional<BookModel> modelFound = bookModels
+    final Optional<BookModel> modelFound = bookModels
         .stream()
         .filter(bookModel -> bookModel.getId().equals(savedModel.getId()))
         .findFirst();
@@ -121,7 +119,8 @@ public class BookServiceImpl implements BookService {
   private BookModel save(BookModel model) throws BadRequestException {
     final BookEntity entity = bookMapper.toEntity(model);
     RelationshipHandler.setParentForChildren(entity);
-Miscellaneous.constraintViolation(entity);
+    RelationshipHandler.setManyToManyRelation(entity);
+    Miscellaneous.constraintViolation(entity);
     return bookMapper.toModel(bookRepo.saveAndFlush(entity));
   }
 

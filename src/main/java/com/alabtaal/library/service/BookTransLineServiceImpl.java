@@ -27,10 +27,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BookTransLineServiceImpl implements BookTransLineService {
 
-  private static List<BookTransLineModel> bookTransLineModels = new ArrayList<>();
-
   private static final Logger LOG = LoggerFactory.getLogger(BookTransLineServiceImpl.class);
-
+  private static List<BookTransLineModel> bookTransLineModels = new ArrayList<>();
   private final BookTransLineRepo bookTransLineRepo;
   private final BookTransLineMapper bookTransLineMapper;
 
@@ -61,7 +59,7 @@ public class BookTransLineServiceImpl implements BookTransLineService {
   }
 
   public ListWithPagination<BookTransLineModel> searchBookTransLines(
-      Map<String, Object>filters,
+      Map<String, Object> filters,
       final Integer pageNumber,
       final Integer pageSize,
       final String sortBy,
@@ -109,7 +107,7 @@ public class BookTransLineServiceImpl implements BookTransLineService {
       throw new BadRequestException("Record does not exist");
     }
     final BookTransLineModel savedModel = save(model);
-        final Optional<BookTransLineModel> modelFound = bookTransLineModels
+    final Optional<BookTransLineModel> modelFound = bookTransLineModels
         .stream()
         .filter(bookTransLineModel -> bookTransLineModel.getId().equals(savedModel.getId()))
         .findFirst();
@@ -121,7 +119,8 @@ public class BookTransLineServiceImpl implements BookTransLineService {
   private BookTransLineModel save(BookTransLineModel model) throws BadRequestException {
     final BookTransLineEntity entity = bookTransLineMapper.toEntity(model);
     RelationshipHandler.setParentForChildren(entity);
-Miscellaneous.constraintViolation(entity);
+    RelationshipHandler.setManyToManyRelation(entity);
+    Miscellaneous.constraintViolation(entity);
     return bookTransLineMapper.toModel(bookTransLineRepo.saveAndFlush(entity));
   }
 

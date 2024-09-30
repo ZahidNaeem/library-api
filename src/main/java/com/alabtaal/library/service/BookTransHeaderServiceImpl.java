@@ -27,10 +27,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BookTransHeaderServiceImpl implements BookTransHeaderService {
 
-  private static List<BookTransHeaderModel> bookTransHeaderModels = new ArrayList<>();
-
   private static final Logger LOG = LoggerFactory.getLogger(BookTransHeaderServiceImpl.class);
-
+  private static List<BookTransHeaderModel> bookTransHeaderModels = new ArrayList<>();
   private final BookTransHeaderRepo bookTransHeaderRepo;
   private final BookTransHeaderMapper bookTransHeaderMapper;
 
@@ -61,7 +59,7 @@ public class BookTransHeaderServiceImpl implements BookTransHeaderService {
   }
 
   public ListWithPagination<BookTransHeaderModel> searchBookTransHeaders(
-      Map<String, Object>filters,
+      Map<String, Object> filters,
       final Integer pageNumber,
       final Integer pageSize,
       final String sortBy,
@@ -109,7 +107,7 @@ public class BookTransHeaderServiceImpl implements BookTransHeaderService {
       throw new BadRequestException("Record does not exist");
     }
     final BookTransHeaderModel savedModel = save(model);
-        final Optional<BookTransHeaderModel> modelFound = bookTransHeaderModels
+    final Optional<BookTransHeaderModel> modelFound = bookTransHeaderModels
         .stream()
         .filter(bookTransHeaderModel -> bookTransHeaderModel.getId().equals(savedModel.getId()))
         .findFirst();
@@ -121,7 +119,8 @@ public class BookTransHeaderServiceImpl implements BookTransHeaderService {
   private BookTransHeaderModel save(BookTransHeaderModel model) throws BadRequestException {
     final BookTransHeaderEntity entity = bookTransHeaderMapper.toEntity(model);
     RelationshipHandler.setParentForChildren(entity);
-Miscellaneous.constraintViolation(entity);
+    RelationshipHandler.setManyToManyRelation(entity);
+    Miscellaneous.constraintViolation(entity);
     return bookTransHeaderMapper.toModel(bookTransHeaderRepo.saveAndFlush(entity));
   }
 

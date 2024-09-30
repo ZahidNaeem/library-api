@@ -79,15 +79,15 @@ public class BookEntity extends Auditable<String> {
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(name = "BOOK_AUTHORS",
       schema = "library",
-      joinColumns = @JoinColumn(name = "AUTHOR_ID"),
-      inverseJoinColumns = @JoinColumn(name = "BOOK_ID"))
+      joinColumns = @JoinColumn(name = "BOOK_ID"),
+      inverseJoinColumns = @JoinColumn(name = "AUTHOR_ID"))
   private Set<AuthorEntity> authors;
 
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(name = "BOOK_SUBJECTS",
       schema = "library",
-      joinColumns = @JoinColumn(name = "SUBJECT_ID"),
-      inverseJoinColumns = @JoinColumn(name = "BOOK_ID"))
+      joinColumns = @JoinColumn(name = "BOOK_ID"),
+      inverseJoinColumns = @JoinColumn(name = "SUBJECT_ID"))
   private Set<SubjectEntity> subjects;
 
   @ManyToOne
@@ -97,8 +97,8 @@ public class BookEntity extends Auditable<String> {
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(name = "BOOK_RESEARCHERS",
       schema = "library",
-      joinColumns = @JoinColumn(name = "RESEARCHER_ID"),
-      inverseJoinColumns = @JoinColumn(name = "BOOK_ID"))
+      joinColumns = @JoinColumn(name = "BOOK_ID"),
+      inverseJoinColumns = @JoinColumn(name = "RESEARCHER_ID"))
   private Set<ResearcherEntity> researchers;
 
   @Override

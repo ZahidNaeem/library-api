@@ -2,7 +2,6 @@ package com.alabtaal.library.mapper;
 
 import com.alabtaal.library.entity.BookEntity;
 import com.alabtaal.library.mapper.qualifier.Qualifier;
-import com.alabtaal.library.model.BookExportToExcel;
 import com.alabtaal.library.model.BookModel;
 import com.alabtaal.library.payload.response.ListWithPagination;
 import java.util.ArrayList;
@@ -19,31 +18,25 @@ import org.mapstruct.Mapping;
 )
 public interface BookMapper {
 
-  @Mapping(target = "author", source = "author.id")
-  @Mapping(target = "authorName", source = "author.name")
-  @Mapping(target = "subject", source = "subject.id")
-  @Mapping(target = "subjectName", source = "subject.name")
+  @Mapping(target = "authors", qualifiedByName = "authorsETM")
+  @Mapping(target = "subjects", qualifiedByName = "subjectsETM")
   @Mapping(target = "publisher", source = "publisher.id")
   @Mapping(target = "publisherName", source = "publisher.name")
-  @Mapping(target = "researcher", source = "researcher.id")
-  @Mapping(target = "researcherName", source = "researcher.name")
-  @Mapping(target = "shelf", source = "shelf.id")
-  @Mapping(target = "shelfName", source = "shelf.name")
+  @Mapping(target = "researchers", qualifiedByName = "researchersETM")
   BookModel toModel(final BookEntity book);
 
-  @Mapping(target = "author", qualifiedByName = "authorMTE")
-  @Mapping(target = "subject", qualifiedByName = "subjectMTE")
+  @Mapping(target = "authors", qualifiedByName = "authorsMTE")
+  @Mapping(target = "subjects", qualifiedByName = "subjectsMTE")
   @Mapping(target = "publisher", qualifiedByName = "publisherMTE")
-  @Mapping(target = "researcher", qualifiedByName = "researcherMTE")
-  @Mapping(target = "shelf", qualifiedByName = "shelfMTE")
+  @Mapping(target = "researchers", qualifiedByName = "researchersMTE")
   BookEntity toEntity(final BookModel model);
 
-  @Mapping(target = "author", qualifiedByName = "authorMTX")
-  @Mapping(target = "subject", qualifiedByName = "subjectMTX")
-  @Mapping(target = "publisher", qualifiedByName = "publisherMTX")
-  @Mapping(target = "researcher", qualifiedByName = "researcherMTX")
-  @Mapping(target = "volumes", expression = "java(model.getVolumes() != null ? model.getVolumes().size() : 0)")
-  BookExportToExcel toExcel(final BookModel model);
+//  @Mapping(target = "author", qualifiedByName = "authorMTX")
+//  @Mapping(target = "subject", qualifiedByName = "subjectMTX")
+//  @Mapping(target = "publisher", qualifiedByName = "publisherMTX")
+//  @Mapping(target = "researcher", qualifiedByName = "researcherMTX")
+//  @Mapping(target = "volumes", expression = "java(model.getVolumes() != null ? model.getVolumes().size() : 0)")
+//  BookExportToExcel toExcel(final BookModel model);
 
   default List<BookModel> toModels(final List<BookEntity> Books) {
     if (CollectionUtils.isEmpty(Books)) {
@@ -67,16 +60,16 @@ public interface BookMapper {
     return books;
   }
 
-  default List<BookExportToExcel> toExcel(final List<BookModel> models) {
-    if (CollectionUtils.isEmpty(models)) {
-      return new ArrayList<>();
-    }
-    final List<BookExportToExcel> books = new ArrayList<>();
-    models.forEach(model -> {
-      books.add(this.toExcel(model));
-    });
-    return books;
-  }
+//  default List<BookExportToExcel> toExcel(final List<BookModel> models) {
+//    if (CollectionUtils.isEmpty(models)) {
+//      return new ArrayList<>();
+//    }
+//    final List<BookExportToExcel> books = new ArrayList<>();
+//    models.forEach(model -> {
+//      books.add(this.toExcel(model));
+//    });
+//    return books;
+//  }
 
   default ListWithPagination<BookEntity> toEntitiesWithPagination(
       final ListWithPagination<BookModel> models) {

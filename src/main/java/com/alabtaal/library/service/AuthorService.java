@@ -25,7 +25,7 @@ public interface AuthorService {
       final String sortDirection) throws BadRequestException;
 
   ListWithPagination<AuthorModel> searchAuthors(
-      Map<String, Object>filters,
+      Map<String, Object> filters,
       final Integer pageNumber,
       final Integer pageSize,
       final String sortBy,

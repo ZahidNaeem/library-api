@@ -58,6 +58,7 @@ public class GlobalExceptionHandler {
     if (ex.getMessage().startsWith("ORA-02292")) {
       sqlExceptionMessage = "You can't delete this record. Child record found";
     }
+    LOG.debug(String.valueOf(ex.getMostSpecificCause()));
     return new ResponseEntity<>(ApiResponse
         .<Boolean>builder()
         .success(false)

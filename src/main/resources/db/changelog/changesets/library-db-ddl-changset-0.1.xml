@@ -341,17 +341,18 @@
       </not>
     </preConditions>
     <createTable tableName="book_authors" schemaName="${currentSchema}">
-      <column name="ID" type="${uuid_type}" valueComputed="${uuid_function}">
-        <constraints primaryKey="true" nullable="false" primaryKeyName="pk_book_authors"/>
+      <column name="BOOK_ID" type="${uuid_type}">
+        <constraints nullable="false"/>
       </column>
-      <column name="BOOK_ID" type="${uuid_type}"/>
-      <column name="AUTHOR_ID" type="${uuid_type}"/>
+      <column name="AUTHOR_ID" type="${uuid_type}">
+        <constraints nullable="false"/>
+      </column>
       <column name="CREATED_BY" type="varchar(255)"/>
       <column name="CREATION_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
       <column name="LAST_UPDATED_BY" type="varchar(255)"/>
       <column name="LAST_UPDATE_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
     </createTable>
-    <addUniqueConstraint constraintName="book_authors_uk1"
+    <addPrimaryKey constraintName="book_authors_pk"
       tableName="book_authors"
       schemaName="${currentSchema}"
       columnNames="book_id, author_id"/>
@@ -380,17 +381,18 @@
       </not>
     </preConditions>
     <createTable tableName="book_subjects" schemaName="${currentSchema}">
-      <column name="ID" type="${uuid_type}" valueComputed="${uuid_function}">
-        <constraints primaryKey="true" nullable="false" primaryKeyName="pk_book_subjects"/>
+      <column name="BOOK_ID" type="${uuid_type}">
+        <constraints nullable="false"/>
       </column>
-      <column name="BOOK_ID" type="${uuid_type}"/>
-      <column name="SUBJECT_ID" type="${uuid_type}"/>
+      <column name="SUBJECT_ID" type="${uuid_type}">
+        <constraints nullable="false"/>
+      </column>
       <column name="CREATED_BY" type="varchar(255)"/>
       <column name="CREATION_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
       <column name="LAST_UPDATED_BY" type="varchar(255)"/>
       <column name="LAST_UPDATE_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
     </createTable>
-    <addUniqueConstraint constraintName="book_subjects_uk1"
+    <addPrimaryKey constraintName="book_subjects_pk"
       tableName="book_subjects"
       schemaName="${currentSchema}"
       columnNames="book_id, subject_id"/>
@@ -419,17 +421,18 @@
       </not>
     </preConditions>
     <createTable tableName="book_researchers" schemaName="${currentSchema}">
-      <column name="ID" type="${uuid_type}" valueComputed="${uuid_function}">
-        <constraints primaryKey="true" nullable="false" primaryKeyName="pk_book_researchers"/>
+      <column name="BOOK_ID" type="${uuid_type}">
+        <constraints nullable="false"/>
       </column>
-      <column name="BOOK_ID" type="${uuid_type}"/>
-      <column name="RESEARCHER_ID" type="${uuid_type}"/>
+      <column name="RESEARCHER_ID" type="${uuid_type}">
+        <constraints nullable="false"/>
+      </column>
       <column name="CREATED_BY" type="varchar(255)"/>
       <column name="CREATION_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
       <column name="LAST_UPDATED_BY" type="varchar(255)"/>
       <column name="LAST_UPDATE_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
     </createTable>
-    <addUniqueConstraint constraintName="book_researchers_uk1"
+    <addPrimaryKey constraintName="book_researchers_uk1"
       tableName="book_researchers"
       schemaName="${currentSchema}"
       columnNames="book_id, researcher_id"/>

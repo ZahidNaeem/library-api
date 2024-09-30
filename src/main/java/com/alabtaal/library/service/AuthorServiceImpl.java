@@ -27,10 +27,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthorServiceImpl implements AuthorService {
 
-  private static List<AuthorModel> authorModels = new ArrayList<>();
-
   private static final Logger LOG = LoggerFactory.getLogger(AuthorServiceImpl.class);
-
+  private static List<AuthorModel> authorModels = new ArrayList<>();
   private final AuthorRepo authorRepo;
   private final AuthorMapper authorMapper;
 
@@ -61,7 +59,7 @@ public class AuthorServiceImpl implements AuthorService {
   }
 
   public ListWithPagination<AuthorModel> searchAuthors(
-      Map<String, Object>filters,
+      Map<String, Object> filters,
       final Integer pageNumber,
       final Integer pageSize,
       final String sortBy,
@@ -109,7 +107,7 @@ public class AuthorServiceImpl implements AuthorService {
       throw new BadRequestException("Record does not exist");
     }
     final AuthorModel savedModel = save(model);
-        final Optional<AuthorModel> modelFound = authorModels
+    final Optional<AuthorModel> modelFound = authorModels
         .stream()
         .filter(authorModel -> authorModel.getId().equals(savedModel.getId()))
         .findFirst();
@@ -121,7 +119,8 @@ public class AuthorServiceImpl implements AuthorService {
   private AuthorModel save(AuthorModel model) throws BadRequestException {
     final AuthorEntity entity = authorMapper.toEntity(model);
     RelationshipHandler.setParentForChildren(entity);
-Miscellaneous.constraintViolation(entity);
+    RelationshipHandler.setManyToManyRelation(entity);
+    Miscellaneous.constraintViolation(entity);
     return authorMapper.toModel(authorRepo.saveAndFlush(entity));
   }
 

@@ -40,13 +40,13 @@ public class BookModel extends Auditable<String> {
 
   private List<VolumeModel> volumes;
 
-  private Set<AuthorModel> authors;
+  private Set<CommonModel> authors;
 
-  private Set<SubjectModel> subjects;
+  private Set<CommonModel> subjects;
 
   private UUID publisher;
 
   private String publisherName;
 
-  private Set<ResearcherModel> researchers;
+  private Set<CommonModel> researchers;
 }

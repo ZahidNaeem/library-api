@@ -25,7 +25,7 @@ public interface BookTransHeaderService {
       final String sortDirection) throws BadRequestException;
 
   ListWithPagination<BookTransHeaderModel> searchBookTransHeaders(
-      Map<String, Object>filters,
+      Map<String, Object> filters,
       final Integer pageNumber,
       final Integer pageSize,
       final String sortBy,

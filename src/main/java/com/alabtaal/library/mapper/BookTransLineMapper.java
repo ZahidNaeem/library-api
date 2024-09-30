@@ -20,7 +20,7 @@ public interface BookTransLineMapper {
 
   @Mapping(target = "bookTransHeader", source = "bookTransHeader.id")
   @Mapping(target = "volume", source = "volume.id")
-  @Mapping(target = "volumeName",expression = "java(bookTransLine.getVolume().getBook().getName() + \" - V. \" + bookTransLine.getVolume().getName())")
+  @Mapping(target = "volumeName", expression = "java(bookTransLine.getVolume().getBook().getName() + \" - V. \" + bookTransLine.getVolume().getName())")
   BookTransLineModel toModel(final BookTransLineEntity bookTransLine);
 
   @Mapping(target = "bookTransHeader", qualifiedByName = "bookTransHeaderMTE")
