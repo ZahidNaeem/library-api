@@ -27,10 +27,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SubjectServiceImpl implements SubjectService {
 
-  private static List<SubjectModel> subjectModels = new ArrayList<>();
-
   private static final Logger LOG = LoggerFactory.getLogger(SubjectServiceImpl.class);
-
+  private static List<SubjectModel> subjectModels = new ArrayList<>();
   private final SubjectRepo subjectRepo;
   private final SubjectMapper subjectMapper;
 
@@ -121,7 +119,8 @@ public class SubjectServiceImpl implements SubjectService {
   private SubjectModel save(SubjectModel model) throws BadRequestException {
     final SubjectEntity entity = subjectMapper.toEntity(model);
     RelationshipHandler.setParentForChildren(entity);
-Miscellaneous.constraintViolation(entity);
+    RelationshipHandler.setManyToManyRelation(entity);
+    Miscellaneous.constraintViolation(entity);
     return subjectMapper.toModel(subjectRepo.saveAndFlush(entity));
   }
 

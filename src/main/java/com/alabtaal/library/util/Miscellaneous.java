@@ -53,12 +53,10 @@ public class Miscellaneous {
   }
 
   public static String getSqlExceptionMessage(final DataIntegrityViolationException exception) {
-    if (exception.getCause() instanceof ConstraintViolationException) {
-      final ConstraintViolationException cause = (ConstraintViolationException) exception.getCause();
+    if (exception.getCause() instanceof ConstraintViolationException cause) {
       LOG.debug(cause.getConstraintName());
       return cause.getSQLException().getMessage();
-    } else if (exception.getCause() instanceof DataException) {
-      final DataException cause = (DataException) exception.getCause();
+    } else if (exception.getCause() instanceof DataException cause) {
       LOG.debug(cause.getSQLState());
       return cause.getSQLException().getMessage();
     } else {

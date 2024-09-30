@@ -25,7 +25,7 @@ public interface ReaderService {
       final String sortDirection) throws BadRequestException;
 
   ListWithPagination<ReaderModel> searchReaders(
-      Map<String, Object>filters,
+      Map<String, Object> filters,
       final Integer pageNumber,
       final Integer pageSize,
       final String sortBy,

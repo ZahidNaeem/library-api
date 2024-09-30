@@ -27,10 +27,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ResearcherServiceImpl implements ResearcherService {
 
-  private static List<ResearcherModel> researcherModels = new ArrayList<>();
-
   private static final Logger LOG = LoggerFactory.getLogger(ResearcherServiceImpl.class);
-
+  private static List<ResearcherModel> researcherModels = new ArrayList<>();
   private final ResearcherRepo researcherRepo;
   private final ResearcherMapper researcherMapper;
 
@@ -61,7 +59,7 @@ public class ResearcherServiceImpl implements ResearcherService {
   }
 
   public ListWithPagination<ResearcherModel> searchResearchers(
-      Map<String, Object>filters,
+      Map<String, Object> filters,
       final Integer pageNumber,
       final Integer pageSize,
       final String sortBy,
@@ -109,7 +107,7 @@ public class ResearcherServiceImpl implements ResearcherService {
       throw new BadRequestException("Record does not exist");
     }
     final ResearcherModel savedModel = save(model);
-        final Optional<ResearcherModel> modelFound = researcherModels
+    final Optional<ResearcherModel> modelFound = researcherModels
         .stream()
         .filter(researcherModel -> researcherModel.getId().equals(savedModel.getId()))
         .findFirst();
@@ -121,7 +119,8 @@ public class ResearcherServiceImpl implements ResearcherService {
   private ResearcherModel save(ResearcherModel model) throws BadRequestException {
     final ResearcherEntity entity = researcherMapper.toEntity(model);
     RelationshipHandler.setParentForChildren(entity);
-Miscellaneous.constraintViolation(entity);
+    RelationshipHandler.setManyToManyRelation(entity);
+    Miscellaneous.constraintViolation(entity);
     return researcherMapper.toModel(researcherRepo.saveAndFlush(entity));
   }
 

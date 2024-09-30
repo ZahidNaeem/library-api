@@ -86,7 +86,7 @@ public class RelationshipHandler {
               }
 
               // Recursively call the method for multi-level relationships
-              setManyToManyRelation(relatedEntity);
+              setManyToManyRelation(relatedEntity, visited);
             }
           }
         } catch (IllegalAccessException e) {

@@ -72,7 +72,8 @@ public class VolumeController {
     volumeService.refreshCachedModels();
     final List<String> filteredVolumes = volumeService.findAll()
         .stream()
-        .map(volume -> "{\"volume\": \"" + volume.getId() + "\", \"volumeName\": \"" + volume.getBookName() + " - V. " + volume.getName() + "\"" + (alreadyIssuedVolumes.contains(volume.getId()) ? ", \"disabled\": true" : "") + "}")
+        .map(volume -> "{\"volume\": \"" + volume.getId() + "\", \"volumeName\": \"" + volume.getBookName() + " - V. " + volume.getName() + "\"" + (
+            alreadyIssuedVolumes.contains(volume.getId()) ? ", \"disabled\": true" : "") + "}")
         .toList();
     return ResponseEntity.ok(
         ApiResponse

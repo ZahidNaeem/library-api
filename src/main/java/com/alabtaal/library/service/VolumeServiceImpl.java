@@ -30,10 +30,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class VolumeServiceImpl implements VolumeService {
 
-  private static List<VolumeModel> volumeModels = new ArrayList<>();
-
   private static final Logger LOG = LoggerFactory.getLogger(VolumeServiceImpl.class);
-
+  private static List<VolumeModel> volumeModels = new ArrayList<>();
   private final VolumeRepo volumeRepo;
   private final VolumeMapper volumeMapper;
   private final BookMapper bookMapper;
@@ -65,7 +63,7 @@ public class VolumeServiceImpl implements VolumeService {
   }
 
   public ListWithPagination<VolumeModel> searchVolumes(
-      Map<String, Object>filters,
+      Map<String, Object> filters,
       final Integer pageNumber,
       final Integer pageSize,
       final String sortBy,
@@ -113,7 +111,7 @@ public class VolumeServiceImpl implements VolumeService {
       throw new BadRequestException("Record does not exist");
     }
     final VolumeModel savedModel = save(model);
-        final Optional<VolumeModel> modelFound = volumeModels
+    final Optional<VolumeModel> modelFound = volumeModels
         .stream()
         .filter(volumeModel -> volumeModel.getId().equals(savedModel.getId()))
         .findFirst();
@@ -125,7 +123,8 @@ public class VolumeServiceImpl implements VolumeService {
   private VolumeModel save(VolumeModel model) throws BadRequestException {
     final VolumeEntity entity = volumeMapper.toEntity(model);
     RelationshipHandler.setParentForChildren(entity);
-Miscellaneous.constraintViolation(entity);
+    RelationshipHandler.setManyToManyRelation(entity);
+    Miscellaneous.constraintViolation(entity);
     return volumeMapper.toModel(volumeRepo.saveAndFlush(entity));
   }
 

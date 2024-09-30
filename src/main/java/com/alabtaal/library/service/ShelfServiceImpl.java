@@ -27,10 +27,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ShelfServiceImpl implements ShelfService {
 
-  private static List<ShelfModel> shelfModels = new ArrayList<>();
-
   private static final Logger LOG = LoggerFactory.getLogger(ShelfServiceImpl.class);
-
+  private static List<ShelfModel> shelfModels = new ArrayList<>();
   private final ShelfRepo shelfRepo;
   private final ShelfMapper shelfMapper;
 
@@ -121,7 +119,8 @@ public class ShelfServiceImpl implements ShelfService {
   private ShelfModel save(ShelfModel model) throws BadRequestException {
     final ShelfEntity entity = shelfMapper.toEntity(model);
     RelationshipHandler.setParentForChildren(entity);
-Miscellaneous.constraintViolation(entity);
+    RelationshipHandler.setManyToManyRelation(entity);
+    Miscellaneous.constraintViolation(entity);
     return shelfMapper.toModel(shelfRepo.saveAndFlush(entity));
   }
 

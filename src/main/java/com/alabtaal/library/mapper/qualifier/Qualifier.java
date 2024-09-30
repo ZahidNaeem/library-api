@@ -15,6 +15,7 @@ import com.alabtaal.library.entity.SubjectEntity;
 import com.alabtaal.library.entity.VolumeEntity;
 import com.alabtaal.library.enumeration.RoleName;
 import com.alabtaal.library.exception.ResourceNotFoundException;
+import com.alabtaal.library.model.CommonModel;
 import com.alabtaal.library.repo.AuthorRepo;
 import com.alabtaal.library.repo.BookRepo;
 import com.alabtaal.library.repo.BookTransHeaderRepo;
@@ -33,6 +34,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.mapstruct.Named;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -71,7 +73,7 @@ public class Qualifier {
   }
 
   @Named("subjectMTE")
-  public SubjectEntity subjectMTE( final UUID subject) {
+  public SubjectEntity subjectMTE(final UUID subject) {
     return subjectRepo != null && subject != null ? subjectRepo.findById(subject).orElse(null) : null;
   }
 
@@ -83,7 +85,7 @@ public class Qualifier {
   }
 
   @Named("parentSubjectMTE")
-  public SubjectEntity parentSubjectMTE( final UUID parentSubjectId) {
+  public SubjectEntity parentSubjectMTE(final UUID parentSubjectId) {
     return subjectRepo != null && parentSubjectId != null ? subjectRepo.findById(parentSubjectId).orElse(null) : null;
   }
 
@@ -102,7 +104,7 @@ public class Qualifier {
   }
 
   @Named("authorMTE")
-  public AuthorEntity authorMTE( final UUID author) {
+  public AuthorEntity authorMTE(final UUID author) {
     return authorRepo != null && author != null ? authorRepo.findById(author).orElse(null) : null;
   }
 
@@ -114,7 +116,7 @@ public class Qualifier {
   }
 
   @Named("publisherMTE")
-  public PublisherEntity publisherMTE( final UUID publisher) {
+  public PublisherEntity publisherMTE(final UUID publisher) {
     return publisherRepo != null && publisher != null ? publisherRepo.findById(publisher).orElse(null) : null;
   }
 
@@ -126,7 +128,7 @@ public class Qualifier {
   }
 
   @Named("researcherMTE")
-  public ResearcherEntity researcherMTE( final UUID researcher) {
+  public ResearcherEntity researcherMTE(final UUID researcher) {
     return researcherRepo != null && researcher != null ? researcherRepo.findById(researcher).orElse(null) : null;
   }
 
@@ -138,17 +140,83 @@ public class Qualifier {
   }
 
   @Named("bookMTE")
-  public BookEntity bookMTE( final UUID book) {
+  public BookEntity bookMTE(final UUID book) {
     return bookRepo != null && book != null ? bookRepo.findById(book).orElse(null) : null;
   }
 
   @Named("rackMTE")
-  public RackEntity rackMTE( final UUID rack) {
+  public RackEntity rackMTE(final UUID rack) {
     return rackRepo != null && rack != null ? rackRepo.findById(rack).orElse(null) : null;
   }
 
   @Named("volumeMTE")
-  public VolumeEntity volumeMTE( final UUID volume) {
+  public VolumeEntity volumeMTE(final UUID volume) {
     return volumeRepo != null && volume != null ? volumeRepo.findById(volume).orElse(null) : null;
+  }
+
+  @Named("authorsETM")
+  public Set<CommonModel> authorsETM(final Set<AuthorEntity> entities) {
+    if (CollectionUtils.isEmpty(entities)) {
+      return Collections.emptySet();
+    }
+    return entities
+        .stream()
+        .map(entity -> CommonModel.builder().id(entity.getId()).name(entity.getName()).build())
+        .collect(Collectors.toSet());
+  }
+
+  @Named("authorsMTE")
+  public Set<AuthorEntity> authorsMTE(final Set<CommonModel> models) {
+    if (CollectionUtils.isEmpty(models)) {
+      return Collections.emptySet();
+    }
+    return models
+        .stream()
+        .map(model -> authorRepo.findById(model.getId()).orElse(null))
+        .collect(Collectors.toSet());
+  }
+
+  @Named("subjectsETM")
+  public Set<CommonModel> subjectsETM(final Set<SubjectEntity> entities) {
+    if (CollectionUtils.isEmpty(entities)) {
+      return Collections.emptySet();
+    }
+    return entities
+        .stream()
+        .map(entity -> CommonModel.builder().id(entity.getId()).name(entity.getName()).build())
+        .collect(Collectors.toSet());
+  }
+
+  @Named("subjectsMTE")
+  public Set<SubjectEntity> subjectsMTE(final Set<CommonModel> models) {
+    if (CollectionUtils.isEmpty(models)) {
+      return Collections.emptySet();
+    }
+    return models
+        .stream()
+        .map(model -> subjectRepo.findById(model.getId()).orElse(null))
+        .collect(Collectors.toSet());
+  }
+
+  @Named("researchersETM")
+  public Set<CommonModel> researchersETM(final Set<ResearcherEntity> entities) {
+    if (CollectionUtils.isEmpty(entities)) {
+      return Collections.emptySet();
+    }
+    return entities
+        .stream()
+        .map(entity -> CommonModel.builder().id(entity.getId()).name(entity.getName()).build())
+        .collect(Collectors.toSet());
+  }
+
+  @Named("researchersMTE")
+  public Set<ResearcherEntity> researchersMTE(final Set<CommonModel> models) {
+    if (CollectionUtils.isEmpty(models)) {
+      return Collections.emptySet();
+    }
+    return models
+        .stream()
+        .map(model -> researcherRepo.findById(model.getId()).orElse(null))
+        .collect(Collectors.toSet());
   }
 }

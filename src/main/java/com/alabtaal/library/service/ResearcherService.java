@@ -25,7 +25,7 @@ public interface ResearcherService {
       final String sortDirection) throws BadRequestException;
 
   ListWithPagination<ResearcherModel> searchResearchers(
-      Map<String, Object>filters,
+      Map<String, Object> filters,
       final Integer pageNumber,
       final Integer pageSize,
       final String sortBy,

@@ -38,7 +38,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
       throw new UsernameNotFoundException("User Not Found with -> username : " + username);
     }
 
-
     final List<GrantedAuthority> authorities = user.getRoles().stream().map(role ->
         new SimpleGrantedAuthority(role.getName().name())
     ).collect(Collectors.toList());

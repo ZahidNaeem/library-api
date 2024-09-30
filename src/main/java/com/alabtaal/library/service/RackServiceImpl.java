@@ -27,10 +27,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RackServiceImpl implements RackService {
 
-  private static List<RackModel> rackModels = new ArrayList<>();
-
   private static final Logger LOG = LoggerFactory.getLogger(RackServiceImpl.class);
-
+  private static List<RackModel> rackModels = new ArrayList<>();
   private final RackRepo rackRepo;
   private final RackMapper rackMapper;
 
@@ -61,7 +59,7 @@ public class RackServiceImpl implements RackService {
   }
 
   public ListWithPagination<RackModel> searchRacks(
-      Map<String, Object>filters,
+      Map<String, Object> filters,
       final Integer pageNumber,
       final Integer pageSize,
       final String sortBy,
@@ -109,7 +107,7 @@ public class RackServiceImpl implements RackService {
       throw new BadRequestException("Record does not exist");
     }
     final RackModel savedModel = save(model);
-        final Optional<RackModel> modelFound = rackModels
+    final Optional<RackModel> modelFound = rackModels
         .stream()
         .filter(rackModel -> rackModel.getId().equals(savedModel.getId()))
         .findFirst();
@@ -121,7 +119,8 @@ public class RackServiceImpl implements RackService {
   private RackModel save(RackModel model) throws BadRequestException {
     final RackEntity entity = rackMapper.toEntity(model);
     RelationshipHandler.setParentForChildren(entity);
-Miscellaneous.constraintViolation(entity);
+    RelationshipHandler.setManyToManyRelation(entity);
+    Miscellaneous.constraintViolation(entity);
     return rackMapper.toModel(rackRepo.saveAndFlush(entity));
   }
 

@@ -27,10 +27,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PublisherServiceImpl implements PublisherService {
 
-  private static List<PublisherModel> publisherModels = new ArrayList<>();
-
   private static final Logger LOG = LoggerFactory.getLogger(PublisherServiceImpl.class);
-
+  private static List<PublisherModel> publisherModels = new ArrayList<>();
   private final PublisherRepo publisherRepo;
   private final PublisherMapper publisherMapper;
 
@@ -61,7 +59,7 @@ public class PublisherServiceImpl implements PublisherService {
   }
 
   public ListWithPagination<PublisherModel> searchPublishers(
-      Map<String, Object>filters,
+      Map<String, Object> filters,
       final Integer pageNumber,
       final Integer pageSize,
       final String sortBy,
@@ -109,7 +107,7 @@ public class PublisherServiceImpl implements PublisherService {
       throw new BadRequestException("Record does not exist");
     }
     final PublisherModel savedModel = save(model);
-        final Optional<PublisherModel> modelFound = publisherModels
+    final Optional<PublisherModel> modelFound = publisherModels
         .stream()
         .filter(publisherModel -> publisherModel.getId().equals(savedModel.getId()))
         .findFirst();
@@ -121,7 +119,8 @@ public class PublisherServiceImpl implements PublisherService {
   private PublisherModel save(PublisherModel model) throws BadRequestException {
     final PublisherEntity entity = publisherMapper.toEntity(model);
     RelationshipHandler.setParentForChildren(entity);
-Miscellaneous.constraintViolation(entity);
+    RelationshipHandler.setManyToManyRelation(entity);
+    Miscellaneous.constraintViolation(entity);
     return publisherMapper.toModel(publisherRepo.saveAndFlush(entity));
   }
 

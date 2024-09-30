@@ -58,7 +58,8 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserEntity save(final UserEntity entity) throws BadRequestException {
     RelationshipHandler.setParentForChildren(entity);
-Miscellaneous.constraintViolation(entity);
+    RelationshipHandler.setManyToManyRelation(entity);
+    Miscellaneous.constraintViolation(entity);
     return userRepo.saveAndFlush(entity);
   }
 

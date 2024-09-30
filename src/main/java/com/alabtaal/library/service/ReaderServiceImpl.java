@@ -27,10 +27,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ReaderServiceImpl implements ReaderService {
 
-  private static List<ReaderModel> readerModels = new ArrayList<>();
-
   private static final Logger LOG = LoggerFactory.getLogger(ReaderServiceImpl.class);
-
+  private static List<ReaderModel> readerModels = new ArrayList<>();
   private final ReaderRepo readerRepo;
   private final ReaderMapper readerMapper;
 
@@ -61,7 +59,7 @@ public class ReaderServiceImpl implements ReaderService {
   }
 
   public ListWithPagination<ReaderModel> searchReaders(
-      Map<String, Object>filters,
+      Map<String, Object> filters,
       final Integer pageNumber,
       final Integer pageSize,
       final String sortBy,
@@ -109,7 +107,7 @@ public class ReaderServiceImpl implements ReaderService {
       throw new BadRequestException("Record does not exist");
     }
     final ReaderModel savedModel = save(model);
-        final Optional<ReaderModel> modelFound = readerModels
+    final Optional<ReaderModel> modelFound = readerModels
         .stream()
         .filter(readerModel -> readerModel.getId().equals(savedModel.getId()))
         .findFirst();
@@ -121,7 +119,8 @@ public class ReaderServiceImpl implements ReaderService {
   private ReaderModel save(ReaderModel model) throws BadRequestException {
     final ReaderEntity entity = readerMapper.toEntity(model);
     RelationshipHandler.setParentForChildren(entity);
-Miscellaneous.constraintViolation(entity);
+    RelationshipHandler.setManyToManyRelation(entity);
+    Miscellaneous.constraintViolation(entity);
     return readerMapper.toModel(readerRepo.saveAndFlush(entity));
   }
 
