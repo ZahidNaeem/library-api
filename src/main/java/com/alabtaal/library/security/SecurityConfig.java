@@ -23,6 +23,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -85,6 +86,7 @@ public class SecurityConfig {
             .requestMatchers("/auth/**").permitAll()
             .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
             .requestMatchers(HttpMethod.PUT, "/users/**").permitAll()
+            .requestMatchers(new AntPathRequestMatcher("/**/refresh", HttpMethod.GET.name())).permitAll()
             .requestMatchers(HttpMethod.PUT, "/**")
             .hasAnyAuthority(RoleName.ROLE_ADMIN.name())
             .requestMatchers(HttpMethod.DELETE, "/**")
