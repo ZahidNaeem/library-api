@@ -104,7 +104,7 @@ public class RelationshipHandler {
         Type genericType = field.getGenericType();
         if (genericType instanceof ParameterizedType pt) {
           Type[] actualTypeArguments = pt.getActualTypeArguments();
-          if (actualTypeArguments.length == 1 && actualTypeArguments[0].getTypeName().equals(entityClass.getTypeName())) {
+          if (actualTypeArguments.length > 0 && actualTypeArguments[0].getTypeName().equals(entityClass.getTypeName())) {
             return field;
           }
         }
@@ -126,66 +126,3 @@ public class RelationshipHandler {
   }
 }
 
-//  public static <T> void setRelationships(T obj) {
-//    Class<?> objClass = obj.getClass();
-//    Field[] fields = objClass.getDeclaredFields();
-//
-//    for (Field field : fields) {
-//      field.setAccessible(true);
-//      if (Collection.class.isAssignableFrom(field.getType())) {
-//        try {
-//          Collection<?> collection = (Collection<?>) field.get(obj);
-//          for (Object element : collection) {
-//            // Set the current object in the many-to-many relationship
-//            Field relationshipField = getRelationshipField(element.getClass(), objClass);
-//            if (relationshipField != null) {
-//              relationshipField.setAccessible(true);
-//              // Get the generic type of the relationshipField
-//              ParameterizedType collectionType = (ParameterizedType) relationshipField.getGenericType();
-//              TypeToken<?> typeToken = TypeToken.of(relationshipField.getDeclaringClass()).resolveType(collectionType);
-//
-//              if (typeToken.getType() instanceof ParameterizedType parameterizedType) {
-//                Type[] typeArguments = parameterizedType.getActualTypeArguments();
-//
-//                if (typeArguments.length > 0) {
-//                  Class<?> elementType = (Class<?>) typeArguments[0];
-//                  Collection<?> inverseCollection = (Collection<?>) relationshipField.get(element);
-//                  inverseCollection.add(elementType.cast(obj));
-//                } else {
-//                  // Handle missing type arguments
-//                }
-//              } else {
-//                // Handle non-parameterized type
-//              }
-//
-//              // Create a Collection Type with actual element type
-//              Collection<?> inverseCollection = (Collection<?>) relationshipField.get(element);
-//              if (!inverseCollection.contains(obj)) {
-//                inverseCollection.add(elementType.cast(obj));
-//              }
-//            }
-//
-//            // Recursively call the method for multi-level relationships
-//            setRelationships(element);
-//          }
-//        } catch (IllegalAccessException e) {
-//          Miscellaneous.logException(LOG, e);
-//        }
-//      }
-//    }
-//  }
-//
-//  private static Field getRelationshipField(Class<?> childClass, Class<?> parentClass) {
-//    Field[] fields = childClass.getDeclaredFields();
-//    for (Field field : fields) {
-//      if (Collection.class.isAssignableFrom(field.getType())) {
-//        Field[] nestedFields = field.getType().getDeclaredFields();
-//        for (Field nestedField : nestedFields) {
-//          if (nestedField.getType().equals(parentClass)) {
-//            return field;
-//          }
-//        }
-//      }
-//    }
-//    return null;
-//  }
