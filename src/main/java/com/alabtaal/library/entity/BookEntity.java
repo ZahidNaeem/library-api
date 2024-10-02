@@ -18,6 +18,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
@@ -41,7 +42,7 @@ import org.hibernate.proxy.HibernateProxy;
 @AllArgsConstructor
 @Entity
 @Table(name = "books", schema = "library", uniqueConstraints = {
-    @UniqueConstraint(name = "book_name_uk", columnNames = {"book_name"})
+    @UniqueConstraint(name = "book_number_uk", columnNames = {"book_number"})
 })
 public class BookEntity extends Auditable<String> {
 
@@ -50,9 +51,13 @@ public class BookEntity extends Auditable<String> {
   @Column(name = "book_id", columnDefinition = "BINARY(16)")
   private UUID id;
 
-  @NotNull
+  @NotBlank
   @Column(name = "book_name")
   private String name;
+
+  @NotNull
+  @Column(name = "book_number")
+  private Long bookNumber;
 
   @Column(name = "publication_date")
   private Date publicationDate;

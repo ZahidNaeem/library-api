@@ -309,6 +309,10 @@
       <column name="BOOK_NAME" type="varchar(255)">
         <constraints nullable="false"/>
       </column>
+      <column name="BOOK_NUMBER" type="bigint">
+        <constraints unique="true" uniqueConstraintName="BOOK_NUMBER_UK"
+          nullable="false" notNullConstraintName="BOOK_NUMBER_NN"/>
+      </column>
       <column name="PUBLICATION_DATE" type="timestamp"/>
       <column name="EDITION" type="int"/>
       <column name="BOOK_CONDITION" type="varchar(255)"/>
@@ -320,10 +324,6 @@
       <column name="LAST_UPDATED_BY" type="varchar(255)"/>
       <column name="LAST_UPDATE_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
     </createTable>
-    <addUniqueConstraint constraintName="book_name_uk"
-      tableName="books"
-      schemaName="${currentSchema}"
-      columnNames="book_name"/>
 
     <addForeignKeyConstraint constraintName="FK_BOOKS_ON_PUBLISHER"
       baseTableName="books"

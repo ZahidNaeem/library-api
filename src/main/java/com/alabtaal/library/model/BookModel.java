@@ -5,6 +5,7 @@ import com.alabtaal.library.enumeration.BookCondition;
 import com.alabtaal.library.enumeration.BookSource;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -25,6 +26,9 @@ public class BookModel extends Auditable<String> {
   private UUID id;
 
   private String name;
+
+  @NotNull
+  private Long bookNumber;
 
   private Date publicationDate;
 
