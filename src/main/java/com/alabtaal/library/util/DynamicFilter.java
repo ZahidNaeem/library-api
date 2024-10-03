@@ -5,12 +5,11 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
 import org.apache.commons.collections4.CollectionUtils;
@@ -23,29 +22,30 @@ public class DynamicFilter {
 
   private static final Logger LOG = LoggerFactory.getLogger(DynamicFilter.class);
   private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+  private static final Map<FieldCacheKey, Field> fieldCache = new HashMap<>();
 
   public static <T> List<T> filter(List<T> list, Map<String, Object> filters) {
     if (MapUtils.isEmpty(filters)) {
       return list;
     }
-    List<T> filteredList = new ArrayList<>(list);
-    for (T item : list) {
-      for (Entry<String, Object> entry : filters.entrySet()) {
-        if (!ObjectUtils.isEmpty(entry.getValue()) && !matchesFilter(item, entry.getKey(), entry.getValue())) {
-          filteredList.remove(item);
-        }
-      }
-    }
-    return filteredList;
+    return list
+        .stream()
+        .filter(item -> filters.entrySet()
+            .stream()
+            .filter(entry -> !ObjectUtils.isEmpty(entry.getValue()))
+            .allMatch(entry -> matchesFilter(item, entry.getKey(), entry.getValue())))
+        .toList();
   }
 
   public static <T> boolean matchesFilter(T item, String fieldName, Object filterValue) {
     try {
-      Field field = item.getClass().getDeclaredField(fieldName);
+      Field field = getField(item.getClass(), fieldName);
       field.setAccessible(true);
       Object fieldValue = field.get(item);
 
-      return matchesFilter(fieldValue, filterValue);
+      return Optional.ofNullable(filterValue)
+          .map(value -> matchesFilter(fieldValue, value))
+          .orElse(true);
     } catch (IllegalAccessException | NoSuchFieldException e) {
       LOG.error("Error accessing field '{}': {}", fieldName, e.getMessage());
       return false;
@@ -53,25 +53,23 @@ public class DynamicFilter {
   }
 
   public static boolean matchesFilter(Object fieldValue, Object filterValue) {
-    boolean result;
     if (filterValue instanceof Collection<?> filterValues) {
       final Object firstElement = getFirstElement(filterValues);
       if (firstElement instanceof Map) {
         final Collection<Map<?, ?>> filterValuesMap = castToMapCollection(filterValues);
-        result = fieldValue instanceof Collection<?> fieldValues
+        return fieldValue instanceof Collection<?> fieldValues
             ? matchesListOfMapFilterToFieldValues(fieldValues, filterValuesMap)
             : matchesListOfMapFilter(fieldValue, filterValuesMap);
       } else {
-        result = fieldValue instanceof Collection<?> fieldValues
+        return fieldValue instanceof Collection<?> fieldValues
             ? matchesListFilterToFieldValues(fieldValues, filterValues)
             : matchesListFilter(fieldValue, filterValues);
       }
     } else if (filterValue instanceof Map<?, ?> filterMap) {
-      result = matchesMapFilter(fieldValue, filterMap);
+      return matchesMapFilter(fieldValue, filterMap);
     } else {
-      result = matchesSingleFilter(fieldValue, filterValue);
+      return matchesSingleFilter(fieldValue, filterValue);
     }
-    return result;
   }
 
   @SuppressWarnings("unchecked")
@@ -94,55 +92,43 @@ public class DynamicFilter {
     if (fieldValue instanceof UUID) {
       return filterList.contains(fieldValue.toString());
     }
-    for (Object filterValue : filterList) {
-      if (compareAsStrings(fieldValue, filterValue)) {
-        return true;
-      }
-    }
-    return false;
+    return filterList.stream()
+        .anyMatch(filterValue -> compareAsStrings(fieldValue, filterValue));
   }
 
   public static boolean matchesListFilterToFieldValues(Collection<?> fieldValues, Collection<?> filterList) {
-    for (Object element : fieldValues) {
-      if (matchesListFilter(element, filterList)) {
-        return true;
-      }
-    }
-    return false;
+    return fieldValues
+        .stream()
+        .anyMatch(element -> matchesListFilter(element, filterList));
   }
 
   public static boolean matchesMapFilter(Object fieldValue, Map<?, ?> filterMap) {
-    for (Entry<?, ?> entry : filterMap.entrySet()) {
-      try {
-        final Field field = fieldValue.getClass().getDeclaredField(String.valueOf(entry.getKey()));
-        field.setAccessible(true);
-        final Object value = field.get(fieldValue);
-        if (!compareAsStrings(value, entry.getValue())) {
-          return false;
-        }
-      } catch (Exception e) {
-        return false;
-      }
-    }
-    return true;
+    return filterMap
+        .entrySet()
+        .stream()
+        .allMatch((entry) -> {
+          try {
+            final Field field = getField(fieldValue.getClass(), String.valueOf(entry.getKey()));
+            field.setAccessible(true);
+            final Object value = field.get(fieldValue);
+            return compareAsStrings(value, entry.getValue());
+          } catch (Exception e) {
+            return false;
+          }
+        });
   }
 
   public static boolean matchesListOfMapFilter(Object fieldValue, Collection<Map<?, ?>> filterListOfMap) {
-    for (Map<?, ?> element : filterListOfMap) {
-      if (matchesMapFilter(fieldValue, element)) {
-        return true;
-      }
-    }
-    return false;
+    return filterListOfMap
+        .stream()
+        .anyMatch((element) -> matchesMapFilter(fieldValue, element));
   }
 
   public static boolean matchesListOfMapFilterToFieldValues(Collection<?> fieldValues, Collection<Map<?, ?>> filterListOfMap) {
-    for (Object fieldValue : fieldValues) {
-      if (matchesListOfMapFilter(fieldValue, filterListOfMap)) {
-        return true;
-      }
-    }
-    return false;
+    return fieldValues
+        .stream()
+        .anyMatch(fieldValue ->
+            matchesListOfMapFilter(fieldValue, filterListOfMap));
   }
 
   public static boolean matchesSingleFilter(Object fieldValue, Object filterValue) {
@@ -195,5 +181,29 @@ public class DynamicFilter {
         .stream()
         .findFirst()
         .orElse(null);
+  }
+
+  public static Field getField(Class<?> clazz, String fieldName) throws NoSuchFieldException {
+    FieldCacheKey key = new FieldCacheKey(clazz, fieldName);
+    if (!fieldCache.containsKey(key)) {
+      Field field = clazz.getDeclaredField(fieldName);
+      fieldCache.put(key, field);
+    }
+    return fieldCache.get(key);
+  }
+
+  private record FieldCacheKey(Class<?> clazz, String fieldName) {
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      FieldCacheKey that = (FieldCacheKey) o;
+      return clazz.equals(that.clazz) && fieldName.equals(that.fieldName);
+    }
   }
 }
