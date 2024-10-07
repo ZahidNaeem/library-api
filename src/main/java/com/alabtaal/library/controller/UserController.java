@@ -17,8 +17,10 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,11 +40,20 @@ public class UserController {
   private final PasswordEncoder passwordEncoder;
 
   @GetMapping("/user/me")
-  @PreAuthorize("hasRole('ROLE_USER')")
   public ResponseEntity<ApiResponse<UserSummary>> getCurrentUser(@CurrentUser UserPrincipal currentUser) {
+    if (currentUser == null) {
+      return new ResponseEntity<>(ApiResponse
+          .<UserSummary>builder()
+          .success(false)
+          .message("Current User is null")
+          .entity(null)
+          .build(), HttpStatus.BAD_REQUEST);
+    }
 
-    final Set<String> authorities = currentUser.getAuthorities().stream()
-        .map(r -> r.getAuthority()).collect(Collectors.toSet());
+    final Set<String> authorities = currentUser.getAuthorities()
+        .stream()
+        .map(GrantedAuthority::getAuthority)
+        .collect(Collectors.toSet());
 
     UserSummary userSummary = UserSummary.builder()
         .id(currentUser.getId())

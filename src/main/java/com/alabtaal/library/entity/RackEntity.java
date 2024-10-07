@@ -12,6 +12,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
@@ -42,7 +43,7 @@ public class RackEntity extends Auditable<String> {
   @Column(name = "rack_id", columnDefinition = "BINARY(16)")
   private UUID id;
 
-  @NotNull
+  @NotBlank
   @Column(name = "rack_name")
   private String name;
 
