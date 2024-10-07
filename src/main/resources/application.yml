@@ -46,3 +46,10 @@ logging:
     com.alabtaal: debug
   pattern:
     console: '%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n'
+abt:
+  app:
+    accessTokenExpiration: 300000 # 5*60*1000 - 300000 milliseconds = 5 minutes
+    refreshTokenExpiration: 86400000 # 24*60*60*1000 - 86400000 milliseconds = 1 Day
+    tokenCookieExpiration: 86400 # 24*60*60 - 86400 seconds = 1 Day
+    accessCookieName: access_token
+    refreshCookieName: refresh_token

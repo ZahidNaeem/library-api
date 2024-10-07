@@ -4,15 +4,20 @@ import com.alabtaal.library.entity.UserEntity;
 import com.alabtaal.library.exception.BadRequestException;
 import com.alabtaal.library.exception.InternalServerErrorException;
 import com.alabtaal.library.mapper.UserMapper;
+import com.alabtaal.library.model.UserPrincipal;
 import com.alabtaal.library.payload.request.LoginRequest;
 import com.alabtaal.library.payload.request.SignupRequest;
 import com.alabtaal.library.payload.response.ApiResponse;
 import com.alabtaal.library.payload.response.JwtAuthenticationResponse;
 import com.alabtaal.library.repo.UserRepo;
+import com.alabtaal.library.security.CurrentUser;
 import com.alabtaal.library.security.jwt.JwtProvider;
+import com.alabtaal.library.service.TokenValidationService;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,15 +37,19 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class AuthController {
 
   private final AuthenticationManager authenticationManager;
-
   private final UserRepo userRepo;
-
+  private final TokenValidationService tokenValidationService;
   private final UserMapper userMapper;
-
   private final JwtProvider jwtProvider;
 
+  @Value("${abt.app.accessTokenExpiration:#{5*60*1000}}")
+  private int accessTokenExpiration;
+
+  @Value("${abt.app.refreshTokenExpiration:#{24*60*60*1000}}")
+  private int refreshTokenExpiration;
+
   @PostMapping("/login")
-  public ResponseEntity<ApiResponse<JwtAuthenticationResponse>> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+  public ResponseEntity<ApiResponse<JwtAuthenticationResponse>> login(@Valid @RequestBody LoginRequest loginRequest) throws BadRequestException {
     final Authentication authentication = authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(
             loginRequest.getUsernameOrEmail(),
@@ -50,15 +59,45 @@ public class AuthController {
 
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
-    final String jwt = jwtProvider.generateJwt(authentication);
-    return ResponseEntity.ok(
-        ApiResponse
-            .<JwtAuthenticationResponse>builder()
-            .success(true)
-            .message("Login successfull")
-            .entity(new JwtAuthenticationResponse(jwt))
-            .build()
-    );
+    final String accessToken = jwtProvider.generateJwt(authentication, accessTokenExpiration);
+    final String refreshToken = jwtProvider.generateJwt(authentication, refreshTokenExpiration);
+
+    tokenValidationService.add(loginRequest.getUsernameOrEmail(), accessToken);
+    tokenValidationService.add(loginRequest.getUsernameOrEmail(), refreshToken);
+
+    HttpHeaders headers = new HttpHeaders();
+    tokenValidationService.addAccessTokenCookie(headers, accessToken);
+    tokenValidationService.addRefreshTokenCookie(headers, refreshToken);
+
+    return ResponseEntity.ok()
+        .headers(headers)
+        .body(
+            ApiResponse.<JwtAuthenticationResponse>builder()
+                .success(true)
+                .message("Login successful")
+                .entity(new JwtAuthenticationResponse(accessToken))
+                .build()
+        );
+  }
+
+  @PostMapping("/logout")
+  public ResponseEntity<ApiResponse<Boolean>> logout(@CurrentUser UserPrincipal currentUser) {
+    tokenValidationService.disableAllUserTokens(currentUser.getUsername());
+
+    HttpHeaders headers = new HttpHeaders();
+    tokenValidationService.deleteAccessTokenCookie(headers);
+    tokenValidationService.deleteRefreshTokenCookie(headers);
+
+    return ResponseEntity.ok()
+        .headers(headers)
+        .body(
+            ApiResponse
+                .<Boolean>builder()
+                .success(true)
+                .message("user logged out")
+                .entity(true)
+                .build()
+        );
   }
 
   @PostMapping("/signup")
@@ -93,7 +132,7 @@ public class AuthController {
 
   @GetMapping("validate-token")
   public ResponseEntity<ApiResponse<Boolean>> validateJwtToken(
-      @RequestParam(value = "jwt") final String jwt) throws InternalServerErrorException, BadRequestException {
+      @RequestParam(value = "jwt") final String jwt) throws InternalServerErrorException {
     final boolean isTokenValid = jwtProvider.validateJwtToken(jwt);
     return ResponseEntity.ok(
         ApiResponse

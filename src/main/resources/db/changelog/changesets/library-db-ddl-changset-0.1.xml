@@ -622,4 +622,32 @@
       END;
     </createProcedure>
   </changeSet>
+
+  <changeSet id="create-table-token_validations" author="Zahid Naeem">
+  <preConditions onFail="MARK_RAN">
+    <not>
+      <tableExists tableName="token_validations" schemaName="${currentSchema}"/>
+    </not>
+  </preConditions>
+  <createTable tableName="token_validations" schemaName="${currentSchema}">
+    <column name="VALIDATION_ID" type="${uuid_type}" valueComputed="${uuid_function}">
+      <constraints primaryKey="true" nullable="false" primaryKeyName="pk_token_validations"/>
+    </column>
+    <column name="USERNAME" type="varchar(255)">
+      <constraints nullable="false" notNullConstraintName="token_validations_username_nn"/>
+    </column>
+    <column name="TOKEN" type="varchar(500)">
+      <constraints nullable="false" notNullConstraintName="token_validations_token_nn"
+      unique="true" uniqueConstraintName="token_validations_token_uk"/>
+    </column>
+    <column name="DISABLED" type="number(1)" defaultValueNumeric="0">
+      <constraints nullable="false" notNullConstraintName="token_validations_disabled_nn"
+      checkConstraint="disabled in (0, 1)"/>
+    </column>
+    <column name="CREATED_BY" type="varchar(255)"/>
+    <column name="CREATION_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+    <column name="LAST_UPDATED_BY" type="varchar(255)"/>
+    <column name="LAST_UPDATE_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+  </createTable>
+  </changeSet>
 </databaseChangeLog>
