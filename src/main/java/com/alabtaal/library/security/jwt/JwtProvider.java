@@ -1,6 +1,5 @@
 package com.alabtaal.library.security.jwt;
 
-import com.alabtaal.library.exception.BadRequestException;
 import com.alabtaal.library.exception.InternalServerErrorException;
 import com.alabtaal.library.model.UserPrincipal;
 import com.alabtaal.library.util.Miscellaneous;
@@ -12,11 +11,12 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Date;
 import javax.crypto.SecretKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -28,15 +28,15 @@ public class JwtProvider {
   private static final byte[] keyBytes = LIBRARY_SECRET_KEY.getBytes(StandardCharsets.UTF_8);
   private static final SecretKey secret = Keys.hmacShaKeyFor(keyBytes);
 
-  //  Set token expiry as 1 hour from issuance date
-  @Value("${abt.app.jwtExpiration:#{1*60*60*1000}}")
-  private int jwtExpiration;
-
-  public String generateJwt(final Authentication authentication) {
+  public String generateJwt(final Authentication authentication, final int jwtExpiration) {
     final UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+    return generateJwt(userPrincipal.getUsername(), jwtExpiration);
+  }
+
+  public String generateJwt(final String username, final int jwtExpiration) {
     return Jwts
         .builder()
-        .subject(userPrincipal.getUsername())
+        .subject(username)
         .issuedAt(new Date())
         .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
         .signWith(secret, SIG.HS256)
@@ -54,7 +54,7 @@ public class JwtProvider {
         .getSubject();
   }
 
-  public boolean validateJwtToken(final String jwt) throws InternalServerErrorException, BadRequestException {
+  public boolean validateJwtToken(final String jwt) throws InternalServerErrorException {
     try {
       Jwts
           .parser()
@@ -64,22 +64,39 @@ public class JwtProvider {
       return true;
     } catch (SignatureException e) {
       Miscellaneous.logException(LOG, e);
-      throw new BadRequestException("Invalid JWT Signature");
+      throw new SignatureException("Invalid JWT Signature");
     } catch (MalformedJwtException e) {
       Miscellaneous.logException(LOG, e);
-      throw new BadRequestException("Invalid JWT");
+      throw new MalformedJwtException("Invalid JWT");
     } catch (ExpiredJwtException e) {
       Miscellaneous.logException(LOG, e);
-      throw new BadRequestException("Expired JWT");
+      throw new ExpiredJwtException(null, null, "Expired JWT");
     } catch (UnsupportedJwtException e) {
       Miscellaneous.logException(LOG, e);
-      throw new BadRequestException("Unsupported JWT");
+      throw new UnsupportedJwtException("Unsupported JWT");
     } catch (IllegalArgumentException e) {
       Miscellaneous.logException(LOG, e);
-      throw new BadRequestException("JWT claims are invalid");
+      throw new IllegalArgumentException("JWT claims are invalid");
     } catch (Exception e) {
       Miscellaneous.logException(LOG, e);
       throw new InternalServerErrorException("Unexpected error");
     }
+  }
+
+  public LocalDateTime getExpiryDateFromToken(String token) {
+    return toLocalDateTime(
+        Jwts
+            .parser()
+            .verifyWith(secret)
+            .build()
+            .parseSignedClaims(token)
+            .getPayload()
+            .getExpiration()
+    );
+  }
+
+  private LocalDateTime toLocalDateTime(Date date) {
+    ZoneOffset zoneOffset = ZoneOffset.UTC;
+    return date.toInstant().atOffset(zoneOffset).toLocalDateTime();
   }
 }
