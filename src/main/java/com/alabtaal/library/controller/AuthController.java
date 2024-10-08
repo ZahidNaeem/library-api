@@ -58,6 +58,7 @@ public class AuthController {
     );
 
     SecurityContextHolder.getContext().setAuthentication(authentication);
+    tokenValidationService.disableAllUserTokens(loginRequest.getUsernameOrEmail());
 
     final String accessToken = jwtProvider.generateJwt(authentication, accessTokenExpiration);
     final String refreshToken = jwtProvider.generateJwt(authentication, refreshTokenExpiration);
