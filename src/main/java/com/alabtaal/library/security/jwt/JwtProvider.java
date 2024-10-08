@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
+import java.util.UUID;
 import javax.crypto.SecretKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,7 @@ public class JwtProvider {
         .subject(username)
         .issuedAt(new Date())
         .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
+        .claim("jti", UUID.randomUUID().toString()) // Add a unique identifier
         .signWith(secret, SIG.HS256)
         .compact();
   }
