@@ -4,7 +4,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +24,7 @@ public class RelationshipHandler {
 
       if (Collection.class.isAssignableFrom(field.getType())) {
         try {
-          Collection<?> collection = (Collection<?>) field.get(parent);
+          Collection<?> collection = Optional.ofNullable((Collection<?>) field.get(parent)).orElse(Collections.emptyList());
 
           for (Object element : collection) {
             Field parentField = getParentField(element.getClass(), parentClass);
@@ -72,14 +74,14 @@ public class RelationshipHandler {
 
       if (Collection.class.isAssignableFrom(field.getType())) {
         try {
-          Collection<?> collection = (Collection<?>) field.get(entity);
+          Collection<?> collection = Optional.ofNullable((Collection<?>) field.get(entity)).orElse(Collections.emptyList());
 
           for (Object relatedEntity : collection) {
             Field inverseField = getInverseField(relatedEntity.getClass(), entityClass);
 
             if (inverseField != null) {
               inverseField.setAccessible(true);
-              Collection<?> inverseCollection = (Collection<?>) inverseField.get(relatedEntity);
+              Collection<?> inverseCollection = Optional.ofNullable((Collection<?>) inverseField.get(relatedEntity)).orElse(Collections.emptyList());
 
               if (!inverseCollection.contains(entity)) {
                 addEntityToCollectionUnchecked(inverseCollection, entity);
